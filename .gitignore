@@ -1,0 +1,18 @@
+# خروجی‌های build
+target/
+build/
+
+# تنظیمات IDE
+.idea/
+*.iml
+.vscode/
+
+# فایل دیتابیس SQLite (داده‌ی محلی)
+*.db
+
+# لاگ‌ها و فایل‌های موقت
+*.log
+
+# سیستم‌عامل
+.DS_Store
+Thumbs.db
