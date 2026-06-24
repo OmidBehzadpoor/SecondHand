@@ -4,6 +4,8 @@ import  jakarta.persistence.*;
 import lombok.* ;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "advertisements")
@@ -47,5 +49,9 @@ public class Advertisement {
     @Column(nullable = false)
     @Builder.Default
     private AdvertisementStatus status =  AdvertisementStatus.PENDING;
+
+    @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<AdvertisementImage> images = new ArrayList<>();
 
 }
