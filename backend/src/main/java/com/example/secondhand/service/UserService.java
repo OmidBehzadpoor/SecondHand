@@ -3,8 +3,10 @@ package com.example.secondhand.service;
 import com.example.secondhand.dto.RegisterRequest;
 import com.example.secondhand.model.User;
 import com.example.secondhand.repository.UserRepository;
+import com.example.secondhand.exception.UserAlreadyExistsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class UserService {
@@ -20,11 +22,11 @@ public class UserService {
     public User register(RegisterRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("این نام کاربری قبلاً ثبت شده است");
+            throw new UserAlreadyExistsException("این نام کاربری قبلاً ثبت شده است");
         }
 
         if (userRepository.existsByPhone(request.getPhone())) {
-            throw new IllegalArgumentException("این شماره تماس قبلاً ثبت شده است");
+            throw new UserAlreadyExistsException("این شماره تماس قبلاً ثبت شده است");
         }
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
