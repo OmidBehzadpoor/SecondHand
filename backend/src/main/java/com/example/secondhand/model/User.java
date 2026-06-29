@@ -1,15 +1,15 @@
 package com.example.secondhand.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -38,12 +38,4 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserStatus status = UserStatus.ACTIVE;
-
-    public User(String name, String username, String password, String phone, String email) {
-        this.name = name;
-        this.username = username;
-        this.password = password;
-        this.phone = phone;
-        this.email = email;
-    }
 }
