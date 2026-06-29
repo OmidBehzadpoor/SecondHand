@@ -2,7 +2,6 @@ package com.example.secondhand.controller;
 
 import com.example.secondhand.dto.RegisterRequest;
 import com.example.secondhand.dto.response.ApiResponse;
-import com.example.secondhand.model.User;
 import com.example.secondhand.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,8 +20,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request) {
-        User user = userService.register(request);
-        ApiResponse response = new ApiResponse(true, "REGISTER_SUCCESS", user.getId());
+        Long userId = userService.register(request);
+        ApiResponse response = new ApiResponse(true, "REGISTER_SUCCESS", userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

@@ -19,7 +19,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User register(RegisterRequest request) {
+    public Long register(RegisterRequest request) {
 
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UserAlreadyExistsException("این نام کاربری قبلاً ثبت شده است");
@@ -39,6 +39,6 @@ public class UserService {
                 .email(request.getEmail())
                 .build();
 
-        return userRepository.save(user);
+        return userRepository.save(user).getId();
     }
 }
