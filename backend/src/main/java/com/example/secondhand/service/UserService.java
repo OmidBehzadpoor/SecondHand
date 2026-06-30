@@ -19,6 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public Long register(RegisterRequest request) {
 
@@ -50,7 +51,9 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidPasswordException("رمز عبور اشتباه است");
         }
-        // TODO: replace with real JWT token after JwtService is implemented
-        return new LoginResponse("", user.getId(), user.getUsername(), user.getRole());
+
+        String token = jwtService.generateToken(user);
+
+        return new LoginResponse(token, user.getId(), user.getUsername(), user.getRole());
     }
 }
