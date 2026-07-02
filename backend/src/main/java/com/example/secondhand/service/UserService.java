@@ -3,8 +3,7 @@ package com.example.secondhand.service;
 import com.example.secondhand.dto.LoginRequest;
 import com.example.secondhand.dto.RegisterRequest;
 import com.example.secondhand.dto.response.LoginResponse;
-import com.example.secondhand.exception.InvalidPasswordException;
-import com.example.secondhand.exception.UserNotFoundException;
+import com.example.secondhand.exception.InvalidCredentialsException;
 import com.example.secondhand.model.User;
 import com.example.secondhand.repository.UserRepository;
 import com.example.secondhand.exception.UserAlreadyExistsException;
@@ -46,10 +45,10 @@ public class UserService {
 
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("کاربری با این نام کاربری یافت نشد"));
+                .orElseThrow(() -> new InvalidCredentialsException("نام کاربری یا رمز عبور اشتباه است"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidPasswordException("رمز عبور اشتباه است");
+            throw new InvalidCredentialsException("نام کاربری یا رمز عبور اشتباه است");
         }
 
         String token = jwtService.generateToken(user);
