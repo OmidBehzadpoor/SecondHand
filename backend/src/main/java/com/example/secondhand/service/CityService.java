@@ -1,6 +1,7 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.CityRequest;
+import com.example.secondhand.dto.response.CityResponse;
 import com.example.secondhand.exception.CityNotFoundException;
 import com.example.secondhand.model.City;
 import com.example.secondhand.repository.CityRepository;
@@ -25,8 +26,14 @@ public class CityService {
         cityRepository.delete(city);
     }
 
-    public List<City> getAll() {
-        return cityRepository.findAll();
+    public List<CityResponse> getAllCities() {
+        return cityRepository.findAll()
+                .stream()
+                .map(city -> CityResponse.builder()
+                        .id(city.getId())
+                        .name(city.getName())
+                        .build())
+                .toList();
     }
-
 }
+
