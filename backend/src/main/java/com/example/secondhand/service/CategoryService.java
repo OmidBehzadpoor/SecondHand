@@ -1,44 +1,43 @@
 package com.example.secondhand.service;
 
-import com.example.secondhand.dto.CategoryRequest;
-import com.example.secondhand.dto.response.CategoryResponse;
-import com.example.secondhand.exception.CategoryNotFoundException;
-import com.example.secondhand.model.Category;
-import com.example.secondhand.repository.CategoryRepository;
+import com.example.secondhand.dto.response.CaptchaResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryService {
-    private final CategoryRepository categoryRepository;
+public class CaptchaService {
 
-    public CategoryResponse create(CategoryRequest request) {
-        Category category = categoryRepository.save(Category.builder().name(request.getName()).build());
+    private final RestTemplate restTemplate = new RestTemplate();
 
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .build();
+    @Value("${app.security.captcha.secret-key}")
+    private String secretKey;
+
+    @Value("${app.security.captcha.url}")
+    private String captchaUrl;
+
+    public boolean verifyToken(String token) {
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("secret", secretKey);
+        requestParams.add("response", token);
+
+        try {
+            CaptchaResponse apiResponse = restTemplate.postForObject(
+                    captchaUrl,
+                    requestParams,
+                    CaptchaResponse.class
+            );
+            return apiResponse != null && apiResponse.isSuccess();
+        } catch (Exception e) {
+            return false;
+        }
     }
-
-    public void delete(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("دسته‌بندی یافت نشد"));
-        categoryRepository.delete(category);
-    }
-
-    public List<CategoryResponse> getAllCategories() {
-        return categoryRepository.findAll()
-                .stream()
-                .map(category -> CategoryResponse.builder()
-                        .id(category.getId())
-                        .name(category.getName())
-                        .build())
-                .toList();
-    }
-
-
 }
