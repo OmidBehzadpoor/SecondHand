@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCCityNotFound(CityNotFoundException ex) {
+    public ResponseEntity<Map<String, String>> handleCityNotFound(CityNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
