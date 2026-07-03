@@ -36,6 +36,11 @@ public class CityController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteCity(@PathVariable Long id) {
+        cityService.delete(id);
+        ApiResponse<Void> response = new ApiResponse<>(true, "CITY_DELETED", null);
+        return ResponseEntity.ok(response);
+    }
 
 }
