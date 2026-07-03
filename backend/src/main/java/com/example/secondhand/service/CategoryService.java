@@ -15,9 +15,13 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public Category create(CategoryRequest request) {
-        Category category = Category.builder().name(request.getName()).build();
-        return categoryRepository.save(category);
+    public CategoryResponse create(CategoryRequest request) {
+        Category category = categoryRepository.save(Category.builder().name(request.getName()).build());
+
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .build();
     }
 
     public void delete(Long id) {
@@ -35,5 +39,6 @@ public class CategoryService {
                         .build())
                 .toList();
     }
+
 
 }
