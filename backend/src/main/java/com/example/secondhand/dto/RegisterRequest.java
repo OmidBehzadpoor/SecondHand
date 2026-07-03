@@ -25,5 +25,7 @@ public class RegisterRequest {
     @NotBlank(message = "ایمیل نمی‌تواند خالی باشد")
     @Email(message = "ایمیل معتبر نیست")
     private String email;
+
+    private String captchaToken;
     // no id, role or status; because client shouldn't have access to the mentioned fields
 }

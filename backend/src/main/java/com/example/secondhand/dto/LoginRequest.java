@@ -13,4 +13,6 @@ public class LoginRequest {
 
     @NotBlank(message = "رمز عبور نمی‌تواند خالی باشد")
     private String password;
+
+    private String captchaToken;
 }
