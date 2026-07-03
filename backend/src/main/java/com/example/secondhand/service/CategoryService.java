@@ -1,6 +1,7 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.CategoryRequest;
+import com.example.secondhand.dto.response.CategoryResponse;
 import com.example.secondhand.exception.CategoryNotFoundException;
 import com.example.secondhand.model.Category;
 import com.example.secondhand.repository.CategoryRepository;
@@ -25,8 +26,14 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(category -> CategoryResponse.builder()
+                        .id(category.getId())
+                        .name(category.getName())
+                        .build())
+                .toList();
     }
 
 }
