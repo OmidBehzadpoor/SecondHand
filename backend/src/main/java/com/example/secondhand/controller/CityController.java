@@ -29,5 +29,13 @@ public class CityController {
         );
         return ResponseEntity.ok(response);
     }
+    @PostMapping("")
+    public ResponseEntity<ApiResponse<CityResponse>> createCity(@Valid @RequestBody CityRequest request) {
+        CityResponse cityResponse = cityService.create(request);
+        ApiResponse<CityResponse> response = new ApiResponse<>(true, "CITY_CREATED", cityResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
 
 }
