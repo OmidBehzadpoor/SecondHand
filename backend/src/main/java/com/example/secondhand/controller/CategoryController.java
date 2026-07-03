@@ -36,4 +36,11 @@ public class CategoryController {
         ApiResponse<CategoryResponse> response = new ApiResponse<>(true, "CATEGORY_CREATED", categoryResponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
+        categoryService.delete(id);
+        ApiResponse<Void> response = new ApiResponse<>(true, "CATEGORY_DELETED", null);
+        return ResponseEntity.ok(response);
+    }
 }
