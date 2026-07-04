@@ -17,20 +17,6 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidPassword(InvalidPasswordException ex) {
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", ex.getMessage()));
-    }
-
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Map<String, String>> handleInvalidCredentials(InvalidCredentialsException ex) {
         return ResponseEntity
