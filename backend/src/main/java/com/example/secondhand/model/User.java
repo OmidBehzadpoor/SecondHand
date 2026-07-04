@@ -40,4 +40,10 @@ public class User {
     @Column(nullable = false)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean emailVerified = false;
+
+    private String verificationToken;
 }
