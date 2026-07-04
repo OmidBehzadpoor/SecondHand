@@ -24,6 +24,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/scalar/**").permitAll()
+                        .requestMatchers("/webjars/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/advertisements/**").permitAll()
                         .anyRequest().authenticated()
                 )
