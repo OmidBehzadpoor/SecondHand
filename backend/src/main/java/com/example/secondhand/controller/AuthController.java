@@ -6,6 +6,7 @@ import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.LoginResponse;
 import com.example.secondhand.model.User;
 import com.example.secondhand.service.UserService;
+import com.example.secondhand.service.PhoneVerificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final PhoneVerificationService phoneVerificationService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Long>> register(@Valid @RequestBody RegisterRequest request) {
@@ -31,6 +33,14 @@ public class AuthController {
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = userService.login(request);
         return ResponseEntity.ok(new ApiResponse<>(true, "LOGIN_SUCCESS", response));
+    }
+
+    @PostMapping("/verify-phone")
+    public ResponseEntity<ApiResponse<String>> verifyPhone(
+            @RequestParam String code,
+            @AuthenticationPrincipal User currentUser) {
+        phoneVerificationService.verifyCode(currentUser, code);
+        return ResponseEntity.ok(new ApiResponse<>(true, "PHONE_VERIFIED", "شماره تلفن با موفقیت تایید شد"));
     }
 
     @GetMapping("/verify-email")

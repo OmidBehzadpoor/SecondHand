@@ -3,6 +3,8 @@ package com.example.secondhand.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -40,6 +42,16 @@ public class User {
     @Column(nullable = false)
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean phoneVerified = false;
+
+    private String phoneVerificationCode;
+
+    private LocalDateTime phoneVerificationExpiry;
+
+    private String telegramChatId;
 
     @Builder.Default
     @Column(nullable = false)
