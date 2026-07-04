@@ -52,4 +52,11 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidCaptchaException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidCaptcha(InvalidCaptchaException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
 }
