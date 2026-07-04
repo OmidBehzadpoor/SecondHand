@@ -35,14 +35,6 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse<>(true, "LOGIN_SUCCESS", response));
     }
 
-    @PostMapping("/send-phone-verification")
-    public ResponseEntity<ApiResponse<String>> sendPhoneVerification(
-            @RequestParam String telegramChatId,
-            @AuthenticationPrincipal User currentUser) {
-        phoneVerificationService.sendVerificationCode(currentUser, telegramChatId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "CODE_SENT", "کد تایید ارسال شد"));
-    }
-
     @PostMapping("/verify-phone")
     public ResponseEntity<ApiResponse<String>> verifyPhone(
             @RequestParam String code,

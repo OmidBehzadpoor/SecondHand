@@ -50,4 +50,6 @@ public class User {
     private String phoneVerificationCode;
 
     private LocalDateTime phoneVerificationExpiry;
+
+    private String telegramChatId;
 }
