@@ -1,6 +1,9 @@
 package com.example.secondhand.service;
 
+import com.example.secondhand.dto.LoginRequest;
 import com.example.secondhand.dto.RegisterRequest;
+import com.example.secondhand.dto.response.LoginResponse;
+import com.example.secondhand.exception.InvalidCredentialsException;
 import com.example.secondhand.model.User;
 import com.example.secondhand.repository.UserRepository;
 import com.example.secondhand.exception.UserAlreadyExistsException;
@@ -9,13 +12,13 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public Long register(RegisterRequest request) {
 
@@ -38,5 +41,18 @@ public class UserService {
                 .build();
 
         return userRepository.save(user).getId();
+    }
+
+    public LoginResponse login(LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new InvalidCredentialsException("نام کاربری یا رمز عبور اشتباه است"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("نام کاربری یا رمز عبور اشتباه است");
+        }
+
+        String token = jwtService.generateToken(user);
+
+        return new LoginResponse(token, user.getId(), user.getUsername(), user.getRole());
     }
 }
