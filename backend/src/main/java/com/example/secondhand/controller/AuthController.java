@@ -6,19 +6,17 @@ import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.LoginResponse;
 import com.example.secondhand.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Long>> register(@Valid @RequestBody RegisterRequest request) {
