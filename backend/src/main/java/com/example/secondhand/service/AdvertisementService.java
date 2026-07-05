@@ -52,8 +52,18 @@ public class AdvertisementService {
     }
 
     public List<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
-        List<Advertisement> advertisements =
-                advertisementRepository.findApproved(AdvertisementStatus.APPROVED, categoryId, cityId);
+        List<Advertisement> advertisements;
+
+        if (categoryId != null && cityId != null) {
+            advertisements = advertisementRepository.findByStatusAndCategoryIdAndCityId(
+                    AdvertisementStatus.APPROVED, categoryId, cityId);
+        } else if (categoryId != null) {
+            advertisements = advertisementRepository.findByStatusAndCategoryId(AdvertisementStatus.APPROVED, categoryId);
+        } else if (cityId != null) {
+            advertisements = advertisementRepository.findByStatusAndCityId(AdvertisementStatus.APPROVED, cityId);
+        } else {
+            advertisements = advertisementRepository.findByStatus(AdvertisementStatus.APPROVED);
+        }
 
         return advertisements.stream().map(this::mapToResponse).toList();
     }
