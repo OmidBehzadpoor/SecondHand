@@ -58,21 +58,30 @@ public class OpenApiConfig {
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
                                         .description("توکن JWT رو اینجا وارد کن — **بدون** Bearer"))
-                        .addResponses("401", new ApiResponse()
-                                .description("احراز هویت ناموفق — توکن ندارید یا نامعتبر است")
+                        // خطاهای استاندارد — فرمت درست با success: false
+                        .addResponses("400", new ApiResponse()
+                                .description("داده ورودی نامعتبر")
                                 .content(new Content().addMediaType("application/json",
                                         new MediaType().addExamples("default",
                                                 new Example().value("""
                                                         {
-                                                          "error": "توکن نامعتبر است"
+                                                          "error": "داده ورودی نامعتبر است"
+                                                        }""")))))
+                        .addResponses("401", new ApiResponse()
+                                .description("احراز هویت ناموفق")
+                                .content(new Content().addMediaType("application/json",
+                                        new MediaType().addExamples("default",
+                                                new Example().value("""
+                                                        {
+                                                          "error": "توکن نامعتبر یا منقضی شده است"
                                                         }""")))))
                         .addResponses("403", new ApiResponse()
-                                .description("دسترسی ممنوع — سطح دسترسی کافی نیست")
+                                .description("دسترسی ممنوع")
                                 .content(new Content().addMediaType("application/json",
                                         new MediaType().addExamples("default",
                                                 new Example().value("""
                                                         {
-                                                          "error": "دسترسی ممنوع"
+                                                          "error": "دسترسی ممنوع است"
                                                         }""")))))
                         .addResponses("404", new ApiResponse()
                                 .description("یافت نشد")
@@ -82,13 +91,13 @@ public class OpenApiConfig {
                                                         {
                                                           "error": "مورد مورد نظر یافت نشد"
                                                         }""")))))
-                        .addResponses("400", new ApiResponse()
-                                .description("داده ورودی نامعتبر")
+                        .addResponses("409", new ApiResponse()
+                                .description("تکراری")
                                 .content(new Content().addMediaType("application/json",
                                         new MediaType().addExamples("default",
                                                 new Example().value("""
                                                         {
-                                                          "error": "داده ورودی نامعتبر است"
+                                                          "error": "این مورد قبلاً ثبت شده است"
                                                         }"""))))));
     }
 }

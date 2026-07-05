@@ -27,10 +27,7 @@ public class CityController {
 
     private final CityService cityService;
 
-    @Operation(
-            summary = "دریافت همه شهرها",
-            description = "عمومی — نیاز به توکن ندارد"
-    )
+    @Operation(summary = "دریافت همه شهرها", description = "عمومی — نیاز به توکن ندارد")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200", description = "لیست شهرها",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -46,15 +43,11 @@ public class CityController {
                             }""")))
     @GetMapping
     public ResponseEntity<ApiResponse<List<CityResponse>>> getAllCities() {
-        List<CityResponse> cities = cityService.getAllCities();
-        return ResponseEntity.ok(new ApiResponse<>(true, "CITIES_RETRIEVED", cities));
+        return ResponseEntity.ok(new ApiResponse<>(true, "CITIES_RETRIEVED", cityService.getAllCities()));
     }
 
-    @Operation(
-            summary = "ایجاد شهر جدید",
-            description = "فقط ADMIN — نیاز به توکن دارد",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @Operation(summary = "ایجاد شهر جدید", description = "فقط ADMIN",
+            security = @SecurityRequirement(name = "Bearer Authentication"))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "201", description = "شهر ساخته شد",
@@ -66,28 +59,48 @@ public class CityController {
                                       "data": {"id": 4, "name": "مشهد"}
                                     }"""))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "403", description = "فقط ادمین می‌تواند شهر بسازد")
+                    responseCode = "403", description = "دسترسی ممنوع",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "دسترسی ممنوع است"
+                                    }""")))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = @ExampleObject(value = """
                     {"name": "مشهد"}""")))
     @PostMapping
     public ResponseEntity<ApiResponse<CityResponse>> createCity(@Valid @RequestBody CityRequest request) {
-        CityResponse cityResponse = cityService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(true, "CITY_CREATED", cityResponse));
+                .body(new ApiResponse<>(true, "CITY_CREATED", cityService.create(request)));
     }
 
-    @Operation(
-            summary = "حذف شهر",
-            description = "فقط ADMIN — نیاز به توکن دارد",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @Operation(summary = "حذف شهر", description = "فقط ADMIN",
+            security = @SecurityRequirement(name = "Bearer Authentication"))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200", description = "حذف موفق"),
+                    responseCode = "200", description = "حذف موفق",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "messageCode": "CITY_DELETED",
+                                      "data": null
+                                    }"""))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404", description = "شهر یافت نشد")
+                    responseCode = "404", description = "شهر یافت نشد",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "شهر یافت نشد"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "403", description = "دسترسی ممنوع",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "دسترسی ممنوع است"
+                                    }""")))
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCity(@PathVariable Long id) {

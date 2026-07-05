@@ -30,10 +30,8 @@ public class AuthController {
     private final UserService userService;
     private final PhoneVerificationService phoneVerificationService;
 
-    @Operation(
-            summary = "ثبت‌نام کاربر جدید",
-            description = "یک حساب کاربری جدید می‌سازد. بعد از ثبت‌نام ایمیل تایید ارسال می‌شود."
-    )
+    @Operation(summary = "ثبت‌نام کاربر جدید",
+            description = "یک حساب کاربری جدید می‌سازد. بعد از ثبت‌نام ایمیل تایید ارسال می‌شود.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "201", description = "ثبت‌نام موفق",
@@ -50,16 +48,24 @@ public class AuthController {
                             examples = @ExampleObject(value = """
                                     {
                                       "error": "این نام کاربری قبلاً ثبت شده است"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400", description = "داده ورودی نامعتبر",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "کپچا نامعتبر است"
                                     }""")))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = @ExampleObject(value = """
                     {
                       "name": "امید بهزادپور",
-                      "username": "omid",
+                      "username": "omid1386",
                       "password": "mySecurePassword123",
                       "phone": "09123456789",
-                      "email": "omid@example.com"
+                      "email": "omid@example.com",
+                      "captchaToken": "03AGdBq..."
                     }""")))
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<Long>> register(@Valid @RequestBody RegisterRequest request) {
@@ -68,10 +74,8 @@ public class AuthController {
                 .body(new ApiResponse<>(true, "REGISTER_SUCCESS", userId));
     }
 
-    @Operation(
-            summary = "ورود کاربر",
-            description = "با نام کاربری و رمز عبور وارد شو و JWT بگیر. توکن را در Authorize استفاده کن."
-    )
+    @Operation(summary = "ورود کاربر",
+            description = "با نام کاربری و رمز عبور وارد شو و JWT بگیر. توکن را در Authorize استفاده کن.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200", description = "ورود موفق",
@@ -81,10 +85,11 @@ public class AuthController {
                                       "success": true,
                                       "messageCode": "LOGIN_SUCCESS",
                                       "data": {
-                                        "token": "eyJhbGciOiJIUzI1NiJ9...",
+                                        "token": "eyJhbGciOiJIUzM4NCJ9...",
                                         "userId": 1,
-                                        "username": "omid",
-                                        "role": "USER"
+                                        "username": "omid1386",
+                                        "role": "USER",
+                                        "emailVerified": false
                                       }
                                     }"""))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -93,13 +98,21 @@ public class AuthController {
                             examples = @ExampleObject(value = """
                                     {
                                       "error": "نام کاربری یا رمز عبور اشتباه است"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400", description = "کپچا نامعتبر",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "کپچا نامعتبر است"
                                     }""")))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = @ExampleObject(value = """
                     {
-                      "username": "omid",
-                      "password": "mySecurePassword123"
+                      "username": "omid1386",
+                      "password": "mySecurePassword123",
+                      "captchaToken": "03AGdBq..."
                     }""")))
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
@@ -107,34 +120,24 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse<>(true, "LOGIN_SUCCESS", response));
     }
 
-    @Operation(
-            summary = "تایید شماره تلفن",
-            description = "کد ارسال شده از طریق تلگرام را وارد کن.",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @Operation(summary = "تایید ایمیل", description = "توکن ارسال شده به ایمیل را وارد کن.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200", description = "تایید موفق"),
+                    responseCode = "200", description = "تایید موفق",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "messageCode": "EMAIL_VERIFIED",
+                                      "data": "ایمیل با موفقیت تایید شد"
+                                    }"""))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "400", description = "کد نامعتبر یا منقضی شده")
-    })
-    @PostMapping("/verify-phone")
-    public ResponseEntity<ApiResponse<String>> verifyPhone(
-            @RequestParam String code,
-            @AuthenticationPrincipal User currentUser) {
-        phoneVerificationService.verifyCode(currentUser, code);
-        return ResponseEntity.ok(new ApiResponse<>(true, "PHONE_VERIFIED", "شماره تلفن با موفقیت تایید شد"));
-    }
-
-    @Operation(
-            summary = "تایید ایمیل",
-            description = "توکن ارسال شده به ایمیل را وارد کن."
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200", description = "تایید موفق"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "400", description = "توکن نامعتبر یا منقضی شده")
+                    responseCode = "400", description = "توکن نامعتبر یا منقضی شده",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "توکن نامعتبر است"
+                                    }""")))
     })
     @GetMapping("/verify-email")
     public ResponseEntity<ApiResponse<String>> verifyEmail(@RequestParam String token) {
@@ -142,17 +145,74 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse<>(true, "EMAIL_VERIFIED", "ایمیل با موفقیت تایید شد"));
     }
 
-    @Operation(
-            summary = "ارسال مجدد ایمیل تایید",
+    @Operation(summary = "ارسال مجدد ایمیل تایید",
             description = "اگر ایمیل تایید دریافت نکردی، دوباره ارسال کن.",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(
-            responseCode = "200", description = "ایمیل ارسال شد")
+            security = @SecurityRequirement(name = "Bearer Authentication"))
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200", description = "ایمیل ارسال شد",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "messageCode": "EMAIL_SENT",
+                                      "data": "ایمیل تایید ارسال شد"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400", description = "ایمیل قبلاً تایید شده",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "ایمیل قبلاً تایید شده است"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401", description = "توکن ندارد",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "توکن نامعتبر یا منقضی شده است"
+                                    }""")))
+    })
     @PostMapping("/resend-verification")
     public ResponseEntity<ApiResponse<String>> resendVerification(
             @AuthenticationPrincipal User currentUser) {
         userService.resendVerificationEmail(currentUser);
         return ResponseEntity.ok(new ApiResponse<>(true, "EMAIL_SENT", "ایمیل تایید ارسال شد"));
+    }
+
+    @Operation(summary = "تایید شماره تلفن",
+            description = "کد ۶ رقمی ارسال شده از طریق ربات تلگرام را وارد کن.",
+            security = @SecurityRequirement(name = "Bearer Authentication"))
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200", description = "تایید موفق",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "messageCode": "PHONE_VERIFIED",
+                                      "data": "شماره تلفن با موفقیت تایید شد"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400", description = "کد نامعتبر یا منقضی شده",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "کد تایید اشتباه است"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401", description = "توکن ندارد",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "توکن نامعتبر یا منقضی شده است"
+                                    }""")))
+    })
+    @PostMapping("/verify-phone")
+    public ResponseEntity<ApiResponse<String>> verifyPhone(
+            @RequestParam String code,
+            @AuthenticationPrincipal User currentUser) {
+        phoneVerificationService.verifyCode(currentUser, code);
+        return ResponseEntity.ok(new ApiResponse<>(true, "PHONE_VERIFIED", "شماره تلفن با موفقیت تایید شد"));
     }
 }

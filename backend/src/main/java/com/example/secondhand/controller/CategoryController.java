@@ -27,10 +27,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @Operation(
-            summary = "دریافت همه دسته‌بندی‌ها",
-            description = "عمومی — نیاز به توکن ندارد"
-    )
+    @Operation(summary = "دریافت همه دسته‌بندی‌ها", description = "عمومی — نیاز به توکن ندارد")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "200", description = "لیست دسته‌بندی‌ها",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -46,15 +43,11 @@ public class CategoryController {
                             }""")))
     @GetMapping
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
-        List<CategoryResponse> categories = categoryService.getAllCategories();
-        return ResponseEntity.ok(new ApiResponse<>(true, "CATEGORIES_RETRIEVED", categories));
+        return ResponseEntity.ok(new ApiResponse<>(true, "CATEGORIES_RETRIEVED", categoryService.getAllCategories()));
     }
 
-    @Operation(
-            summary = "ایجاد دسته‌بندی جدید",
-            description = "فقط ADMIN — نیاز به توکن دارد",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @Operation(summary = "ایجاد دسته‌بندی جدید", description = "فقط ADMIN",
+            security = @SecurityRequirement(name = "Bearer Authentication"))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "201", description = "دسته‌بندی ساخته شد",
@@ -66,29 +59,48 @@ public class CategoryController {
                                       "data": {"id": 4, "name": "لوازم خانگی"}
                                     }"""))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "403", description = "فقط ادمین می‌تواند دسته‌بندی بسازد")
+                    responseCode = "403", description = "دسترسی ممنوع",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "دسترسی ممنوع است"
+                                    }""")))
     })
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = @ExampleObject(value = """
                     {"name": "لوازم خانگی"}""")))
     @PostMapping
-    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
-            @Valid @RequestBody CategoryRequest request) {
-        CategoryResponse categoryResponse = categoryService.create(request);
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@Valid @RequestBody CategoryRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse<>(true, "CATEGORY_CREATED", categoryResponse));
+                .body(new ApiResponse<>(true, "CATEGORY_CREATED", categoryService.create(request)));
     }
 
-    @Operation(
-            summary = "حذف دسته‌بندی",
-            description = "فقط ADMIN — نیاز به توکن دارد",
-            security = @SecurityRequirement(name = "Bearer Authentication")
-    )
+    @Operation(summary = "حذف دسته‌بندی", description = "فقط ADMIN",
+            security = @SecurityRequirement(name = "Bearer Authentication"))
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200", description = "حذف موفق"),
+                    responseCode = "200", description = "حذف موفق",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "success": true,
+                                      "messageCode": "CATEGORY_DELETED",
+                                      "data": null
+                                    }"""))),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404", description = "دسته‌بندی یافت نشد")
+                    responseCode = "404", description = "دسته‌بندی یافت نشد",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "دسته‌بندی یافت نشد"
+                                    }"""))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "403", description = "دسترسی ممنوع",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "error": "دسترسی ممنوع است"
+                                    }""")))
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
