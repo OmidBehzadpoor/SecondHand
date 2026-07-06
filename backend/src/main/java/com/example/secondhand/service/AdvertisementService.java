@@ -145,7 +145,7 @@ public class AdvertisementService {
     }
 
     private void addImages(Advertisement advertisement, List<String> imageUrls) {
-        if (imageUrls == null) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
             return;
         }
 
