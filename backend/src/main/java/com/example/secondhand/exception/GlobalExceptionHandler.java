@@ -52,4 +52,11 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidAdvertisementStateException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidAdvertisementState(InvalidAdvertisementStateException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
 }
