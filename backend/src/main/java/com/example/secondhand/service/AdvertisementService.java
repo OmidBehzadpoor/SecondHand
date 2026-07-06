@@ -109,7 +109,9 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.PENDING);
 
-        syncImages(advertisement, request.getImageUrls());
+        if (request.getImageUrls() != null) {
+            syncImages(advertisement, request.getImageUrls());
+        }
 
         return mapToResponse(advertisementRepository.save(advertisement));
     }
