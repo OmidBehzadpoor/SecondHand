@@ -30,22 +30,25 @@ public class AdvertisementController {
     }
 
     @GetMapping("/mine")
-    public ResponseEntity<List<AdvertisementResponse>> getMyAdvertisements(
+    public ResponseEntity<ApiResponse<List<AdvertisementResponse>>> getMyAdvertisements(
             @AuthenticationPrincipal User currentUser) {
-        return ResponseEntity.ok(advertisementService.getMyAdvertisements(currentUser));
+        List<AdvertisementResponse> responses = advertisementService.getMyAdvertisements(currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(true, "MY_ADVERTISEMENTS_RETRIEVED", responses));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdvertisementResponse> getById(@PathVariable Long id,
-                                                         @AuthenticationPrincipal User currentUser) {
-        return ResponseEntity.ok(advertisementService.getById(id, currentUser));
+    public ResponseEntity<ApiResponse<AdvertisementResponse>> getById(@PathVariable Long id,
+                                                                      @AuthenticationPrincipal User currentUser) {
+        AdvertisementResponse response = advertisementService.getById(id, currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_RETRIEVED", response));
     }
 
     @GetMapping
-    public ResponseEntity<List<AdvertisementResponse>> getAll(
+    public ResponseEntity<ApiResponse<List<AdvertisementResponse>>> getAll(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long cityId) {
-        return ResponseEntity.ok(advertisementService.getAll(categoryId, cityId));
+        List<AdvertisementResponse> responses = advertisementService.getAll(categoryId, cityId);
+        return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENTS_RETRIEVED", responses));
     }
 
     @PutMapping("/{id}")
