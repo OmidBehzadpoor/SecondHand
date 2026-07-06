@@ -36,8 +36,9 @@ public class AdvertisementController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdvertisementResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(advertisementService.getById(id));
+    public ResponseEntity<AdvertisementResponse> getById(@PathVariable Long id,
+                                                         @AuthenticationPrincipal User currentUser) {
+        return ResponseEntity.ok(advertisementService.getById(id, currentUser));
     }
 
     @GetMapping

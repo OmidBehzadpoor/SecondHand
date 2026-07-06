@@ -44,9 +44,21 @@ public class AdvertisementService {
         return mapToResponse(advertisementRepository.save(advertisement));
     }
 
-    public AdvertisementResponse getById(Long id) {
+    public AdvertisementResponse getById(Long id, User currentUser) {
         Advertisement advertisement = advertisementRepository.findById(id)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        boolean isOwner = currentUser != null
+                && advertisement.getSeller().getId().equals(currentUser.getId());
+
+        boolean isAdmin = currentUser != null && currentUser.getRole() == Role.ADMIN;
+
+        boolean isPubliclyVisible = advertisement.getStatus() == AdvertisementStatus.APPROVED
+                || advertisement.getStatus() == AdvertisementStatus.SOLD;
+
+        if (!isOwner && !isAdmin && !isPubliclyVisible) {
+            throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
+        }
 
         return mapToResponse(advertisement);
     }
