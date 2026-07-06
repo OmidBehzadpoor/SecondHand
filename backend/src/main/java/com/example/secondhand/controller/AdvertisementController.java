@@ -22,11 +22,11 @@ public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse> create(@Valid @RequestBody AdvertisementRequest request,
-                                              @AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<ApiResponse<AdvertisementResponse>> create(@Valid @RequestBody AdvertisementRequest request,
+                                                                     @AuthenticationPrincipal User currentUser) {
         AdvertisementResponse response = advertisementService.create(request, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse(true, "ADVERTISEMENT_CREATED", response));
+                .body(new ApiResponse<>(true, "ADVERTISEMENT_CREATED", response));
     }
 
     @GetMapping("/mine")
@@ -48,17 +48,17 @@ public class AdvertisementController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable Long id,
-                                              @Valid @RequestBody AdvertisementRequest request,
-                                              @AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<ApiResponse<AdvertisementResponse>> update(@PathVariable Long id,
+                                                                     @Valid @RequestBody AdvertisementRequest request,
+                                                                     @AuthenticationPrincipal User currentUser) {
         AdvertisementResponse response = advertisementService.update(id, request, currentUser);
-        return ResponseEntity.ok(new ApiResponse(true, "ADVERTISEMENT_UPDATED", response));
+        return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_UPDATED", response));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable Long id,
-                                              @AuthenticationPrincipal User currentUser) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id,
+                                                    @AuthenticationPrincipal User currentUser) {
         advertisementService.delete(id, currentUser);
-        return ResponseEntity.ok(new ApiResponse(true, "ADVERTISEMENT_DELETED", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_DELETED", null));
     }
 }
