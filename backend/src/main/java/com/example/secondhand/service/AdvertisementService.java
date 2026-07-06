@@ -6,6 +6,7 @@ import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.CategoryNotFoundException;
 import com.example.secondhand.exception.CityNotFoundException;
 import com.example.secondhand.exception.UnauthorizedActionException;
+import com.example.secondhand.exception.InvalidAdvertisementStateException;
 import com.example.secondhand.model.*;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
@@ -124,6 +125,23 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.DELETED);
         advertisementRepository.save(advertisement);
+    }
+
+    public AdvertisementResponse markAsSold(Long id, User currentUser) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (!advertisement.getSeller().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedActionException("شما اجازه‌ی تغییر وضعیت این آگهی را ندارید");
+        }
+
+        if (advertisement.getStatus() != AdvertisementStatus.APPROVED) {
+            throw new InvalidAdvertisementStateException("فقط آگهی‌های تاییدشده را می‌توان فروخته‌شده علامت زد");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.SOLD);
+
+        return mapToResponse(advertisementRepository.save(advertisement));
     }
 
     private void addImages(Advertisement advertisement, List<String> imageUrls) {

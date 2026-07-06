@@ -62,4 +62,11 @@ public class AdvertisementController {
         advertisementService.delete(id, currentUser);
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_DELETED", null));
     }
+
+    @PatchMapping("/{id}/sold")
+    public ResponseEntity<ApiResponse<AdvertisementResponse>> markAsSold(@PathVariable Long id,
+                                                                         @AuthenticationPrincipal User currentUser) {
+        AdvertisementResponse response = advertisementService.markAsSold(id, currentUser);
+        return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_MARKED_AS_SOLD", response));
+    }
 }
