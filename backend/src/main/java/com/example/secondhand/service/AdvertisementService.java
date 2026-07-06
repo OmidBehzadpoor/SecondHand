@@ -82,6 +82,10 @@ public class AdvertisementService {
     }
 
     public List<AdvertisementResponse> getMyAdvertisements(User currentUser) {
+        if (currentUser == null) {
+            throw new UnauthorizedActionException("برای دیدن آگهی‌های خودتان باید وارد حساب کاربری شوید");
+        }
+
         List<Advertisement> advertisements = advertisementRepository.findBySellerId(currentUser.getId());
 
         return advertisements.stream().map(this::mapToResponse).toList();
