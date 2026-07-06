@@ -109,8 +109,7 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.PENDING);
 
-        advertisement.getImages().clear();
-        addImages(advertisement, request.getImageUrls());
+        syncImages(advertisement, request.getImageUrls());
 
         return mapToResponse(advertisementRepository.save(advertisement));
     }
@@ -157,6 +156,26 @@ public class AdvertisementService {
                 .toList();
 
         advertisement.getImages().addAll(images);
+    }
+
+    private void syncImages(Advertisement advertisement, List<String> requestedImageUrls) {
+        List<String> requested = requestedImageUrls != null ? requestedImageUrls : List.of();
+
+        advertisement.getImages().removeIf(image -> !requested.contains(image.getImageUrl()));
+
+        List<String> existingUrls = advertisement.getImages().stream()
+                .map(AdvertisementImage::getImageUrl)
+                .toList();
+
+        List<AdvertisementImage> newImages = requested.stream()
+                .filter(url -> !existingUrls.contains(url))
+                .map(url -> AdvertisementImage.builder()
+                        .imageUrl(url)
+                        .advertisement(advertisement)
+                        .build())
+                .toList();
+
+        advertisement.getImages().addAll(newImages);
     }
 
     private AdvertisementResponse mapToResponse(Advertisement advertisement) {
