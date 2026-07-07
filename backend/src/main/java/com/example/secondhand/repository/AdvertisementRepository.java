@@ -19,6 +19,5 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
     List<Advertisement> findBySellerId(Long sellerId);
 
     boolean existsByCategoryId(Long categoryId);
-
     boolean existsByCityId(Long cityId);
 }
