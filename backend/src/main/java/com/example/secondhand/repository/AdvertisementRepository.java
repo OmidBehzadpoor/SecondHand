@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long> {
-
+    boolean existsByCategoryId(Long categoryId);
+    boolean existsByCityId(Long cityId);
 }

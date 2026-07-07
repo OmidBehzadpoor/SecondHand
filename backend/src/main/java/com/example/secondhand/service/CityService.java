@@ -2,8 +2,10 @@ package com.example.secondhand.service;
 
 import com.example.secondhand.dto.CityRequest;
 import com.example.secondhand.dto.response.CityResponse;
+import com.example.secondhand.exception.CityInUseException;
 import com.example.secondhand.exception.CityNotFoundException;
 import com.example.secondhand.model.City;
+import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CityService {
     private final CityRepository cityRepository;
+    private final AdvertisementRepository advertisementRepository;
 
     public CityResponse create(CityRequest request) {
         City city = cityRepository.save(City.builder().name(request.getName()).build());
@@ -27,6 +30,9 @@ public class CityService {
     public void delete(Long id) {
         City city = cityRepository.findById(id)
                 .orElseThrow(() -> new CityNotFoundException("شهر یافت نشد"));
+        if (advertisementRepository.existsByCityId(id)) {
+            throw new CityInUseException("این شهر در آگهی‌های فعال استفاده شده و قابل حذف نیست");
+        }
         cityRepository.delete(city);
     }
 
