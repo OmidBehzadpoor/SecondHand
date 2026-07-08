@@ -54,6 +54,10 @@ public class SellerRatingService {
                 .toList();
     }
 
+    public Long getSellerRatingCount(Long sellerId) {
+        return (long) sellerRatingRepository.findByAdvertisementSellerId(sellerId).size();
+    }
+
     public Double getSellerAverageRating(Long sellerId) {
 
         List<SellerRating> ratings = sellerRatingRepository.findByAdvertisementSellerId(sellerId);
