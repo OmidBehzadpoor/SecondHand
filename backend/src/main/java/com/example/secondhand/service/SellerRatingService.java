@@ -6,6 +6,7 @@ import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.RatingAlreadyExistsException;
 import com.example.secondhand.exception.UnauthorizedActionException;
 import com.example.secondhand.model.Advertisement;
+import com.example.secondhand.model.AdvertisementStatus;
 import com.example.secondhand.model.SellerRating;
 import com.example.secondhand.model.User;
 import com.example.secondhand.repository.AdvertisementRepository;
@@ -28,6 +29,11 @@ public class SellerRatingService {
 
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.APPROVED
+                && advertisement.getStatus() != AdvertisementStatus.SOLD) {
+            throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
+        }
 
         if (advertisement.getSeller().getId().equals(currentUser.getId())) {
             throw new UnauthorizedActionException("شما نمی‌توانید به آگهی خودتان امتیاز دهید");
