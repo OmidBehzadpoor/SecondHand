@@ -195,4 +195,12 @@ public class AdvertisementService {
                 .createdAt(advertisement.getCreatedAt())
                 .build();
     }
+
+    public List<AdvertisementResponse> getPendingAdvertisements() {
+        return advertisementRepository.findByStatus(AdvertisementStatus.PENDING)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
 }
