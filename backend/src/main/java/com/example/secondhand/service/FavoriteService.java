@@ -23,6 +23,7 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final AdvertisementRepository advertisementRepository;
 
+    @Transactional
     public FavoriteResponse addFavorite(Long advertisementId, User currentUser) {
 
         if (currentUser == null) {
@@ -62,6 +63,7 @@ public class FavoriteService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<FavoriteResponse> getMyFavorites(User currentUser) {
 
         if (currentUser == null) {
