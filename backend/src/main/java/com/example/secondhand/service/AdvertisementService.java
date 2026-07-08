@@ -203,4 +203,27 @@ public class AdvertisementService {
                 .toList();
     }
 
+    public AdvertisementResponse approve(Long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.PENDING) {
+            throw new InvalidAdvertisementStateException("فقط آگهی‌های در انتظار بررسی قابل تایید هستند");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.APPROVED);
+        return mapToResponse(advertisementRepository.save(advertisement));
+    }
+
+    public AdvertisementResponse reject(Long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.PENDING) {
+            throw new InvalidAdvertisementStateException("فقط آگهی‌های در انتظار بررسی قابل رد هستند");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.REJECTED);
+        return mapToResponse(advertisementRepository.save(advertisement));
+    }
 }
