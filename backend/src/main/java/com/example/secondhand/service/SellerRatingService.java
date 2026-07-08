@@ -26,10 +26,6 @@ public class SellerRatingService {
     @Transactional
     public SellerRatingResponse rateAdvertisement(Long advertisementId, SellerRatingRequest request, User currentUser) {
 
-        if (currentUser == null) {
-            throw new UnauthorizedActionException("برای ثبت امتیاز باید وارد حساب کاربری شوید");
-        }
-
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
 
