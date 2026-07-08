@@ -23,8 +23,7 @@ public class SellerRatingService {
     private final SellerRatingRepository sellerRatingRepository;
     private final AdvertisementRepository advertisementRepository;
 
-    public SellerRatingResponse rateAdvertisement(Long advertisementId, SellerRatingRequest request, User currentUser)
-    {
+    public SellerRatingResponse rateAdvertisement(Long advertisementId, SellerRatingRequest request, User currentUser) {
 
         if (currentUser == null) {
             throw new UnauthorizedActionException("برای ثبت امتیاز باید وارد حساب کاربری شوید");
@@ -41,7 +40,7 @@ public class SellerRatingService {
             throw new RatingAlreadyExistsException("شما قبلاً به این آگهی امتیاز داده‌اید");
         }
 
-        SellerRating sellerRating =SellerRating.builder().buyer(currentUser)
+        SellerRating sellerRating = SellerRating.builder().buyer(currentUser)
                 .advertisement(advertisement).rating(request.getRating()).comment(request.getComment()).build();
 
         return mapToResponse(sellerRatingRepository.save(sellerRating));
@@ -53,6 +52,17 @@ public class SellerRatingService {
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+    public Double getSellerAverageRating(Long sellerId) {
+
+        List<SellerRating> ratings = sellerRatingRepository.findByAdvertisementSellerId(sellerId);
+        if (ratings.isEmpty()) return 0.0;
+        return ratings.stream()
+                .mapToInt(SellerRating::getRating)
+                .average()
+                .orElse(0.0);
+
     }
 
     private SellerRatingResponse mapToResponse(SellerRating sellerRating) {
