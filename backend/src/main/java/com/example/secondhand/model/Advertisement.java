@@ -55,4 +55,6 @@ public class Advertisement
     @Builder.Default
     private List<AdvertisementImage> images = new ArrayList<>();
 
+    @Column(columnDefinition = "TEXT")
+    private String rejectionReason;
 }
