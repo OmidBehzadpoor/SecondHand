@@ -48,6 +48,12 @@ public class SellerRatingService {
 
     }
 
+    public List<SellerRatingResponse> getSellerRatings(Long sellerId) {
+        return sellerRatingRepository.findByAdvertisementSellerId(sellerId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 
     private SellerRatingResponse mapToResponse(SellerRating sellerRating) {
         return SellerRatingResponse.builder()
