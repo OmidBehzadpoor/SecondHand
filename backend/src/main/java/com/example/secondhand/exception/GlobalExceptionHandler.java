@@ -78,4 +78,10 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "شما اجازه‌ی دسترسی به این عملیات را ندارید"));
     }
 
+    @ExceptionHandler(FavoriteAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleFavoriteAlreadyExists(FavoriteAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
 }
