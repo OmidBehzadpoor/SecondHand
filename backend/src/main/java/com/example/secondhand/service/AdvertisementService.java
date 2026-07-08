@@ -230,6 +230,14 @@ public class AdvertisementService {
         return mapToAdminResponse(advertisementRepository.save(advertisement));
     }
 
+    public void adminDelete(Long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        advertisement.setStatus(AdvertisementStatus.DELETED);
+        advertisementRepository.save(advertisement);
+    }
+
     private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement) {
         return AdminAdvertisementResponse.builder()
                 .id(advertisement.getId())
