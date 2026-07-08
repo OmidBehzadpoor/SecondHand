@@ -217,7 +217,7 @@ public class AdvertisementService {
         return mapToAdminResponse(advertisementRepository.save(advertisement));
     }
 
-    public AdvertisementResponse reject(Long id) {
+    public AdminAdvertisementResponse reject(Long id, String reason) {
         Advertisement advertisement = advertisementRepository.findById(id)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
 
@@ -226,7 +226,8 @@ public class AdvertisementService {
         }
 
         advertisement.setStatus(AdvertisementStatus.REJECTED);
-        return mapToResponse(advertisementRepository.save(advertisement));
+        advertisement.setRejectionReason(reason);
+        return mapToAdminResponse(advertisementRepository.save(advertisement));
     }
 
     private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement) {
