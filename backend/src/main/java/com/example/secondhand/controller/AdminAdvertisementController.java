@@ -3,7 +3,6 @@ package com.example.secondhand.controller;
 import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.AdminRejectRequest;
 import com.example.secondhand.dto.response.AdminAdvertisementResponse;
-import com.example.secondhand.dto.response.AdvertisementResponse;
 import com.example.secondhand.service.AdvertisementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +21,8 @@ public class AdminAdvertisementController {
 
     @GetMapping("/pending")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<AdvertisementResponse>>> getPending() {
-        List<AdvertisementResponse> responses = advertisementService.getPendingAdvertisements();
+    public ResponseEntity<ApiResponse<List<AdminAdvertisementResponse>>> getPending() {
+        List<AdminAdvertisementResponse> responses = advertisementService.getPendingAdvertisements();
         return ResponseEntity.ok(new ApiResponse<>(true, "PENDING_ADVERTISEMENTS_RETRIEVED", responses));
     }
 
@@ -40,5 +39,12 @@ public class AdminAdvertisementController {
             @PathVariable Long id, @Valid @RequestBody AdminRejectRequest request) {
         AdminAdvertisementResponse response = advertisementService.reject(id, request.getReason());
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_REJECTED", response));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+        advertisementService.adminDelete(id);
+        return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_DELETED_BY_ADMIN", null));
     }
 }
