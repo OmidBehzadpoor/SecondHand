@@ -3,6 +3,7 @@ package com.example.secondhand.service;
 import com.example.secondhand.dto.response.FavoriteResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.FavoriteAlreadyExistsException;
+import com.example.secondhand.exception.FavoriteNotFoundException;
 import com.example.secondhand.exception.UnauthorizedActionException;
 import com.example.secondhand.model.Advertisement;
 import com.example.secondhand.model.AdvertisementImage;
@@ -12,6 +13,7 @@ import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,25 @@ public class FavoriteService {
         Favorite favorite = Favorite.builder().advertisement(advertisement).user(currentUser).build();
 
         return mapToResponse(favoriteRepository.save(favorite));
+
+    }
+
+    @Transactional
+    public void removeFavorite(Long advertisementId, User currentUser) {
+
+        if (currentUser == null) {
+            throw new UnauthorizedActionException("برای حذف از علاقه‌مندی‌ها باید وارد حساب کاربری شوید");
+        }
+
+        if (!advertisementRepository.existsById(advertisementId)) {
+            throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
+        }
+
+        if (!favoriteRepository.existsByUserIdAndAdvertisementId(currentUser.getId(), advertisementId)) {
+            throw new FavoriteNotFoundException("این آگهی در علاقه‌مندی‌های شما وجود ندارد");
+        }
+
+        favoriteRepository.deleteByUserIdAndAdvertisementId(currentUser.getId(), advertisementId);
 
     }
 
