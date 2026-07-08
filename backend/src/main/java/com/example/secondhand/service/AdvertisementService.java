@@ -1,6 +1,7 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.AdvertisementRequest;
+import com.example.secondhand.dto.response.AdminAdvertisementResponse;
 import com.example.secondhand.dto.response.AdvertisementResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.CategoryNotFoundException;
@@ -225,5 +226,25 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.REJECTED);
         return mapToResponse(advertisementRepository.save(advertisement));
+    }
+
+    private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement) {
+        return AdminAdvertisementResponse.builder()
+                .id(advertisement.getId())
+                .title(advertisement.getTitle())
+                .description(advertisement.getDescription())
+                .price(advertisement.getPrice())
+                .categoryName(advertisement.getCategory().getName())
+                .cityName(advertisement.getCity().getName())
+                .status(advertisement.getStatus())
+                .sellerId(advertisement.getSeller().getId())
+                .sellerUsername(advertisement.getSeller().getUsername())
+                .sellerName(advertisement.getSeller().getName())
+                .sellerPhone(advertisement.getSeller().getPhone())
+                .sellerEmail(advertisement.getSeller().getEmail())
+                .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
+                .rejectionReason(advertisement.getRejectionReason())
+                .createdAt(advertisement.getCreatedAt())
+                .build();
     }
 }
