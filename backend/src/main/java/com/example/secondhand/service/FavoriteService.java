@@ -4,11 +4,7 @@ import com.example.secondhand.dto.response.FavoriteResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.FavoriteAlreadyExistsException;
 import com.example.secondhand.exception.FavoriteNotFoundException;
-import com.example.secondhand.exception.UnauthorizedActionException;
-import com.example.secondhand.model.Advertisement;
-import com.example.secondhand.model.AdvertisementImage;
-import com.example.secondhand.model.Favorite;
-import com.example.secondhand.model.User;
+import com.example.secondhand.model.*;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.FavoriteRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +22,13 @@ public class FavoriteService {
     @Transactional
     public FavoriteResponse addFavorite(Long advertisementId, User currentUser) {
 
-
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.APPROVED
+                && advertisement.getStatus() != AdvertisementStatus.SOLD) {
+            throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
+        }
 
         boolean favoriteAlreadyExist = favoriteRepository.existsByUserIdAndAdvertisementId(currentUser.getId(), advertisementId);
         if (favoriteAlreadyExist) {
