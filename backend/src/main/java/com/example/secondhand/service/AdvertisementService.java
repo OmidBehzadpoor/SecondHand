@@ -197,10 +197,10 @@ public class AdvertisementService {
                 .build();
     }
 
-    public List<AdvertisementResponse> getPendingAdvertisements() {
+    public List<AdminAdvertisementResponse> getPendingAdvertisements() {
         return advertisementRepository.findByStatus(AdvertisementStatus.PENDING)
                 .stream()
-                .map(this::mapToResponse)
+                .map(this::mapToAdminResponse)
                 .toList();
     }
 
