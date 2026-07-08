@@ -72,6 +72,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(RatingAlreadyExistsException .class)
+    public ResponseEntity<Map<String, String>> handleRatingAlreadyExists(RatingAlreadyExistsException  ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, String>> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
