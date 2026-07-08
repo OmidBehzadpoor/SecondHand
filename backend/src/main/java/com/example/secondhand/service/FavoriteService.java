@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FavoriteService {
@@ -58,6 +60,18 @@ public class FavoriteService {
 
         favoriteRepository.deleteByUserIdAndAdvertisementId(currentUser.getId(), advertisementId);
 
+    }
+
+    public List<FavoriteResponse> getMyFavorites(User currentUser) {
+
+        if (currentUser == null) {
+            throw new UnauthorizedActionException("برای مشاهده علاقه‌مندی‌ها باید وارد حساب کاربری شوید");
+        }
+
+        return favoriteRepository.findByUserId(currentUser.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     private FavoriteResponse mapToResponse(Favorite favorite) {
