@@ -26,9 +26,6 @@ public class FavoriteService {
     @Transactional
     public FavoriteResponse addFavorite(Long advertisementId, User currentUser) {
 
-        if (currentUser == null) {
-            throw new UnauthorizedActionException("برای افزودن به علاقه‌مندی‌ها باید وارد حساب کاربری شوید");
-        }
 
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
@@ -47,10 +44,6 @@ public class FavoriteService {
     @Transactional
     public void removeFavorite(Long advertisementId, User currentUser) {
 
-        if (currentUser == null) {
-            throw new UnauthorizedActionException("برای حذف از علاقه‌مندی‌ها باید وارد حساب کاربری شوید");
-        }
-
         if (!advertisementRepository.existsById(advertisementId)) {
             throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
         }
@@ -65,10 +58,6 @@ public class FavoriteService {
 
     @Transactional(readOnly = true)
     public List<FavoriteResponse> getMyFavorites(User currentUser) {
-
-        if (currentUser == null) {
-            throw new UnauthorizedActionException("برای مشاهده علاقه‌مندی‌ها باید وارد حساب کاربری شوید");
-        }
 
         return favoriteRepository.findByUserId(currentUser.getId())
                 .stream()
