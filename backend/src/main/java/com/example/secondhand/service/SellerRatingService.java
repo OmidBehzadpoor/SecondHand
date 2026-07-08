@@ -23,6 +23,7 @@ public class SellerRatingService {
     private final SellerRatingRepository sellerRatingRepository;
     private final AdvertisementRepository advertisementRepository;
 
+    @Transactional
     public SellerRatingResponse rateAdvertisement(Long advertisementId, SellerRatingRequest request, User currentUser) {
 
         if (currentUser == null) {
@@ -47,6 +48,7 @@ public class SellerRatingService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<SellerRatingResponse> getSellerRatings(Long sellerId) {
         return sellerRatingRepository.findByAdvertisementSellerId(sellerId)
                 .stream()
@@ -54,10 +56,12 @@ public class SellerRatingService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public Long getSellerRatingCount(Long sellerId) {
         return (long) sellerRatingRepository.findByAdvertisementSellerId(sellerId).size();
     }
 
+    @Transactional(readOnly = true)
     public Double getSellerAverageRating(Long sellerId) {
 
         List<SellerRating> ratings = sellerRatingRepository.findByAdvertisementSellerId(sellerId);
