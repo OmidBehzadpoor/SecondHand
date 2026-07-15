@@ -206,6 +206,7 @@ public class AdvertisementService {
                 .toList();
     }
 
+    @Transactional
     public AdminAdvertisementResponse approve(Long id) {
         Advertisement advertisement = advertisementRepository.findById(id)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
@@ -219,6 +220,7 @@ public class AdvertisementService {
         return mapToAdminResponse(advertisementRepository.save(advertisement));
     }
 
+    @Transactional
     public AdminAdvertisementResponse reject(Long id, String reason) {
         Advertisement advertisement = advertisementRepository.findById(id)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
@@ -232,6 +234,7 @@ public class AdvertisementService {
         return mapToAdminResponse(advertisementRepository.save(advertisement));
     }
 
+    @Transactional
     public void adminDelete(Long id) {
         Advertisement advertisement = advertisementRepository.findById(id)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
