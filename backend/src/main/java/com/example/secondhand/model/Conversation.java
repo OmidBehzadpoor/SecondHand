@@ -7,8 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "conversations")
-@Getter
+@Table(
+        name = "conversations",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"advertisement_id", "buyer_id"})
+        }
+)@Getter
 @Setter
 @Builder
 @NoArgsConstructor
