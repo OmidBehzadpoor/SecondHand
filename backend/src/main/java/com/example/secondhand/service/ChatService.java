@@ -1,10 +1,12 @@
 package com.example.secondhand.service;
 
+import com.example.secondhand.dto.SendMessageRequest;
 import com.example.secondhand.dto.response.ConversationResponse;
 import com.example.secondhand.dto.response.MessageResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.ConversationNotFoundException;
 import com.example.secondhand.exception.UnauthorizedActionException;
+import com.example.secondhand.exception.UserBlockedException;
 import com.example.secondhand.model.*;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.ConversationRepository;
@@ -28,14 +30,24 @@ public class ChatService {
     @Transactional
     public ConversationResponse startOrGetConversation(Long adId, User currentUser) {
         Advertisement advertisement = advertisementRepository.findById(adId)
+                .filter(ad -> ad.getStatus() != AdvertisementStatus.DELETED)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
 
-        if (advertisement.getStatus() != AdvertisementStatus.APPROVED) {
+        if (advertisement.getStatus() != AdvertisementStatus.APPROVED
+                && advertisement.getStatus() != AdvertisementStatus.SOLD) {
             throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
         }
 
         if (advertisement.getSeller().getId().equals(currentUser.getId())) {
             throw new UnauthorizedActionException("نمی‌توانید با آگهی خودتان گفت‌وگو شروع کنید");
+        }
+
+        if (currentUser.getStatus() == UserStatus.BLOCKED) {
+            throw new UserBlockedException("حساب کاربری شما مسدود شده است");
+        }
+
+        if (advertisement.getSeller().getStatus() == UserStatus.BLOCKED) {
+            throw new UserBlockedException("امکان شروع گفت‌وگو با این فروشنده وجود ندارد");
         }
 
         Optional<Conversation> existing = conversationRepository
@@ -54,21 +66,33 @@ public class ChatService {
     }
 
     @Transactional
-    public MessageResponse sendMessage(Long conversationId, User currentUser, Message messageInput) {
+    public MessageResponse sendMessage(Long conversationId, User currentUser, SendMessageRequest request) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new ConversationNotFoundException("گفت‌وگو مورد نظر یافت نشد"));
 
-        boolean isMember = conversation.getBuyer().getId().equals(currentUser.getId())
-                || conversation.getAdvertisement().getSeller().getId().equals(currentUser.getId());
+        boolean isBuyer = conversation.getBuyer().getId().equals(currentUser.getId());
+        boolean isSeller = conversation.getAdvertisement().getSeller().getId().equals(currentUser.getId());
 
-        if (!isMember) {
+        if (!isBuyer && !isSeller) {
             throw new UnauthorizedActionException("شما عضو این گفت‌وگو نیستید");
+        }
+
+        if (currentUser.getStatus() == UserStatus.BLOCKED) {
+            throw new UserBlockedException("حساب کاربری شما مسدود شده است");
+        }
+
+        User otherParty = isBuyer
+                ? conversation.getAdvertisement().getSeller()
+                : conversation.getBuyer();
+
+        if (otherParty.getStatus() == UserStatus.BLOCKED) {
+            throw new UserBlockedException("امکان ارسال پیام به این کاربر وجود ندارد");
         }
 
         Message message = Message.builder()
                 .conversation(conversation)
                 .sender(currentUser)
-                .content(messageInput.getContent())
+                .content(request.getContent())
                 .build();
 
         Message savedMessage = messageRepository.save(message);
@@ -81,7 +105,8 @@ public class ChatService {
 
     @Transactional(readOnly = true)
     public List<ConversationResponse> getMyConversations(User currentUser) {
-        return conversationRepository.findByBuyerIdOrAdvertisementSellerIdOrderByUpdatedAtDesc(
+        return conversationRepository
+                .findByBuyerIdOrAdvertisementSellerIdOrderByUpdatedAtDesc(
                         currentUser.getId(),
                         currentUser.getId()
                 )
@@ -104,19 +129,17 @@ public class ChatService {
 
         messageRepository.markMessagesAsRead(conversationId, currentUser.getId());
 
-        List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
-
-        return messages.stream()
+        return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId)
+                .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
     private ConversationResponse mapToResponse(Conversation conversation, User currentUser) {
-        String lastMessage = conversation.getMessages().isEmpty()
-                ? null
-                : conversation.getMessages()
-                .get(conversation.getMessages().size() - 1)
-                .getContent();
+        String lastMessage = messageRepository
+                .findLastMessageByConversationId(conversation.getId())
+                .map(Message::getContent)
+                .orElse(null);
 
         long unreadCount = messageRepository
                 .countByConversationIdAndIsReadFalseAndSenderIdNot(
