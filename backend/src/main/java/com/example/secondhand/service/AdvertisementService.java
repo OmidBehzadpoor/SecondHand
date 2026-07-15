@@ -14,6 +14,7 @@ import com.example.secondhand.repository.CategoryRepository;
 import com.example.secondhand.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -197,6 +198,7 @@ public class AdvertisementService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public List<AdminAdvertisementResponse> getPendingAdvertisements() {
         return advertisementRepository.findByStatus(AdvertisementStatus.PENDING)
                 .stream()
