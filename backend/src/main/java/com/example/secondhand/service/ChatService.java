@@ -25,6 +25,7 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final AdvertisementRepository advertisementRepository;
 
+    @Transactional
     public ConversationResponse startOrGetConversation(Long adId, User currentUser) {
         Advertisement advertisement = advertisementRepository.findById(adId)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
@@ -41,7 +42,7 @@ public class ChatService {
                 .findByAdvertisementIdAndBuyerId(adId, currentUser.getId());
 
         if (existing.isPresent()) {
-            return mapToResponse(existing.get());
+            return mapToResponse(existing.get(), currentUser);
         }
 
         Conversation conversation = Conversation.builder()
@@ -49,12 +50,11 @@ public class ChatService {
                 .buyer(currentUser)
                 .build();
 
-        return mapToResponse(conversationRepository.save(conversation));
+        return mapToResponse(conversationRepository.save(conversation), currentUser);
     }
 
     @Transactional
     public MessageResponse sendMessage(Long conversationId, User currentUser, Message messageInput) {
-
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new ConversationNotFoundException("گفت‌وگو مورد نظر یافت نشد"));
 
@@ -64,6 +64,7 @@ public class ChatService {
         if (!isMember) {
             throw new UnauthorizedActionException("شما عضو این گفت‌وگو نیستید");
         }
+
         Message message = Message.builder()
                 .conversation(conversation)
                 .sender(currentUser)
@@ -78,7 +79,39 @@ public class ChatService {
         return mapToResponse(savedMessage);
     }
 
-    private ConversationResponse mapToResponse(Conversation conversation) {
+    @Transactional(readOnly = true)
+    public List<ConversationResponse> getMyConversations(User currentUser) {
+        return conversationRepository.findByBuyerIdOrAdvertisementSellerIdOrderByUpdatedAtDesc(
+                        currentUser.getId(),
+                        currentUser.getId()
+                )
+                .stream()
+                .map(conversation -> mapToResponse(conversation, currentUser))
+                .toList();
+    }
+
+    @Transactional
+    public List<MessageResponse> getMessages(Long conversationId, User currentUser) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new ConversationNotFoundException("گفت‌وگو مورد نظر یافت نشد"));
+
+        boolean isMember = conversation.getBuyer().getId().equals(currentUser.getId())
+                || conversation.getAdvertisement().getSeller().getId().equals(currentUser.getId());
+
+        if (!isMember) {
+            throw new UnauthorizedActionException("شما عضو این گفت‌وگو نیستید");
+        }
+
+        messageRepository.markMessagesAsRead(conversationId, currentUser.getId());
+
+        List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
+
+        return messages.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private ConversationResponse mapToResponse(Conversation conversation, User currentUser) {
         String lastMessage = conversation.getMessages().isEmpty()
                 ? null
                 : conversation.getMessages()
@@ -88,7 +121,7 @@ public class ChatService {
         long unreadCount = messageRepository
                 .countByConversationIdAndIsReadFalseAndSenderIdNot(
                         conversation.getId(),
-                        conversation.getBuyer().getId()
+                        currentUser.getId()
                 );
 
         return ConversationResponse.builder()
@@ -117,5 +150,4 @@ public class ChatService {
                 .isRead(message.isRead())
                 .build();
     }
-
 }
