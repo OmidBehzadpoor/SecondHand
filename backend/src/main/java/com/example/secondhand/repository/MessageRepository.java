@@ -15,8 +15,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message> findByConversationIdOrderByCreatedAtAsc(Long conversationId);
 
-    @Query("SELECT m FROM Message m WHERE m.conversation.id = :conversationId ORDER BY m.createdAt DESC LIMIT 1")
-    Optional<Message> findLastMessageByConversationId(@Param("conversationId") Long conversationId);
+    Optional<Message> findFirstByConversationIdOrderByCreatedAtDesc(Long conversationId);
+
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Message m SET m.isRead = true WHERE m.conversation.id = :conversationId AND m.sender.id != :userId AND m.isRead = false")

@@ -137,7 +137,7 @@ public class ChatService {
 
     private ConversationResponse mapToResponse(Conversation conversation, User currentUser) {
         String lastMessage = messageRepository
-                .findLastMessageByConversationId(conversation.getId())
+                .findFirstByConversationIdOrderByCreatedAtDesc(conversation.getId())
                 .map(Message::getContent)
                 .orElse(null);
 
