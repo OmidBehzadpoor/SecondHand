@@ -29,8 +29,12 @@ public class ChatService {
 
     @Transactional
     public ConversationResponse startOrGetConversation(Long adId, User currentUser) {
+
+        if (currentUser.getStatus() == UserStatus.BLOCKED) {
+            throw new UserBlockedException("حساب کاربری شما مسدود شده است");
+        }
+
         Advertisement advertisement = advertisementRepository.findById(adId)
-                .filter(ad -> ad.getStatus() != AdvertisementStatus.DELETED)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
 
         if (advertisement.getStatus() != AdvertisementStatus.APPROVED
@@ -40,10 +44,6 @@ public class ChatService {
 
         if (advertisement.getSeller().getId().equals(currentUser.getId())) {
             throw new UnauthorizedActionException("نمی‌توانید با آگهی خودتان گفت‌وگو شروع کنید");
-        }
-
-        if (currentUser.getStatus() == UserStatus.BLOCKED) {
-            throw new UserBlockedException("حساب کاربری شما مسدود شده است");
         }
 
         if (advertisement.getSeller().getStatus() == UserStatus.BLOCKED) {
