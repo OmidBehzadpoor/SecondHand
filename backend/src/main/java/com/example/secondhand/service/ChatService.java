@@ -1,18 +1,20 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.response.ConversationResponse;
+import com.example.secondhand.dto.response.MessageResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
+import com.example.secondhand.exception.ConversationNotFoundException;
 import com.example.secondhand.exception.UnauthorizedActionException;
-import com.example.secondhand.model.Advertisement;
-import com.example.secondhand.model.AdvertisementStatus;
-import com.example.secondhand.model.Conversation;
-import com.example.secondhand.model.User;
+import com.example.secondhand.model.*;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.ConversationRepository;
 import com.example.secondhand.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,6 +52,32 @@ public class ChatService {
         return mapToResponse(conversationRepository.save(conversation));
     }
 
+    @Transactional
+    public MessageResponse sendMessage(Long conversationId, User currentUser, Message messageInput) {
+
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new ConversationNotFoundException("گفت‌وگو مورد نظر یافت نشد"));
+
+        boolean isMember = conversation.getBuyer().getId().equals(currentUser.getId())
+                || conversation.getAdvertisement().getSeller().getId().equals(currentUser.getId());
+
+        if (!isMember) {
+            throw new UnauthorizedActionException("شما عضو این گفت‌وگو نیستید");
+        }
+        Message message = Message.builder()
+                .conversation(conversation)
+                .sender(currentUser)
+                .content(messageInput.getContent())
+                .build();
+
+        Message savedMessage = messageRepository.save(message);
+
+        conversation.setUpdatedAt(LocalDateTime.now());
+        conversationRepository.save(conversation);
+
+        return mapToResponse(savedMessage);
+    }
+
     private ConversationResponse mapToResponse(Conversation conversation) {
         String lastMessage = conversation.getMessages().isEmpty()
                 ? null
@@ -75,6 +103,18 @@ public class ChatService {
                 .unreadCount((int) unreadCount)
                 .updatedAt(conversation.getUpdatedAt())
                 .createdAt(conversation.getCreatedAt())
+                .build();
+    }
+
+    private MessageResponse mapToResponse(Message message) {
+        return MessageResponse.builder()
+                .id(message.getId())
+                .conversationId(message.getConversation().getId())
+                .senderId(message.getSender().getId())
+                .senderUsername(message.getSender().getUsername())
+                .content(message.getContent())
+                .createdAt(message.getCreatedAt())
+                .isRead(message.isRead())
                 .build();
     }
 
