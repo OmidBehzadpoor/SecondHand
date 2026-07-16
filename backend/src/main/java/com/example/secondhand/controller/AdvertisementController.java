@@ -49,9 +49,10 @@ public class AdvertisementController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long cityId,
             @RequestParam(required = false) Long minPrice,
-            @RequestParam(required = false) Long maxPrice) {
+            @RequestParam(required = false) Long maxPrice,
+            @RequestParam(required = false) String sortBy) {
         List<AdvertisementResponse> responses =
-                advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice);
+                advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy);
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENTS_RETRIEVED", responses));
     }
 
