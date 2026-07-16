@@ -120,4 +120,18 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "این عملیات با داده‌ای که از قبل وجود دارد در تناقض است"));
     }
 
+    @ExceptionHandler(InvalidImageException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidImage(InvalidImageException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(AdvertisementImageNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleAdvertisementImageNotFound(AdvertisementImageNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
 }
