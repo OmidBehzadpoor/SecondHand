@@ -66,22 +66,30 @@ public class AdvertisementService {
         return mapToResponse(advertisement);
     }
 
+    @Transactional(readOnly = true)
     public List<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
-        List<Advertisement> advertisements;
+        return getAll(null, categoryId, cityId, null, null, null);
+    }
 
-        if (categoryId != null && cityId != null) {
-            advertisements = advertisementRepository.findByStatusAndCategoryIdAndCityId(
-                    AdvertisementStatus.APPROVED, categoryId, cityId);
-        } else if (categoryId != null) {
-            advertisements = advertisementRepository.findByStatusAndCategoryId(AdvertisementStatus.APPROVED, categoryId);
-        } else if (cityId != null) {
-            advertisements = advertisementRepository.findByStatusAndCityId(AdvertisementStatus.APPROVED, cityId);
-        } else {
-            advertisements = advertisementRepository.findByStatus(AdvertisementStatus.APPROVED);
+    @Transactional(readOnly = true)
+    public List<AdvertisementResponse> getAll(String keyword, Long categoryId, Long cityId,
+                                              Long minPrice, Long maxPrice, String sortBy) {
+
+        if (categoryId != null && !categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotFoundException("دسته‌بندی مورد نظر یافت نشد");
         }
 
-        return advertisements.stream().map(this::mapToResponse).toList();
+        if (cityId != null && !cityRepository.existsById(cityId)) {
+            throw new CityNotFoundException("شهر مورد نظر یافت نشد");
+        }
+
+        return advertisementRepository
+                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortBy)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
+
 
     public List<AdvertisementResponse> getMyAdvertisements(User currentUser) {
         List<Advertisement> advertisements = advertisementRepository.findBySellerId(currentUser.getId());
