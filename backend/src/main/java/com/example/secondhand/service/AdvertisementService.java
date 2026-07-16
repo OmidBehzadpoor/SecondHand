@@ -239,6 +239,10 @@ public class AdvertisementService {
         Advertisement advertisement = advertisementRepository.findById(id)
                 .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
 
+        if (advertisement.getStatus() == AdvertisementStatus.DELETED) {
+            throw new InvalidAdvertisementStateException("این آگهی قبلاً حذف شده است");
+        }
+
         advertisement.setStatus(AdvertisementStatus.DELETED);
         advertisementRepository.save(advertisement);
     }
