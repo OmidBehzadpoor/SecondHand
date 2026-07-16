@@ -1,6 +1,7 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.AdvertisementRequest;
+import com.example.secondhand.dto.response.AdminAdvertisementResponse;
 import com.example.secondhand.dto.response.AdvertisementResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.CategoryNotFoundException;
@@ -13,6 +14,7 @@ import com.example.secondhand.repository.CategoryRepository;
 import com.example.secondhand.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -192,6 +194,75 @@ public class AdvertisementService {
                 .ownerId(advertisement.getSeller().getId())
                 .ownerUsername(advertisement.getSeller().getUsername())
                 .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
+                .createdAt(advertisement.getCreatedAt())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminAdvertisementResponse> getPendingAdvertisements() {
+        return advertisementRepository.findByStatus(AdvertisementStatus.PENDING)
+                .stream()
+                .map(this::mapToAdminResponse)
+                .toList();
+    }
+
+    @Transactional
+    public AdminAdvertisementResponse approve(Long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.PENDING) {
+            throw new InvalidAdvertisementStateException("فقط آگهی‌های در انتظار بررسی قابل تایید هستند");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.APPROVED);
+        advertisement.setRejectionReason(null);
+        return mapToAdminResponse(advertisementRepository.save(advertisement));
+    }
+
+    @Transactional
+    public AdminAdvertisementResponse reject(Long id, String reason) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.PENDING) {
+            throw new InvalidAdvertisementStateException("فقط آگهی‌های در انتظار بررسی قابل رد هستند");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.REJECTED);
+        advertisement.setRejectionReason(reason);
+        return mapToAdminResponse(advertisementRepository.save(advertisement));
+    }
+
+    @Transactional
+    public void adminDelete(Long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() == AdvertisementStatus.DELETED) {
+            throw new InvalidAdvertisementStateException("این آگهی قبلاً حذف شده است");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.DELETED);
+        advertisementRepository.save(advertisement);
+    }
+
+    private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement) {
+        return AdminAdvertisementResponse.builder()
+                .id(advertisement.getId())
+                .title(advertisement.getTitle())
+                .description(advertisement.getDescription())
+                .price(advertisement.getPrice())
+                .categoryName(advertisement.getCategory().getName())
+                .cityName(advertisement.getCity().getName())
+                .status(advertisement.getStatus())
+                .sellerId(advertisement.getSeller().getId())
+                .sellerUsername(advertisement.getSeller().getUsername())
+                .sellerName(advertisement.getSeller().getName())
+                .sellerPhone(advertisement.getSeller().getPhone())
+                .sellerEmail(advertisement.getSeller().getEmail())
+                .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
+                .rejectionReason(advertisement.getRejectionReason())
                 .createdAt(advertisement.getCreatedAt())
                 .build();
     }
