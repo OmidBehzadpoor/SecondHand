@@ -6,6 +6,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
+
 import java.util.Map;
 
 @RestControllerAdvice
@@ -72,8 +73,8 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    @ExceptionHandler(RatingAlreadyExistsException .class)
-    public ResponseEntity<Map<String, String>> handleRatingAlreadyExists(RatingAlreadyExistsException  ex) {
+    @ExceptionHandler(RatingAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleRatingAlreadyExists(RatingAlreadyExistsException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(Map.of("error", ex.getMessage()));
@@ -95,6 +96,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleFavoriteNotFound(FavoriteNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ConversationNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleConversationNotFound(ConversationNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserBlockedException.class)
+    public ResponseEntity<Map<String, String>> handleUserBlocked(UserBlockedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
                 .body(Map.of("error", ex.getMessage()));
     }
 
