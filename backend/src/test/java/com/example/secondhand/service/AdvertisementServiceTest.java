@@ -676,4 +676,122 @@ class AdvertisementServiceTest {
                 () -> advertisementService.getById(adId, user));
     }
 
+    // ==================== UPDATE edge cases ====================
+
+    @Test
+    void update_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsDeleted() {
+        User seller = User.builder().id(1L).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .seller(seller)
+                .status(AdvertisementStatus.DELETED)
+                .images(new ArrayList<>())
+                .build();
+
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("New Title")
+                .categoryId(1L)
+                .cityId(1L)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        assertThrows(InvalidAdvertisementStateException.class,
+                () -> advertisementService.update(1L, request, seller));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
+    @Test
+    void update_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsSold() {
+        User seller = User.builder().id(1L).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .seller(seller)
+                .status(AdvertisementStatus.SOLD)
+                .images(new ArrayList<>())
+                .build();
+
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("New Title")
+                .categoryId(1L)
+                .cityId(1L)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        assertThrows(InvalidAdvertisementStateException.class,
+                () -> advertisementService.update(1L, request, seller));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
+// ==================== DELETE edge cases ====================
+
+    @Test
+    void delete_shouldDeleteAdvertisement_whenUserIsAdmin() {
+        User seller = User.builder().id(1L).build();
+        User admin = User.builder().id(99L).role(Role.ADMIN).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .seller(seller)
+                .status(AdvertisementStatus.APPROVED)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        advertisementService.delete(1L, admin);
+
+        assertEquals(AdvertisementStatus.DELETED, ad.getStatus());
+        verify(advertisementRepository, times(1)).save(ad);
+    }
+
+// ==================== GET BY ID edge cases ====================
+
+    @Test
+    void getById_shouldReturnAdvertisementResponse_whenAdvertisementIsSoldAndUserIsStranger() {
+        Long adId = 1L;
+        User owner = User.builder().id(1L).build();
+        User stranger = User.builder().id(2L).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(adId)
+                .title("Sold Phone")
+                .status(AdvertisementStatus.SOLD)
+                .seller(owner)
+                .images(new ArrayList<>())
+                .build();
+
+        when(advertisementRepository.findById(adId)).thenReturn(Optional.of(ad));
+
+        AdvertisementResponse response = advertisementService.getById(adId, stranger);
+
+        assertNotNull(response);
+        assertEquals(AdvertisementStatus.SOLD, response.getStatus());
+    }
+
+// ==================== MARK AS SOLD edge cases ====================
+
+    @Test
+    void markAsSold_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsAlreadySold() {
+        User seller = User.builder().id(1L).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .seller(seller)
+                .status(AdvertisementStatus.SOLD)
+                .images(new ArrayList<>())
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        assertThrows(InvalidAdvertisementStateException.class,
+                () -> advertisementService.markAsSold(1L, seller));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
 }
