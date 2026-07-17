@@ -12,12 +12,6 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
 
     List<Advertisement> findByStatus(AdvertisementStatus status);
 
-    List<Advertisement> findByStatusAndCategoryId(AdvertisementStatus status, Long categoryId);
-
-    List<Advertisement> findByStatusAndCityId(AdvertisementStatus status, Long cityId);
-
-    List<Advertisement> findByStatusAndCategoryIdAndCityId(AdvertisementStatus status, Long categoryId, Long cityId);
-
     List<Advertisement> findBySellerId(Long sellerId);
 
     boolean existsByCategoryId(Long categoryId);
