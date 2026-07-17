@@ -53,6 +53,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(CategoryHasChildrenException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryHasChildren(CategoryHasChildrenException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(CityInUseException.class)
     public ResponseEntity<Map<String, String>> handleCityInUse(CityInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
