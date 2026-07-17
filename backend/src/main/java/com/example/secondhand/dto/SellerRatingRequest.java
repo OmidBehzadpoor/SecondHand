@@ -3,11 +3,13 @@ package com.example.secondhand.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SellerRatingRequest {
 
     @NotNull(message = "امتیاز نمی‌تواند خالی باشد")
