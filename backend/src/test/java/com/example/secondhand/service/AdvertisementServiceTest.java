@@ -390,28 +390,23 @@ class AdvertisementServiceTest {
         assertThrows(AdvertisementNotFoundException.class,
                 () -> advertisementService.getById(adId, stranger));
     }
-
     @Test
-    void getById_shouldReturnAdvertisementResponse_whenAdvertisementIsPendingButUserIsOwner() {
-        Long adId = 100L;
-        User owner = User.builder().id(1L).username("owner_user").build();
+    void getById_shouldThrowAdvertisementNotFoundException_whenAdvertisementIsDeletedEvenIfUserIsOwner() {
+        Long adId = 1L;
+        User owner = User.builder().id(1L).build();
 
-        Advertisement pendingAd = Advertisement.builder()
+        Advertisement ad = Advertisement.builder()
                 .id(adId)
-                .title("Draft Item")
-                .status(AdvertisementStatus.PENDING)
+                .title("Deleted Ad")
+                .status(AdvertisementStatus.DELETED)
                 .seller(owner)
                 .build();
 
-        when(advertisementRepository.findById(adId)).thenReturn(Optional.of(pendingAd));
+        when(advertisementRepository.findById(adId)).thenReturn(Optional.of(ad));
 
-        AdvertisementResponse response = advertisementService.getById(adId, owner);
-
-        assertNotNull(response);
-        assertEquals(adId, response.getId());
-        assertEquals("Draft Item", response.getTitle());
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> advertisementService.getById(adId, owner));
     }
-
     // ==================== UPDATE ====================
 
     @Test
