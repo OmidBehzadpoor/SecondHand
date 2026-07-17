@@ -1,10 +1,12 @@
 package com.example.secondhand.controller;
 
 import com.example.secondhand.dto.AdvertisementRequest;
-import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.AdvertisementResponse;
+import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.model.User;
 import com.example.secondhand.service.AdvertisementService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/advertisements")
 @RequiredArgsConstructor
+@Tag(name = "Advertisements", description = "مدیریت آگهی‌ها؛ مشاهده لیست و جزئیات عمومی است، بقیه عملیات نیاز به توکن دارد")
 public class AdvertisementController {
 
     private final AdvertisementService advertisementService;
@@ -37,6 +40,7 @@ public class AdvertisementController {
     }
 
     @GetMapping("/{id}")
+    @SecurityRequirements
     public ResponseEntity<ApiResponse<AdvertisementResponse>> getById(@PathVariable Long id,
                                                                       @AuthenticationPrincipal User currentUser) {
         AdvertisementResponse response = advertisementService.getById(id, currentUser);
@@ -44,6 +48,7 @@ public class AdvertisementController {
     }
 
     @GetMapping
+    @SecurityRequirements
     public ResponseEntity<ApiResponse<List<AdvertisementResponse>>> getAll(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
