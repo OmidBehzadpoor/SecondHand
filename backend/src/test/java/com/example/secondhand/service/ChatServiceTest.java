@@ -287,6 +287,74 @@ class ChatServiceTest {
     }
 
     @Test
+    void sendMessage_shouldSucceed_whenAdvertisementIsSold() {
+        // Old conversations should keep working after the advertisement is marked SOLD.
+        User seller = User.builder().id(1L).username("seller").status(UserStatus.ACTIVE).build();
+        User buyer = User.builder().id(2L).username("buyer").status(UserStatus.ACTIVE).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(10L)
+                .status(AdvertisementStatus.SOLD)
+                .seller(seller)
+                .build();
+
+        Conversation conversation = Conversation.builder()
+                .id(1L)
+                .advertisement(ad)
+                .buyer(buyer)
+                .build();
+
+        Message savedMessage = Message.builder()
+                .id(1L)
+                .conversation(conversation)
+                .sender(buyer)
+                .content("هنوز آگهی موجوده؟")
+                .build();
+
+        SendMessageRequest request = new SendMessageRequest("هنوز آگهی موجوده؟");
+
+        when(conversationRepository.findById(1L)).thenReturn(Optional.of(conversation));
+        when(messageRepository.save(any(Message.class))).thenReturn(savedMessage);
+        when(conversationRepository.save(any(Conversation.class))).thenReturn(conversation);
+
+        MessageResponse response = chatService.sendMessage(1L, buyer, request);
+
+        assertNotNull(response);
+        verify(messageRepository, times(1)).save(any(Message.class));
+    }
+
+    @Test
+    void sendMessage_shouldThrowAdvertisementNotFoundException_whenAdvertisementIsDeleted() {
+        // EXPECTED business rule: once an advertisement is DELETED, its conversations should
+        // no longer accept new messages — consistent with how startOrGetConversation already
+        // rejects DELETED advertisements. sendMessage currently has NO such check, so this
+        // test is expected to fail until that validation is added to the service.
+        User seller = User.builder().id(1L).username("seller").status(UserStatus.ACTIVE).build();
+        User buyer = User.builder().id(2L).username("buyer").status(UserStatus.ACTIVE).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(10L)
+                .status(AdvertisementStatus.DELETED)
+                .seller(seller)
+                .build();
+
+        Conversation conversation = Conversation.builder()
+                .id(1L)
+                .advertisement(ad)
+                .buyer(buyer)
+                .build();
+
+        SendMessageRequest request = new SendMessageRequest("سلام");
+
+        when(conversationRepository.findById(1L)).thenReturn(Optional.of(conversation));
+
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> chatService.sendMessage(1L, buyer, request));
+
+        verify(messageRepository, never()).save(any());
+    }
+
+    @Test
     void sendMessage_shouldThrowConversationNotFoundException_whenConversationDoesNotExist() {
         User buyer = User.builder().id(2L).build();
         SendMessageRequest request = new SendMessageRequest("سلام");
