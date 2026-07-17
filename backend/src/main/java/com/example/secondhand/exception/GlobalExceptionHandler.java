@@ -92,6 +92,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(UserStateConflictException.class)
+    public ResponseEntity<Map<String, String>> handleUserStateConflict(UserStateConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(FavoriteNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleFavoriteNotFound(FavoriteNotFoundException ex) {
         return ResponseEntity
