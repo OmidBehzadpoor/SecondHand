@@ -7,6 +7,7 @@ import com.example.secondhand.dto.response.LoginResponse;
 import com.example.secondhand.exception.InvalidCredentialsException;
 import com.example.secondhand.exception.UnauthorizedActionException;
 import com.example.secondhand.exception.UserNotFoundException;
+import com.example.secondhand.exception.UserStateConflictException;
 import com.example.secondhand.model.Role;
 import com.example.secondhand.model.User;
 import com.example.secondhand.model.UserStatus;
@@ -82,7 +83,7 @@ public class UserService {
         }
 
         if (user.getStatus() == UserStatus.BLOCKED) {
-            throw new IllegalStateException("کاربر از قبل مسدود شده است");
+            throw new UserStateConflictException("کاربر از قبل مسدود شده است");
         }
 
         user.setStatus(UserStatus.BLOCKED);
@@ -95,7 +96,7 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("کاربر مورد نظر یافت نشد"));
 
         if (user.getStatus() == UserStatus.ACTIVE) {
-            throw new IllegalStateException("کاربر از قبل فعال است");
+            throw new UserStateConflictException("کاربر از قبل فعال است");
         }
 
         user.setStatus(UserStatus.ACTIVE);
