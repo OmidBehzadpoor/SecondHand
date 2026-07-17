@@ -234,6 +234,48 @@ class FavoriteServiceTest {
     }
 
     @Test
+    void getMyFavorites_shouldExcludeFavorite_whenAdvertisementWasLaterDeleted() {
+        // EXPECTED business rule: a DELETED advertisement is treated as non-existent
+        // everywhere else in the codebase (addFavorite rejects it, getById hides it from
+        // non-owners, startOrGetConversation and sendMessage both reject it). For
+        // consistency, a favorite pointing at an advertisement that was later deleted
+        // should not be surfaced as a normal favorite either. The service currently does
+        // NOT filter by status here, so this test is expected to fail until that
+        // filtering is added to getMyFavorites.
+        User user = User.builder().id(1L).build();
+        Category category = Category.builder().id(1L).name("Electronics").build();
+        City city = City.builder().id(1L).name("Tehran").build();
+
+        Advertisement activeAd = Advertisement.builder()
+                .id(10L)
+                .title("Phone")
+                .status(AdvertisementStatus.APPROVED)
+                .category(category)
+                .city(city)
+                .images(new ArrayList<>())
+                .build();
+
+        Advertisement deletedAd = Advertisement.builder()
+                .id(20L)
+                .title("Laptop")
+                .status(AdvertisementStatus.DELETED)
+                .category(category)
+                .city(city)
+                .images(new ArrayList<>())
+                .build();
+
+        Favorite activeFavorite = Favorite.builder().id(1L).advertisement(activeAd).user(user).build();
+        Favorite deletedFavorite = Favorite.builder().id(2L).advertisement(deletedAd).user(user).build();
+
+        when(favoriteRepository.findByUserId(1L)).thenReturn(List.of(activeFavorite, deletedFavorite));
+
+        List<FavoriteResponse> responses = favoriteService.getMyFavorites(user);
+
+        assertEquals(1, responses.size());
+        assertEquals(10L, responses.get(0).getAdvertisementId());
+    }
+
+    @Test
     void getMyFavorites_shouldReturnEmptyList_whenUserHasNone() {
         User user = User.builder().id(1L).build();
 
