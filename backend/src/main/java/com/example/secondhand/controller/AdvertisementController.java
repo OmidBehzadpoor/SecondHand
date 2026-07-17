@@ -45,9 +45,14 @@ public class AdvertisementController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AdvertisementResponse>>> getAll(
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) Long cityId) {
-        List<AdvertisementResponse> responses = advertisementService.getAll(categoryId, cityId);
+            @RequestParam(required = false) Long cityId,
+            @RequestParam(required = false) Long minPrice,
+            @RequestParam(required = false) Long maxPrice,
+            @RequestParam(required = false) String sortBy) {
+        List<AdvertisementResponse> responses =
+                advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy);
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENTS_RETRIEVED", responses));
     }
 
