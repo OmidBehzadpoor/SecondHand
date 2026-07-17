@@ -1,20 +1,22 @@
 package com.example.secondhand.controller;
 
-import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.AdminRejectRequest;
 import com.example.secondhand.dto.response.AdminAdvertisementResponse;
+import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.service.AdvertisementService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/advertisements")
 @RequiredArgsConstructor
+@Tag(name = "Admin - Advertisements", description = "بررسی، تایید و رد آگهی‌ها توسط مدیر - نیاز به توکن مدیر")
 public class AdminAdvertisementController {
 
     private final AdvertisementService advertisementService;

@@ -4,6 +4,7 @@ import com.example.secondhand.dto.CategoryRequest;
 import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.CategoryResponse;
 import com.example.secondhand.service.CategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
+@Tag(name = "Categories", description = "دسته‌بندی آگهی‌ها")
 public class CategoryController {
 
     private final CategoryService categoryService;

@@ -4,6 +4,7 @@ import com.example.secondhand.dto.CityRequest;
 import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.CityResponse;
 import com.example.secondhand.service.CityService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/cities")
+@Tag(name = "Cities", description = "شهرها")
 public class CityController {
 
     private final CityService cityService;
