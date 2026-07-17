@@ -2,10 +2,7 @@ package com.example.secondhand.service;
 
 import com.example.secondhand.dto.AdvertisementRequest;
 import com.example.secondhand.dto.response.AdvertisementResponse;
-import com.example.secondhand.exception.AdvertisementNotFoundException;
-import com.example.secondhand.exception.CategoryNotFoundException;
-import com.example.secondhand.exception.InvalidAdvertisementStateException;
-import com.example.secondhand.exception.UnauthorizedActionException;
+import com.example.secondhand.exception.*;
 import com.example.secondhand.model.*;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
@@ -17,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -242,5 +240,93 @@ class AdvertisementServiceTest {
 
         verify(advertisementRepository, never()).save(any(Advertisement.class));
     }
+
+    @Test
+    void create_shouldThrowCityNotFoundException_whenCityDoesNotExist() {
+        User currentUser = User.builder().id(1L).build();
+        Category category = Category.builder().id(10L).name("Electronics").build();
+
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("Laptop")
+                .categoryId(10L)
+                .cityId(888L)
+                .build();
+
+        when(categoryRepository.findById(10L)).thenReturn(Optional.of(category));
+        when(cityRepository.findById(888L)).thenReturn(Optional.empty());
+
+        assertThrows(CityNotFoundException.class,
+                () -> advertisementService.create(request, currentUser));
+
+        verify(advertisementRepository, never()).save(any(Advertisement.class));
+    }
+    @Test
+    void create_shouldSaveAdvertisementSuccessfully_whenNoImagesAreProvided() {
+        User currentUser = User.builder()
+                .id(1L)
+                .username("omid_b")
+                .name("Omid Behzadpoor")
+                .build();
+
+        Category category = Category.builder()
+                .id(10L)
+                .name("Electronics")
+                .build();
+
+        City city = City.builder()
+                .id(20L)
+                .name("Tehran")
+                .build();
+
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("Laptop")
+                .description("Core i7, 16GB RAM")
+                .price(1500L)
+                .categoryId(10L)
+                .cityId(20L)
+                .imageUrls(null)
+                .build();
+
+        Advertisement savedAd = Advertisement.builder()
+                .id(100L)
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .price(request.getPrice())
+                .category(category)
+                .city(city)
+                .seller(currentUser)
+                .status(AdvertisementStatus.PENDING)
+                .images(new ArrayList<>())
+                .build();
+
+        when(categoryRepository.findById(10L)).thenReturn(Optional.of(category));
+        when(cityRepository.findById(20L)).thenReturn(Optional.of(city));
+        when(advertisementRepository.save(any(Advertisement.class))).thenReturn(savedAd);
+
+        AdvertisementResponse response = advertisementService.create(request, currentUser);
+
+        assertNotNull(response);
+        assertEquals(100L, response.getId());
+        assertTrue(response.getImageUrls() == null || response.getImageUrls().isEmpty());
+
+        verify(advertisementRepository, times(1)).save(any(Advertisement.class));
+    }
+
+    @Test
+    void create_shouldThrowUnauthorizedActionException_whenUserIsAnonymous() {
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("Laptop")
+                .description("Core i7, 16GB RAM")
+                .price(1500L)
+                .categoryId(10L)
+                .cityId(20L)
+                .build();
+
+        assertThrows(UnauthorizedActionException.class,
+                () -> advertisementService.create(request, null));
+
+        verify(advertisementRepository, never()).save(any(Advertisement.class));
+    }
+
 
 }
