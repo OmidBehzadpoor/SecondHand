@@ -158,6 +158,62 @@ class ChatServiceTest {
     }
 
     @Test
+    void startOrGetConversation_shouldThrowAdvertisementNotFoundException_whenAdIsRejected() {
+        User seller = User.builder().id(1L).build();
+        User buyer = User.builder().id(2L).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(10L)
+                .status(AdvertisementStatus.REJECTED)
+                .seller(seller)
+                .build();
+
+        when(advertisementRepository.findById(10L)).thenReturn(Optional.of(ad));
+
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> chatService.startOrGetConversation(10L, buyer));
+
+        verify(conversationRepository, never()).save(any());
+    }
+
+    @Test
+    void startOrGetConversation_shouldCreateNewConversation_whenAdvertisementIsSold() {
+        // A SOLD advertisement is treated the same as APPROVED for read/interaction
+        // purposes everywhere else in the codebase (getById shows it to strangers,
+        // addFavorite allows favoriting it, and sendMessage on its existing conversations
+        // already works — tested above). Consistent with that pattern, a new buyer
+        // starting a fresh conversation on a SOLD advertisement is expected to succeed.
+        User seller = User.builder().id(1L).username("seller").status(UserStatus.ACTIVE).build();
+        User buyer = User.builder().id(2L).username("buyer").status(UserStatus.ACTIVE).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(10L)
+                .title("Laptop")
+                .status(AdvertisementStatus.SOLD)
+                .seller(seller)
+                .build();
+
+        Conversation savedConversation = Conversation.builder()
+                .id(1L)
+                .advertisement(ad)
+                .buyer(buyer)
+                .messages(new ArrayList<>())
+                .build();
+
+        when(advertisementRepository.findById(10L)).thenReturn(Optional.of(ad));
+        when(conversationRepository.findByAdvertisementIdAndBuyerId(10L, 2L))
+                .thenReturn(Optional.empty());
+        when(conversationRepository.save(any(Conversation.class))).thenReturn(savedConversation);
+        when(messageRepository.countByConversationIdAndIsReadFalseAndSenderIdNot(any(), any()))
+                .thenReturn(0L);
+
+        ConversationResponse response = chatService.startOrGetConversation(10L, buyer);
+
+        assertNotNull(response);
+        verify(conversationRepository, times(1)).save(any(Conversation.class));
+    }
+
+    @Test
     void startOrGetConversation_shouldThrowUnauthorizedActionException_whenBuyerIsOwner() {
         User seller = User.builder().id(1L).status(UserStatus.ACTIVE).build();
 
@@ -335,6 +391,36 @@ class ChatServiceTest {
         Advertisement ad = Advertisement.builder()
                 .id(10L)
                 .status(AdvertisementStatus.DELETED)
+                .seller(seller)
+                .build();
+
+        Conversation conversation = Conversation.builder()
+                .id(1L)
+                .advertisement(ad)
+                .buyer(buyer)
+                .build();
+
+        SendMessageRequest request = new SendMessageRequest("سلام");
+
+        when(conversationRepository.findById(1L)).thenReturn(Optional.of(conversation));
+
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> chatService.sendMessage(1L, buyer, request));
+
+        verify(messageRepository, never()).save(any());
+    }
+
+    @Test
+    void sendMessage_shouldThrowAdvertisementNotFoundException_whenAdvertisementIsRejected() {
+        // Same missing check as the DELETED case above — sendMessage has no advertisement-
+        // status guard at all, so this fails for the same reason and would be fixed by the
+        // same code change.
+        User seller = User.builder().id(1L).username("seller").status(UserStatus.ACTIVE).build();
+        User buyer = User.builder().id(2L).username("buyer").status(UserStatus.ACTIVE).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(10L)
+                .status(AdvertisementStatus.REJECTED)
                 .seller(seller)
                 .build();
 
