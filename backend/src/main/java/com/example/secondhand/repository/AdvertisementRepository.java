@@ -21,4 +21,6 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
     boolean existsByCategoryId(Long categoryId);
 
     boolean existsByCityId(Long cityId);
+
+    long countByStatus(AdvertisementStatus status);
 }
