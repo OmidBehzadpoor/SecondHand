@@ -25,6 +25,7 @@ public class AdvertisementService {
     private final AdvertisementRepository advertisementRepository;
     private final CategoryRepository categoryRepository;
     private final CityRepository cityRepository;
+    private final SellerRatingService sellerRatingService;
 
     public AdvertisementResponse create(AdvertisementRequest request, User currentUser) {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -261,6 +262,8 @@ public class AdvertisementService {
                 .sellerName(advertisement.getSeller().getName())
                 .sellerPhone(advertisement.getSeller().getPhone())
                 .sellerEmail(advertisement.getSeller().getEmail())
+                .sellerAverageRating(sellerRatingService.getSellerAverageRating(advertisement.getSeller().getId()))
+                .sellerRatingCount(sellerRatingService.getSellerRatingCount(advertisement.getSeller().getId()))
                 .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
                 .rejectionReason(advertisement.getRejectionReason())
                 .createdAt(advertisement.getCreatedAt())
