@@ -186,8 +186,6 @@ class ChatServiceTest {
                 .seller(seller)
                 .build();
 
-        when(advertisementRepository.findById(10L)).thenReturn(Optional.of(ad));
-
         assertThrows(UserBlockedException.class,
                 () -> chatService.startOrGetConversation(10L, blockedBuyer));
 
