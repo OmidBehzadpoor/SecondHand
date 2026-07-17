@@ -142,6 +142,27 @@ class SellerRatingServiceTest {
     }
 
     @Test
+    void rateAdvertisement_shouldThrowAdvertisementNotFoundException_whenAdIsRejected() {
+        User buyer = User.builder().id(2L).build();
+        User seller = User.builder().id(1L).build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(10L)
+                .status(AdvertisementStatus.REJECTED)
+                .seller(seller)
+                .build();
+
+        SellerRatingRequest request = SellerRatingRequest.builder().rating(5).build();
+
+        when(advertisementRepository.findById(10L)).thenReturn(Optional.of(ad));
+
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> sellerRatingService.rateAdvertisement(10L, request, buyer));
+
+        verify(sellerRatingRepository, never()).save(any());
+    }
+
+    @Test
     void rateAdvertisement_shouldThrowUnauthorizedActionException_whenBuyerIsSeller() {
         User seller = User.builder().id(1L).username("seller").build();
 
