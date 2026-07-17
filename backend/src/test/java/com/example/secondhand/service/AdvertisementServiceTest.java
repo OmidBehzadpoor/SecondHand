@@ -1,13 +1,13 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.AdvertisementRequest;
+import com.example.secondhand.dto.response.AdminAdvertisementResponse;
 import com.example.secondhand.dto.response.AdvertisementResponse;
 import com.example.secondhand.exception.*;
 import com.example.secondhand.model.*;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
 import com.example.secondhand.repository.CityRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -176,7 +176,6 @@ class AdvertisementServiceTest {
         verify(advertisementRepository, never()).save(any(Advertisement.class));
     }
 
-    @Disabled("Service does not check DELETED status in delete yet")
     @Test
     void delete_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsAlreadyDeleted() {
         User seller = User.builder().id(1L).build();
@@ -195,7 +194,6 @@ class AdvertisementServiceTest {
         verify(advertisementRepository, never()).save(any(Advertisement.class));
     }
 
-    @Disabled("Service does not allow admin to delete others ads yet")
     @Test
     void delete_shouldDeleteAdvertisement_whenUserIsAdmin() {
         User seller = User.builder().id(1L).build();
@@ -357,7 +355,6 @@ class AdvertisementServiceTest {
         verify(advertisementRepository, never()).save(any(Advertisement.class));
     }
 
-    @Disabled("Service does not check for null user yet — should throw UnauthorizedActionException")
     @Test
     void create_shouldThrowUnauthorizedActionException_whenUserIsAnonymous() {
         AdvertisementRequest request = AdvertisementRequest.builder()
@@ -455,7 +452,6 @@ class AdvertisementServiceTest {
                 () -> advertisementService.getById(adId, user));
     }
 
-    @Disabled("Service does not check DELETED status before isOwner check yet")
     @Test
     void getById_shouldThrowAdvertisementNotFoundException_whenAdvertisementIsDeletedEvenIfUserIsOwner() {
         Long adId = 1L;
@@ -665,7 +661,6 @@ class AdvertisementServiceTest {
         verify(advertisementRepository, never()).save(any());
     }
 
-    @Disabled("Service does not check advertisement status before updating yet")
     @Test
     void update_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsDeleted() {
         User seller = User.builder().id(1L).build();
@@ -691,7 +686,6 @@ class AdvertisementServiceTest {
         verify(advertisementRepository, never()).save(any());
     }
 
-    @Disabled("Service does not check advertisement status before updating yet")
     @Test
     void update_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsSold() {
         User seller = User.builder().id(1L).build();
@@ -807,5 +801,272 @@ class AdvertisementServiceTest {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    // ==================== GET ALL — edge cases ====================
+
+    @Test
+    void getAll_shouldThrowCategoryNotFoundException_whenCategoryIdIsInvalid() {
+        when(categoryRepository.existsById(999L)).thenReturn(false);
+
+        assertThrows(CategoryNotFoundException.class,
+                () -> advertisementService.getAll(null, 999L, null, null, null, null));
+
+        verify(advertisementRepository, never()).search(any(), any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void getAll_shouldThrowCityNotFoundException_whenCityIdIsInvalid() {
+        when(categoryRepository.existsById(1L)).thenReturn(true);
+        when(cityRepository.existsById(999L)).thenReturn(false);
+
+        assertThrows(CityNotFoundException.class,
+                () -> advertisementService.getAll(null, 1L, 999L, null, null, null));
+
+        verify(advertisementRepository, never()).search(any(), any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void getAll_shouldStillCallRepository_whenMinPriceIsGreaterThanMaxPrice() {
+        // NOTE: the service currently performs no validation that minPrice <= maxPrice;
+        // it passes both values straight through to the repository query. This test
+        // documents that current (unvalidated) behavior rather than asserting a business rule.
+        when(advertisementRepository.search(
+                eq(AdvertisementStatus.APPROVED), isNull(), isNull(), isNull(), eq(5000L), eq(1000L), isNull()))
+                .thenReturn(List.of());
+
+        List<AdvertisementResponse> result =
+                advertisementService.getAll(null, null, null, 5000L, 1000L, null);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(advertisementRepository, times(1))
+                .search(eq(AdvertisementStatus.APPROVED), isNull(), isNull(), isNull(), eq(5000L), eq(1000L), isNull());
+    }
+
+    // ==================== UPDATE — status transition edge case ====================
+
+    @Test
+    void update_shouldResetStatusToPending_whenAdvertisementIsAlreadyPending() {
+        // NOTE: the service currently does not block editing a PENDING advertisement;
+        // it re-applies PENDING regardless of the advertisement's prior status.
+        User seller = User.builder().id(1L).username("omid_b").build();
+        Category category = Category.builder().id(1L).name("Electronics").build();
+        City city = City.builder().id(1L).name("Tehran").build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .title("Old Title")
+                .seller(seller)
+                .category(category)
+                .city(city)
+                .status(AdvertisementStatus.PENDING)
+                .images(new ArrayList<>())
+                .build();
+
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("New Title")
+                .categoryId(1L)
+                .cityId(1L)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
+        when(advertisementRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        AdvertisementResponse response = advertisementService.update(1L, request, seller);
+
+        assertEquals(AdvertisementStatus.PENDING, response.getStatus());
+        verify(advertisementRepository, times(1)).save(any());
+    }
+
+    // ==================== GET PENDING ADVERTISEMENTS (admin) ====================
+
+    @Test
+    void getPendingAdvertisements_shouldReturnPendingAdvertisements_whenSomeExist() {
+        User seller = User.builder().id(1L).username("seller").name("Seller Name")
+                .phone("09121234567").email("seller@example.com").build();
+        Category category = Category.builder().id(1L).name("Electronics").build();
+        City city = City.builder().id(1L).name("Tehran").build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .title("Laptop")
+                .status(AdvertisementStatus.PENDING)
+                .seller(seller)
+                .category(category)
+                .city(city)
+                .images(new ArrayList<>())
+                .build();
+
+        when(advertisementRepository.findByStatus(AdvertisementStatus.PENDING)).thenReturn(List.of(ad));
+
+        List<AdminAdvertisementResponse> result = advertisementService.getPendingAdvertisements();
+
+        assertEquals(1, result.size());
+        assertEquals("Laptop", result.get(0).getTitle());
+        assertEquals(1L, result.get(0).getSellerId());
+    }
+
+    @Test
+    void getPendingAdvertisements_shouldReturnEmptyList_whenNoneArePending() {
+        when(advertisementRepository.findByStatus(AdvertisementStatus.PENDING)).thenReturn(List.of());
+
+        List<AdminAdvertisementResponse> result = advertisementService.getPendingAdvertisements();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    // ==================== APPROVE (admin) ====================
+
+    @Test
+    void approve_shouldSetStatusToApproved_whenAdvertisementIsPending() {
+        User seller = User.builder().id(1L).username("seller").build();
+        Category category = Category.builder().id(1L).name("Electronics").build();
+        City city = City.builder().id(1L).name("Tehran").build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .title("Laptop")
+                .status(AdvertisementStatus.PENDING)
+                .rejectionReason("previous rejection note")
+                .seller(seller)
+                .category(category)
+                .city(city)
+                .images(new ArrayList<>())
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+        when(advertisementRepository.save(any(Advertisement.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        AdminAdvertisementResponse response = advertisementService.approve(1L);
+
+        assertEquals(AdvertisementStatus.APPROVED, response.getStatus());
+        assertNull(response.getRejectionReason());
+        verify(advertisementRepository, times(1)).save(ad);
+    }
+
+    @Test
+    void approve_shouldThrowAdvertisementNotFoundException_whenAdvertisementDoesNotExist() {
+        when(advertisementRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> advertisementService.approve(99L));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
+    @Test
+    void approve_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsNotPending() {
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .status(AdvertisementStatus.APPROVED)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        assertThrows(InvalidAdvertisementStateException.class,
+                () -> advertisementService.approve(1L));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
+    // ==================== REJECT (admin) ====================
+
+    @Test
+    void reject_shouldSetStatusToRejectedWithReason_whenAdvertisementIsPending() {
+        User seller = User.builder().id(1L).username("seller").build();
+        Category category = Category.builder().id(1L).name("Electronics").build();
+        City city = City.builder().id(1L).name("Tehran").build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .title("Laptop")
+                .status(AdvertisementStatus.PENDING)
+                .seller(seller)
+                .category(category)
+                .city(city)
+                .images(new ArrayList<>())
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+        when(advertisementRepository.save(any(Advertisement.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        AdminAdvertisementResponse response = advertisementService.reject(1L, "Inappropriate content");
+
+        assertEquals(AdvertisementStatus.REJECTED, response.getStatus());
+        assertEquals("Inappropriate content", response.getRejectionReason());
+        verify(advertisementRepository, times(1)).save(ad);
+    }
+
+    @Test
+    void reject_shouldThrowAdvertisementNotFoundException_whenAdvertisementDoesNotExist() {
+        when(advertisementRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> advertisementService.reject(99L, "reason"));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
+    @Test
+    void reject_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsNotPending() {
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .status(AdvertisementStatus.APPROVED)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        assertThrows(InvalidAdvertisementStateException.class,
+                () -> advertisementService.reject(1L, "reason"));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
+    // ==================== ADMIN DELETE ====================
+
+    @Test
+    void adminDelete_shouldSetStatusToDeleted_whenAdvertisementIsNotAlreadyDeleted() {
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .status(AdvertisementStatus.APPROVED)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        advertisementService.adminDelete(1L);
+
+        assertEquals(AdvertisementStatus.DELETED, ad.getStatus());
+        verify(advertisementRepository, times(1)).save(ad);
+    }
+
+    @Test
+    void adminDelete_shouldThrowAdvertisementNotFoundException_whenAdvertisementDoesNotExist() {
+        when(advertisementRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(AdvertisementNotFoundException.class,
+                () -> advertisementService.adminDelete(99L));
+
+        verify(advertisementRepository, never()).save(any());
+    }
+
+    @Test
+    void adminDelete_shouldThrowInvalidAdvertisementStateException_whenAdvertisementIsAlreadyDeleted() {
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .status(AdvertisementStatus.DELETED)
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+
+        assertThrows(InvalidAdvertisementStateException.class,
+                () -> advertisementService.adminDelete(1L));
+
+        verify(advertisementRepository, never()).save(any());
     }
 }
