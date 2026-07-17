@@ -4,6 +4,7 @@ import com.example.secondhand.model.Role;
 import com.example.secondhand.model.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,6 +102,12 @@ class JwtServiceTest {
 
         assertThrows(ExpiredJwtException.class,
                 () -> jwtService.isTokenExpired(expiredToken));
+    }
+
+    @Test
+    void isTokenExpired_shouldThrowMalformedJwtException_whenTokenIsNotAJwtAtAll() {
+        assertThrows(MalformedJwtException.class,
+                () -> jwtService.isTokenExpired("not-a-token"));
     }
 
     // ==================== validateToken ====================
