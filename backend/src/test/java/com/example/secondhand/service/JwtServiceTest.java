@@ -120,6 +120,24 @@ class JwtServiceTest {
     }
 
     @Test
+    void validateToken_shouldReturnFalse_whenTokenIsExpired() {
+        SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+        Date past = new Date(System.currentTimeMillis() - 10_000);
+        Date evenMorePast = new Date(System.currentTimeMillis() - 20_000);
+
+        String expiredToken = Jwts.builder()
+                .subject("ali123")
+                .claim("userId", 1L)
+                .claim("role", Role.USER.name())
+                .issuedAt(evenMorePast)
+                .expiration(past)
+                .signWith(key)
+                .compact();
+
+        assertFalse(jwtService.validateToken(expiredToken, "ali123"));
+    }
+
+    @Test
     void validateToken_shouldReturnFalse_whenTokenIsMalformed() {
         assertFalse(jwtService.validateToken("not-a-valid-token", "ali123"));
     }
