@@ -41,4 +41,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             @Param("maxPrice") Long maxPrice,
             @Param("sortBy") String sortBy
     );
+    long countByStatus(AdvertisementStatus status);
+
 }
+

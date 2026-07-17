@@ -92,6 +92,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(UserStateConflictException.class)
+    public ResponseEntity<Map<String, String>> handleUserStateConflict(UserStateConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(FavoriteNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleFavoriteNotFound(FavoriteNotFoundException ex) {
         return ResponseEntity
@@ -101,6 +107,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConversationNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleConversationNotFound(ConversationNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
