@@ -568,6 +568,96 @@ class AdvertisementServiceTest {
     }
 
     @Test
+    void update_shouldSyncImages_whenSomeAreKeptSomeRemovedAndOneAdded() {
+        User seller = User.builder().id(1L).username("omid_b").build();
+        Category category = Category.builder().id(1L).name("Electronics").build();
+        City city = City.builder().id(1L).name("Tehran").build();
+
+        AdvertisementImage keptImage = AdvertisementImage.builder()
+                .id(1L)
+                .imageUrl("http://example.com/keep.jpg")
+                .build();
+        AdvertisementImage removedImage = AdvertisementImage.builder()
+                .id(2L)
+                .imageUrl("http://example.com/remove.jpg")
+                .build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .title("Old Title")
+                .seller(seller)
+                .category(category)
+                .city(city)
+                .status(AdvertisementStatus.APPROVED)
+                .images(new ArrayList<>(List.of(keptImage, removedImage)))
+                .build();
+
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("New Title")
+                .categoryId(1L)
+                .cityId(1L)
+                .imageUrls(List.of("http://example.com/keep.jpg", "http://example.com/new.jpg"))
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
+        when(advertisementRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        AdvertisementResponse response = advertisementService.update(1L, request, seller);
+
+        List<String> resultUrls = response.getImageUrls();
+        assertEquals(2, resultUrls.size());
+        assertTrue(resultUrls.contains("http://example.com/keep.jpg"));
+        assertTrue(resultUrls.contains("http://example.com/new.jpg"));
+        assertFalse(resultUrls.contains("http://example.com/remove.jpg"));
+
+        AdvertisementImage newlyAddedImage = ad.getImages().stream()
+                .filter(image -> image.getImageUrl().equals("http://example.com/new.jpg"))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(ad, newlyAddedImage.getAdvertisement());
+    }
+
+    @Test
+    void update_shouldRemoveAllImages_whenImageUrlsIsEmpty() {
+        User seller = User.builder().id(1L).username("omid_b").build();
+        Category category = Category.builder().id(1L).name("Electronics").build();
+        City city = City.builder().id(1L).name("Tehran").build();
+
+        AdvertisementImage existingImage = AdvertisementImage.builder()
+                .id(1L)
+                .imageUrl("http://example.com/old.jpg")
+                .build();
+
+        Advertisement ad = Advertisement.builder()
+                .id(1L)
+                .title("Old Title")
+                .seller(seller)
+                .category(category)
+                .city(city)
+                .status(AdvertisementStatus.APPROVED)
+                .images(new ArrayList<>(List.of(existingImage)))
+                .build();
+
+        AdvertisementRequest request = AdvertisementRequest.builder()
+                .title("New Title")
+                .categoryId(1L)
+                .cityId(1L)
+                .imageUrls(List.of())
+                .build();
+
+        when(advertisementRepository.findById(1L)).thenReturn(Optional.of(ad));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
+        when(advertisementRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        AdvertisementResponse response = advertisementService.update(1L, request, seller);
+
+        assertTrue(response.getImageUrls() == null || response.getImageUrls().isEmpty());
+    }
+
+    @Test
     void update_shouldThrowUnauthorizedActionException_whenUserIsNotOwner() {
         User seller = User.builder().id(1L).build();
         User stranger = User.builder().id(2L).build();
