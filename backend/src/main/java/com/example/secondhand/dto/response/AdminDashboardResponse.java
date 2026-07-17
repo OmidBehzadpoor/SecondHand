@@ -24,4 +24,9 @@ public class AdminDashboardResponse {
 
     private long totalCategories;
     private long totalCities;
+
+    private long totalConversations;
+    private long totalMessages;
+    private long totalFavorites;
+    private long totalRatings;
 }
