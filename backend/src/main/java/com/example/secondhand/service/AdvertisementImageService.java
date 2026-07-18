@@ -48,8 +48,9 @@ public class AdvertisementImageService {
             throw new UnauthorizedActionException("شما اجازه‌ی افزودن تصویر به این آگهی را ندارید");
         }
 
-        if (advertisement.getStatus() == AdvertisementStatus.DELETED) {
-            throw new InvalidImageException("امکان افزودن تصویر به آگهی حذف‌شده وجود ندارد");
+        if (advertisement.getStatus() == AdvertisementStatus.DELETED
+                || advertisement.getStatus() == AdvertisementStatus.SOLD) {
+            throw new InvalidImageException("امکان حذف تصویر این آگهی وجود ندارد");
         }
 
         if (advertisement.getImages().size() >= MAX_IMAGES_PER_ADVERTISEMENT) {
@@ -104,8 +105,9 @@ public class AdvertisementImageService {
             throw new UnauthorizedActionException("شما اجازه‌ی حذف تصویر این آگهی را ندارید");
         }
 
-        if (advertisement.getStatus() == AdvertisementStatus.DELETED) {
-            throw new InvalidImageException("امکان حذف تصویر آگهی حذف‌شده وجود ندارد");
+        if (advertisement.getStatus() == AdvertisementStatus.DELETED
+                || advertisement.getStatus() == AdvertisementStatus.SOLD) {
+            throw new InvalidImageException("امکان حذف تصویر این آگهی وجود ندارد");
         }
 
         AdvertisementImage image = advertisementImageRepository.findById(imageId)
