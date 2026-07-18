@@ -73,18 +73,19 @@ public class AdvertisementService {
 
     @Transactional(readOnly = true)
     public List<AdvertisementResponse> getAll(String keyword, Long categoryId, Long cityId,
-                                              Long minPrice, Long maxPrice, String sortBy) {
+                                              Long minPrice, Long maxPrice, SortOption sortBy) {
 
         if (categoryId != null && !categoryRepository.existsById(categoryId)) {
             throw new CategoryNotFoundException("دسته‌بندی مورد نظر یافت نشد");
         }
-
         if (cityId != null && !cityRepository.existsById(cityId)) {
             throw new CityNotFoundException("شهر مورد نظر یافت نشد");
         }
 
+        String sortByName = sortBy != null ? sortBy.name() : null;
+
         return advertisementRepository
-                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortBy)
+                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

@@ -3,6 +3,7 @@ package com.example.secondhand.controller;
 import com.example.secondhand.dto.AdvertisementRequest;
 import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.AdvertisementResponse;
+import com.example.secondhand.model.SortOption;
 import com.example.secondhand.model.User;
 import com.example.secondhand.service.AdvertisementService;
 import jakarta.validation.Valid;
@@ -50,7 +51,7 @@ public class AdvertisementController {
             @RequestParam(required = false) Long cityId,
             @RequestParam(required = false) Long minPrice,
             @RequestParam(required = false) Long maxPrice,
-            @RequestParam(required = false) String sortBy) {
+            @RequestParam(required = false) SortOption sortBy) {
         List<AdvertisementResponse> responses =
                 advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy);
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENTS_RETRIEVED", responses));
