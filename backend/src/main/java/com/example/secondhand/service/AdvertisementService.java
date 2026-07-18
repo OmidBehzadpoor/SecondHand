@@ -81,6 +81,9 @@ public class AdvertisementService {
         if (cityId != null && !cityRepository.existsById(cityId)) {
             throw new CityNotFoundException("شهر مورد نظر یافت نشد");
         }
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new InvalidAdvertisementStateException("حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد");
+        }
 
         String sortByName = sortBy != null ? sortBy.name() : null;
 
