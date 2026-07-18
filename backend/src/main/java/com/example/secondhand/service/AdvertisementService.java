@@ -13,6 +13,8 @@ import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
 import com.example.secondhand.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,31 +69,19 @@ public class AdvertisementService {
     }
 
     @Transactional(readOnly = true)
-    public List<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
-        return getAll(null, categoryId, cityId, null, null, null);
+    public Page<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
+        return getAll(null, categoryId, cityId, null, null, null, Pageable.unpaged());
     }
 
     @Transactional(readOnly = true)
-    public List<AdvertisementResponse> getAll(String keyword, Long categoryId, Long cityId,
-                                              Long minPrice, Long maxPrice, SortOption sortBy) {
-
-        if (categoryId != null && !categoryRepository.existsById(categoryId)) {
-            throw new CategoryNotFoundException("دسته‌بندی مورد نظر یافت نشد");
-        }
-        if (cityId != null && !cityRepository.existsById(cityId)) {
-            throw new CityNotFoundException("شهر مورد نظر یافت نشد");
-        }
-        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
-            throw new InvalidAdvertisementStateException("حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد");
-        }
-
+    public Page<AdvertisementResponse> getAll(String keyword, Long categoryId, Long cityId,
+                                              Long minPrice, Long maxPrice, SortOption sortBy,
+                                              Pageable pageable) {
         String sortByName = sortBy != null ? sortBy.name() : null;
 
         return advertisementRepository
-                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName, pageable)
+                .map(this::mapToResponse);
     }
 
 

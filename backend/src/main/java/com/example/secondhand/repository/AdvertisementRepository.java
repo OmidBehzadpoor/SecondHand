@@ -2,6 +2,8 @@ package com.example.secondhand.repository;
 
 import com.example.secondhand.model.Advertisement;
 import com.example.secondhand.model.AdvertisementStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,13 +35,14 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
       CASE WHEN :sortBy = 'OLDEST' THEN a.createdAt END ASC,
       a.createdAt DESC
     """)
-    List<Advertisement> search(
+    Page<Advertisement> search(
             @Param("status") AdvertisementStatus status,
             @Param("keyword") String keyword,
             @Param("categoryId") Long categoryId,
             @Param("cityId") Long cityId,
             @Param("minPrice") Long minPrice,
             @Param("maxPrice") Long maxPrice,
-            @Param("sortBy") String sortBy
+            @Param("sortBy") String sortBy,
+            Pageable pageable
     );
 }
