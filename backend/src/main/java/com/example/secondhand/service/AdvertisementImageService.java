@@ -65,6 +65,10 @@ public class AdvertisementImageService {
             throw new InvalidImageException("فرمت فایل مجاز نیست؛ فقط JPEG، PNG و WEBP پذیرفته می‌شود");
         }
 
+        if (!hasValidImageSignature(file)) {
+            throw new InvalidImageException("محتوای فایل با فرمت اعلام‌شده مطابقت ندارد");
+        }
+
         String extension = switch (contentType.toLowerCase()) {
             case "image/png" -> ".png";
             case "image/webp" -> ".webp";
@@ -123,5 +127,37 @@ public class AdvertisementImageService {
                 .id(image.getId())
                 .imageUrl(image.getImageUrl())
                 .build();
+    }
+
+    private boolean hasValidImageSignature(MultipartFile file) {
+        try {
+            byte[] header = new byte[12];
+            int bytesRead;
+            try (var inputStream = file.getInputStream()) {
+                bytesRead = inputStream.read(header);
+            }
+
+            if (bytesRead < 3) {
+                return false;
+            }
+
+            boolean isJpeg = (header[0] & 0xFF) == 0xFF
+                    && (header[1] & 0xFF) == 0xD8
+                    && (header[2] & 0xFF) == 0xFF;
+
+            boolean isPng = bytesRead >= 8
+                    && (header[0] & 0xFF) == 0x89
+                    && header[1] == 'P' && header[2] == 'N' && header[3] == 'G'
+                    && header[4] == 0x0D && header[5] == 0x0A
+                    && header[6] == 0x1A && header[7] == 0x0A;
+
+            boolean isWebp = bytesRead >= 12
+                    && header[0] == 'R' && header[1] == 'I' && header[2] == 'F' && header[3] == 'F'
+                    && header[8] == 'W' && header[9] == 'E' && header[10] == 'B' && header[11] == 'P';
+
+            return isJpeg || isPng || isWebp;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
