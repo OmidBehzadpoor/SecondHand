@@ -19,19 +19,20 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
     boolean existsByCityId(Long cityId);
 
     @Query("""
-        SELECT a FROM Advertisement a
-        WHERE a.status = :status
-          AND (:keyword IS NULL OR LOWER(a.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
-               OR LOWER(a.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
-          AND (:categoryId IS NULL OR a.category.id = :categoryId)
-          AND (:cityId IS NULL OR a.city.id = :cityId)
-          AND (:minPrice IS NULL OR a.price >= :minPrice)
-          AND (:maxPrice IS NULL OR a.price <= :maxPrice)
-        ORDER BY
-          CASE WHEN :sortBy = 'PRICE_ASC' THEN a.price END ASC,
-          CASE WHEN :sortBy = 'PRICE_DESC' THEN a.price END DESC,
-          a.createdAt DESC
-        """)
+    SELECT a FROM Advertisement a
+    WHERE a.status = :status
+      AND (:keyword IS NULL OR LOWER(a.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(a.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
+      AND (:categoryId IS NULL OR a.category.id = :categoryId)
+      AND (:cityId IS NULL OR a.city.id = :cityId)
+      AND (:minPrice IS NULL OR a.price >= :minPrice)
+      AND (:maxPrice IS NULL OR a.price <= :maxPrice)
+    ORDER BY
+      CASE WHEN :sortBy = 'PRICE_ASC' THEN a.price END ASC,
+      CASE WHEN :sortBy = 'PRICE_DESC' THEN a.price END DESC,
+      CASE WHEN :sortBy = 'OLDEST' THEN a.createdAt END ASC,
+      a.createdAt DESC
+    """)
     List<Advertisement> search(
             @Param("status") AdvertisementStatus status,
             @Param("keyword") String keyword,
