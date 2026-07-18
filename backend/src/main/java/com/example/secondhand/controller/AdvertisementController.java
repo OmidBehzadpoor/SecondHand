@@ -7,10 +7,12 @@ import com.example.secondhand.model.SortOption;
 import com.example.secondhand.model.User;
 import com.example.secondhand.service.AdvertisementService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/advertisements")
 @RequiredArgsConstructor
+@Validated
 public class AdvertisementController {
 
     private final AdvertisementService advertisementService;
@@ -49,8 +52,8 @@ public class AdvertisementController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long cityId,
-            @RequestParam(required = false) Long minPrice,
-            @RequestParam(required = false) Long maxPrice,
+            @RequestParam(required = false) @Min(value = 0, message = "قیمت نمی‌تواند منفی باشد") Long minPrice,
+            @RequestParam(required = false) @Min(value = 0, message = "قیمت نمی‌تواند منفی باشد") Long maxPrice,
             @RequestParam(required = false) SortOption sortBy) {
         List<AdvertisementResponse> responses =
                 advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy);
