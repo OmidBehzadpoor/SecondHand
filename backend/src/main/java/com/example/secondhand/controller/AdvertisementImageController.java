@@ -3,6 +3,7 @@ package com.example.secondhand.controller;
 import com.example.secondhand.dto.response.AdvertisementImageResponse;
 import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.model.User;
+import com.example.secondhand.exception.InvalidImageException;
 import com.example.secondhand.service.AdvertisementImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,13 @@ public class AdvertisementImageController {
             @PathVariable Long advertisementId,
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal User currentUser) {
+        if (file.isEmpty()) {
+            throw new InvalidImageException("فایل تصویر ارسال نشده است");
+        }
         AdvertisementImageResponse response = advertisementImageService.uploadImage(advertisementId, file, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(true, "IMAGE_UPLOADED", response));
     }
-
     @DeleteMapping("/{imageId}")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable Long advertisementId,
