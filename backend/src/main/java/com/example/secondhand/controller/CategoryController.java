@@ -46,4 +46,14 @@ public class CategoryController {
         ApiResponse<Void> response = new ApiResponse<>(true, "CATEGORY_DELETED", null);
         return ResponseEntity.ok(response);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryRequest request) {
+        CategoryResponse categoryResponse = categoryService.update(id, request);
+        ApiResponse<CategoryResponse> response = new ApiResponse<>(true, "CATEGORY_UPDATED", categoryResponse);
+        return ResponseEntity.ok(response);
+    }
 }
