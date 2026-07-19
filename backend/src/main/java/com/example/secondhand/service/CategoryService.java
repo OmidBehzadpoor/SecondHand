@@ -60,6 +60,24 @@ public class CategoryService {
                 .toList();
     }
 
+    public CategoryResponse update(Long id, CategoryRequest request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("دسته‌بندی یافت نشد"));
+
+        Category newParent = null;
+        if (request.getParentId() != null) {
+            newParent = categoryRepository.findById(request.getParentId())
+                    .orElseThrow(() -> new CategoryNotFoundException("دسته‌بندی والد یافت نشد"));
+        }
+
+        ensureNoCycle(category, newParent);
+
+        category.setName(request.getName());
+        category.setParent(newParent);
+
+        return mapToResponse(categoryRepository.save(category), false);
+    }
+
     private void ensureNoCycle(Category category, Category newParent) {
         if (newParent == null) {
             return;
