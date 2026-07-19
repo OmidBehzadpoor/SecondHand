@@ -14,6 +14,8 @@ import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
 import com.example.secondhand.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,26 +71,30 @@ public class AdvertisementService {
         return mapToResponse(advertisement, ratingSummaryFor(advertisement.getSeller().getId()));
     }
 
-    public List<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
-        List<Advertisement> advertisements;
+    @Transactional(readOnly = true)
+    public Page<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
+        return getAll(null, categoryId, cityId, null, null, null, Pageable.unpaged());
+    }
 
-        if (categoryId != null && cityId != null) {
-            advertisements = advertisementRepository.findByStatusAndCategoryIdAndCityId(
-                    AdvertisementStatus.APPROVED, categoryId, cityId);
-        } else if (categoryId != null) {
-            advertisements = advertisementRepository.findByStatusAndCategoryId(AdvertisementStatus.APPROVED, categoryId);
-        } else if (cityId != null) {
-            advertisements = advertisementRepository.findByStatusAndCityId(AdvertisementStatus.APPROVED, cityId);
-        } else {
-            advertisements = advertisementRepository.findByStatus(AdvertisementStatus.APPROVED);
+    @Transactional(readOnly = true)
+    public Page<AdvertisementResponse> getAll(String keyword, Long categoryId, Long cityId,
+                                              Long minPrice, Long maxPrice, SortOption sortBy,
+                                              Pageable pageable) {
+
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new InvalidAdvertisementStateException("حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد");
         }
 
-        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisements);
+        String sortByName = sortBy != null ? sortBy.name() : null;
 
-        return advertisements.stream()
-                .map(advertisement -> mapToResponse(advertisement, ratingSummaries))
-                .toList();
+        Page<Advertisement> advertisementsPage = advertisementRepository
+                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName, pageable);
+
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisementsPage.getContent());
+
+        return advertisementsPage.map(advertisement -> mapToResponse(advertisement, ratingSummaries));
     }
+
 
     public List<AdvertisementResponse> getMyAdvertisements(User currentUser) {
         List<Advertisement> advertisements = advertisementRepository.findBySellerId(currentUser.getId());

@@ -8,6 +8,7 @@ import com.example.secondhand.exception.InvalidCredentialsException;
 import com.example.secondhand.exception.UnauthorizedActionException;
 import com.example.secondhand.exception.UserNotFoundException;
 import com.example.secondhand.exception.UserStateConflictException;
+import com.example.secondhand.exception.UserBlockedException;
 import com.example.secondhand.model.Role;
 import com.example.secondhand.model.User;
 import com.example.secondhand.model.UserStatus;
@@ -59,6 +60,10 @@ public class UserService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("نام کاربری یا رمز عبور اشتباه است");
+        }
+
+        if (user.getStatus() == UserStatus.BLOCKED) {
+            throw new UserBlockedException("حساب کاربری شما مسدود شده است");
         }
 
         String token = jwtService.generateToken(user);
