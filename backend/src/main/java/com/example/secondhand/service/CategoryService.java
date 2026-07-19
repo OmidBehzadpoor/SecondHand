@@ -2,15 +2,13 @@ package com.example.secondhand.service;
 
 import com.example.secondhand.dto.CategoryRequest;
 import com.example.secondhand.dto.response.CategoryResponse;
-import com.example.secondhand.exception.CategoryHasChildrenException;
-import com.example.secondhand.exception.CategoryInUseException;
-import com.example.secondhand.exception.CategoryNotFoundException;
-import com.example.secondhand.exception.InvalidCategoryHierarchyException;
+import com.example.secondhand.exception.*;
 import com.example.secondhand.model.Category;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -53,11 +51,44 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryResponse> getAllCategories() {
-        return categoryRepository.findByParentIsNull()
+        return categoryRepository.findByParentIsNullAndActiveTrue()
                 .stream()
                 .map(category -> mapToResponse(category, true))
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> getAllCategoriesForAdmin() {
+        return categoryRepository.findByParentIsNull()
+                .stream()
+                .map(category -> mapToAdminResponse(category, true))
+                .toList();
+    }
+
+    @Transactional
+    public CategoryResponse activate(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("دسته‌بندی یافت نشد"));
+
+        if (category.isActive()) {
+            throw new CategoryStateConflictException("دسته‌بندی از قبل فعال است");
+        }
+        category.setActive(true);
+        return mapToResponse(categoryRepository.save(category), false);
+    }
+
+    @Transactional
+    public CategoryResponse deactivate(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException("دسته‌بندی یافت نشد"));
+
+        if (!category.isActive()) {
+            throw new CategoryStateConflictException("دسته‌بندی از قبل غیرفعال است");
+        }
+        category.setActive(false);
+        return mapToResponse(categoryRepository.save(category), false);
     }
 
     public CategoryResponse update(Long id, CategoryRequest request) {
@@ -100,10 +131,26 @@ public class CategoryService {
                 .id(category.getId())
                 .name(category.getName())
                 .parentId(category.getParent() != null ? category.getParent().getId() : null)
+                .active(category.isActive())
                 .subCategories(includeChildren
                         ? category.getChildren().stream()
-                            .map(child -> mapToResponse(child, true))
-                            .toList()
+                        .filter(Category::isActive)
+                        .map(child -> mapToResponse(child, true))
+                        .toList()
+                        : null)
+                .build();
+    }
+
+    private CategoryResponse mapToAdminResponse(Category category, boolean includeChildren) {
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .parentId(category.getParent() != null ? category.getParent().getId() : null)
+                .active(category.isActive())
+                .subCategories(includeChildren
+                        ? category.getChildren().stream()
+                        .map(child -> mapToAdminResponse(child, true))
+                        .toList()
                         : null)
                 .build();
     }
