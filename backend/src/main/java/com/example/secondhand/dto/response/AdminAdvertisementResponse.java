@@ -22,6 +22,8 @@ public class AdminAdvertisementResponse {
     private String sellerName;
     private String sellerPhone;
     private String sellerEmail;
+    private Double sellerAverageRating;
+    private Long sellerRatingCount;
     private List<String> imageUrls;
     private String rejectionReason;
     private LocalDateTime createdAt;

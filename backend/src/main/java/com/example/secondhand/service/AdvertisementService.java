@@ -1,6 +1,7 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.AdvertisementRequest;
+import com.example.secondhand.dto.SellerRatingSummary;
 import com.example.secondhand.dto.response.AdminAdvertisementResponse;
 import com.example.secondhand.dto.response.AdvertisementResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class AdvertisementService {
     private final AdvertisementRepository advertisementRepository;
     private final CategoryRepository categoryRepository;
     private final CityRepository cityRepository;
+    private final SellerRatingService sellerRatingService;
 
     public AdvertisementResponse create(AdvertisementRequest request, User currentUser) {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -46,7 +49,7 @@ public class AdvertisementService {
 
         addImages(advertisement, request.getImageUrls());
 
-        return mapToResponse(advertisementRepository.save(advertisement));
+        return mapToResponse(advertisementRepository.save(advertisement), ratingSummaryFor(currentUser.getId()));
     }
 
     public AdvertisementResponse getById(Long id, User currentUser) {
@@ -65,7 +68,7 @@ public class AdvertisementService {
             throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
         }
 
-        return mapToResponse(advertisement);
+        return mapToResponse(advertisement, ratingSummaryFor(advertisement.getSeller().getId()));
     }
 
     @Transactional(readOnly = true)
@@ -84,16 +87,23 @@ public class AdvertisementService {
 
         String sortByName = sortBy != null ? sortBy.name() : null;
 
-        return advertisementRepository
-                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName, pageable)
-                .map(this::mapToResponse);
+        Page<Advertisement> advertisementsPage = advertisementRepository
+                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName, pageable);
+
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisementsPage.getContent());
+
+        return advertisementsPage.map(advertisement -> mapToResponse(advertisement, ratingSummaries));
     }
 
 
     public List<AdvertisementResponse> getMyAdvertisements(User currentUser) {
         List<Advertisement> advertisements = advertisementRepository.findBySellerId(currentUser.getId());
 
-        return advertisements.stream().map(this::mapToResponse).toList();
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisements);
+
+        return advertisements.stream()
+                .map(advertisement -> mapToResponse(advertisement, ratingSummaries))
+                .toList();
     }
 
     public AdvertisementResponse update(Long id, AdvertisementRequest request, User currentUser) {
@@ -122,7 +132,7 @@ public class AdvertisementService {
             syncImages(advertisement, request.getImageUrls());
         }
 
-        return mapToResponse(advertisementRepository.save(advertisement));
+        return mapToResponse(advertisementRepository.save(advertisement), ratingSummaryFor(currentUser.getId()));
     }
 
     public void delete(Long id, User currentUser) {
@@ -151,7 +161,7 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.SOLD);
 
-        return mapToResponse(advertisementRepository.save(advertisement));
+        return mapToResponse(advertisementRepository.save(advertisement), ratingSummaryFor(currentUser.getId()));
     }
 
     private void addImages(Advertisement advertisement, List<String> imageUrls) {
@@ -189,7 +199,10 @@ public class AdvertisementService {
         advertisement.getImages().addAll(newImages);
     }
 
-    private AdvertisementResponse mapToResponse(Advertisement advertisement) {
+    private AdvertisementResponse mapToResponse(Advertisement advertisement, Map<Long, SellerRatingSummary> ratingSummaries) {
+        SellerRatingSummary ratingSummary = ratingSummaries.getOrDefault(
+                advertisement.getSeller().getId(), SellerRatingSummary.EMPTY);
+
         return AdvertisementResponse.builder()
                 .id(advertisement.getId())
                 .title(advertisement.getTitle())
@@ -200,6 +213,8 @@ public class AdvertisementService {
                 .status(advertisement.getStatus())
                 .ownerId(advertisement.getSeller().getId())
                 .ownerUsername(advertisement.getSeller().getUsername())
+                .sellerAverageRating(ratingSummary.getAverageRating())
+                .sellerRatingCount(ratingSummary.getRatingCount())
                 .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
                 .createdAt(advertisement.getCreatedAt())
                 .build();
@@ -207,9 +222,12 @@ public class AdvertisementService {
 
     @Transactional(readOnly = true)
     public List<AdminAdvertisementResponse> getPendingAdvertisements() {
-        return advertisementRepository.findByStatus(AdvertisementStatus.PENDING)
-                .stream()
-                .map(this::mapToAdminResponse)
+        List<Advertisement> advertisements = advertisementRepository.findByStatus(AdvertisementStatus.PENDING);
+
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisements);
+
+        return advertisements.stream()
+                .map(advertisement -> mapToAdminResponse(advertisement, ratingSummaries))
                 .toList();
     }
 
@@ -224,7 +242,8 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.APPROVED);
         advertisement.setRejectionReason(null);
-        return mapToAdminResponse(advertisementRepository.save(advertisement));
+        return mapToAdminResponse(advertisementRepository.save(advertisement),
+                ratingSummaryFor(advertisement.getSeller().getId()));
     }
 
     @Transactional
@@ -238,7 +257,8 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.REJECTED);
         advertisement.setRejectionReason(reason);
-        return mapToAdminResponse(advertisementRepository.save(advertisement));
+        return mapToAdminResponse(advertisementRepository.save(advertisement),
+                ratingSummaryFor(advertisement.getSeller().getId()));
     }
 
     @Transactional
@@ -254,7 +274,10 @@ public class AdvertisementService {
         advertisementRepository.save(advertisement);
     }
 
-    private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement) {
+    private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement, Map<Long, SellerRatingSummary> ratingSummaries) {
+        SellerRatingSummary ratingSummary = ratingSummaries.getOrDefault(
+                advertisement.getSeller().getId(), SellerRatingSummary.EMPTY);
+
         return AdminAdvertisementResponse.builder()
                 .id(advertisement.getId())
                 .title(advertisement.getTitle())
@@ -268,9 +291,23 @@ public class AdvertisementService {
                 .sellerName(advertisement.getSeller().getName())
                 .sellerPhone(advertisement.getSeller().getPhone())
                 .sellerEmail(advertisement.getSeller().getEmail())
+                .sellerAverageRating(ratingSummary.getAverageRating())
+                .sellerRatingCount(ratingSummary.getRatingCount())
                 .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
                 .rejectionReason(advertisement.getRejectionReason())
                 .createdAt(advertisement.getCreatedAt())
                 .build();
+    }
+
+    private Map<Long, SellerRatingSummary> ratingSummariesFor(List<Advertisement> advertisements) {
+        List<Long> sellerIds = advertisements.stream()
+                .map(advertisement -> advertisement.getSeller().getId())
+                .toList();
+
+        return sellerRatingService.getRatingSummariesForSellers(sellerIds);
+    }
+
+    private Map<Long, SellerRatingSummary> ratingSummaryFor(Long sellerId) {
+        return sellerRatingService.getRatingSummariesForSellers(List.of(sellerId));
     }
 }

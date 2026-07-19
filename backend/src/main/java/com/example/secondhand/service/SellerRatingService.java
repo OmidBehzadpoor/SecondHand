@@ -1,6 +1,7 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.SellerRatingRequest;
+import com.example.secondhand.dto.SellerRatingSummary;
 import com.example.secondhand.dto.response.SellerRatingResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.RatingAlreadyExistsException;
@@ -15,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -73,6 +76,30 @@ public class SellerRatingService {
                 .average()
                 .orElse(0.0);
 
+    }
+
+
+    @Transactional(readOnly = true)
+    public Map<Long, SellerRatingSummary> getRatingSummariesForSellers(List<Long> sellerIds) {
+        Map<Long, SellerRatingSummary> summaries = new HashMap<>();
+
+        if (sellerIds == null || sellerIds.isEmpty()) {
+            return summaries;
+        }
+
+        List<Long> distinctSellerIds = sellerIds.stream().distinct().toList();
+
+        for (Long sellerId : distinctSellerIds) {
+            summaries.put(sellerId, SellerRatingSummary.EMPTY);
+        }
+
+        sellerRatingRepository.findRatingAggregatesBySellerIds(distinctSellerIds)
+                .forEach(aggregate -> summaries.put(
+                        aggregate.getSellerId(),
+                        new SellerRatingSummary(aggregate.getAverageRating(), aggregate.getRatingCount())
+                ));
+
+        return summaries;
     }
 
     private SellerRatingResponse mapToResponse(SellerRating sellerRating) {

@@ -107,6 +107,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(UserStateConflictException.class)
+    public ResponseEntity<Map<String, String>> handleUserStateConflict(UserStateConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(CategoryStateConflictException.class)
     public ResponseEntity<Map<String, String>> handleCategoryStateConflict(CategoryStateConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -122,6 +128,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConversationNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleConversationNotFound(ConversationNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
@@ -170,4 +183,4 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "حجم فایل نباید بیشتر از ۵ مگابایت باشد"));
     }
-    }
+}

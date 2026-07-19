@@ -20,6 +20,8 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
 
     boolean existsByCityId(Long cityId);
 
+    long countByStatus(AdvertisementStatus status);
+
     @Query("""
     SELECT a FROM Advertisement a
     WHERE a.status = :status
