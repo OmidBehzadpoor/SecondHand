@@ -71,7 +71,7 @@ public class HttpClientHelper {
         } catch (ConnectException e) {
             throw new ApiException("امکان برقراری ارتباط با سرور وجود ندارد. لطفاً مطمئن شوید سرور در حال اجراست.", 0);
         } catch (IOException | InterruptedException e) {
-            throw new ApiException("خطا در پردازش داده‌ی ارسالی یا دریافتی از سرور رخ داد.", 0);
+            throw new ApiException("مشکلی در ارتباط با سرور پیش آمد. لطفاً دوباره تلاش کنید.", 0);
         }
     }
 
