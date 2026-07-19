@@ -105,6 +105,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(CategoryStateConflictException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryStateConflict(CategoryStateConflictException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(FavoriteNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleFavoriteNotFound(FavoriteNotFoundException ex) {
         return ResponseEntity
