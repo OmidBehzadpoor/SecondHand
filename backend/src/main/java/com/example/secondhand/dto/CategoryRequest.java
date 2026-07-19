@@ -6,8 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CategoryRequest
-{
+public class CategoryRequest {
+
     @NotBlank(message = "نام دسته بندی نمیتواند خالی باشد")
     private String name;
+
+    private Long parentId;
 }
