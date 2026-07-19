@@ -91,6 +91,7 @@ public class CategoryService {
         return mapToResponse(categoryRepository.save(category), false);
     }
 
+    @Transactional
     public CategoryResponse update(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("دسته‌بندی یافت نشد"));
