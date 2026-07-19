@@ -15,4 +15,5 @@ public class CategoryResponse {
     private String name;
     private Long parentId;
     private List<CategoryResponse> subCategories;
+    private boolean active;
 }
