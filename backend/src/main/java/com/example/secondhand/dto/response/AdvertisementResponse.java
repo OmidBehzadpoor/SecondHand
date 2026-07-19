@@ -22,6 +22,8 @@ public class AdvertisementResponse
     private AdvertisementStatus status;
     private Long ownerId;
     private String ownerUsername;
+    private Double sellerAverageRating;
+    private Long sellerRatingCount;
     private List<String> imageUrls;
     private LocalDateTime createdAt;
 }
