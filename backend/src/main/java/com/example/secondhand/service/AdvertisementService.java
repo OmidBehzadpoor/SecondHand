@@ -77,6 +77,11 @@ public class AdvertisementService {
     public Page<AdvertisementResponse> getAll(String keyword, Long categoryId, Long cityId,
                                               Long minPrice, Long maxPrice, SortOption sortBy,
                                               Pageable pageable) {
+
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new InvalidAdvertisementStateException("حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد");
+        }
+
         String sortByName = sortBy != null ? sortBy.name() : null;
 
         return advertisementRepository
