@@ -18,13 +18,14 @@ public class SceneNavigator {
         primaryStage = stage;
     }
 
-    public static void navigateTo(String fxmlPath, String title) {
+    public static FXMLLoader navigateTo(String fxmlPath, String title) {
         try {
             FXMLLoader loader = new FXMLLoader(SceneNavigator.class.getResource(fxmlPath));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.setTitle(title);
+            return loader;
         } catch (IOException e) {
             throw new IllegalStateException("بارگذاری صفحه‌ی " + fxmlPath + " با خطا مواجه شد", e);
         }
