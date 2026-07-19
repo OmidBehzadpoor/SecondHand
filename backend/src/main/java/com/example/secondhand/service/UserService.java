@@ -4,7 +4,9 @@ import com.example.secondhand.dto.LoginRequest;
 import com.example.secondhand.dto.RegisterRequest;
 import com.example.secondhand.dto.response.LoginResponse;
 import com.example.secondhand.exception.InvalidCredentialsException;
+import com.example.secondhand.exception.UserBlockedException;
 import com.example.secondhand.model.User;
+import com.example.secondhand.model.UserStatus;
 import com.example.secondhand.repository.UserRepository;
 import com.example.secondhand.exception.UserAlreadyExistsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +51,10 @@ public class UserService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new InvalidCredentialsException("نام کاربری یا رمز عبور اشتباه است");
+        }
+
+        if (user.getStatus() == UserStatus.BLOCKED) {
+            throw new UserBlockedException("حساب کاربری شما مسدود شده است");
         }
 
         String token = jwtService.generateToken(user);

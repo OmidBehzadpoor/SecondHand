@@ -1,5 +1,6 @@
 package com.example.secondhand.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -139,6 +141,14 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", "این عملیات با داده‌ای که از قبل وجود دارد در تناقض است"));
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex) {
+        String message = ex.getConstraintViolations().stream()
+                .map(violation -> violation.getMessage())
+                .collect(Collectors.joining(", "));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", message));
+    }
+
     @ExceptionHandler(InvalidImageException.class)
     public ResponseEntity<Map<String, String>> handleInvalidImage(InvalidImageException ex) {
         return ResponseEntity
@@ -160,4 +170,4 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "حجم فایل نباید بیشتر از ۵ مگابایت باشد"));
     }
-}
+    }
