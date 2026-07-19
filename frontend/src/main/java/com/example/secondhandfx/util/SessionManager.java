@@ -5,7 +5,8 @@
 // allow creating multiple parallel session instances).
 // @Setter is also not appropriate here, since session changes must only go
 // through the controlled setSession/clearSession methods, not by setting
-// individual fields independently and out of sync with each other.package com.example.secondhandfx.util;
+// individual fields independently and out of sync with each other.
+
 package com.example.secondhandfx.util;
 
 import com.example.secondhandfx.model.Role;
