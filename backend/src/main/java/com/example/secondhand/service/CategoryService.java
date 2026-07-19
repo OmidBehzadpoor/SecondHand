@@ -5,6 +5,7 @@ import com.example.secondhand.dto.response.CategoryResponse;
 import com.example.secondhand.exception.CategoryHasChildrenException;
 import com.example.secondhand.exception.CategoryInUseException;
 import com.example.secondhand.exception.CategoryNotFoundException;
+import com.example.secondhand.exception.InvalidCategoryHierarchyException;
 import com.example.secondhand.model.Category;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
@@ -57,6 +58,23 @@ public class CategoryService {
                 .stream()
                 .map(category -> mapToResponse(category, true))
                 .toList();
+    }
+
+    private void ensureNoCycle(Category category, Category newParent) {
+        if (newParent == null) {
+            return;
+        }
+
+        if (category.getId().equals(newParent.getId())) {
+            throw new InvalidCategoryHierarchyException("دسته‌بندی نمی‌تواند والد خودش باشد");
+        }
+
+        Category current = newParent.getParent();
+        while (current != null) {
+            if (current.getId().equals(category.getId())) {
+                throw new InvalidCategoryHierarchyException("این دسته‌بندی را نمی‌توان زیرمجموعه‌ی یکی از زیردسته‌های خودش قرار داد");            }
+            current = current.getParent();
+        }
     }
 
     private CategoryResponse mapToResponse(Category category, boolean includeChildren) {
