@@ -56,4 +56,30 @@ public class CategoryController {
         ApiResponse<CategoryResponse> response = new ApiResponse<>(true, "CATEGORY_UPDATED", categoryResponse);
         return ResponseEntity.ok(response);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategoriesForAdmin() {
+        List<CategoryResponse> categories = categoryService.getAllCategoriesForAdmin();
+        ApiResponse<List<CategoryResponse>> response = new ApiResponse<>(
+                true, "CATEGORIES_RETRIEVED", categories
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<ApiResponse<CategoryResponse>> activateCategory(@PathVariable Long id) {
+        CategoryResponse categoryResponse = categoryService.activate(id);
+        ApiResponse<CategoryResponse> response = new ApiResponse<>(true, "CATEGORY_ACTIVATED", categoryResponse);
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<ApiResponse<CategoryResponse>> deactivateCategory(@PathVariable Long id) {
+        CategoryResponse categoryResponse = categoryService.deactivate(id);
+        ApiResponse<CategoryResponse> response = new ApiResponse<>(true, "CATEGORY_DEACTIVATED", categoryResponse);
+        return ResponseEntity.ok(response);
+    }
 }
