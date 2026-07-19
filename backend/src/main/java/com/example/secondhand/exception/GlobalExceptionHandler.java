@@ -53,6 +53,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(CategoryHasChildrenException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryHasChildren(CategoryHasChildrenException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(CityInUseException.class)
     public ResponseEntity<Map<String, String>> handleCityInUse(CityInUseException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -73,6 +79,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidCategoryHierarchyException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidCategoryHierarchy(InvalidCategoryHierarchyException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
     @ExceptionHandler(RatingAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleRatingAlreadyExists(RatingAlreadyExistsException ex) {
         return ResponseEntity
@@ -88,6 +101,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FavoriteAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleFavoriteAlreadyExists(FavoriteAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(CategoryStateConflictException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryStateConflict(CategoryStateConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("error", ex.getMessage()));
     }
