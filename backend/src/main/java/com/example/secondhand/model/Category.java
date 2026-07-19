@@ -29,4 +29,8 @@ public class Category {
     @OneToMany(mappedBy = "parent")
     @Builder.Default
     private List<Category> children = new ArrayList<>();
+    
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    @Builder.Default
+    private boolean active = true;
 }
