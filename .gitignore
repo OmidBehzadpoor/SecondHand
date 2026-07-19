@@ -18,3 +18,5 @@ build/
 Thumbs.db
 
 uploads/
+log.txt
+parsa/frontend-setup
