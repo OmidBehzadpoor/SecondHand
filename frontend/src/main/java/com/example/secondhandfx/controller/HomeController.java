@@ -25,7 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-
+import java.util.List;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
@@ -67,6 +67,29 @@ public class HomeController implements Initializable {
         loadCategories();
         loadCities();
         loadAdvertisements();
+        categoryComboBox.setConverter(new javafx.util.StringConverter<CategoryResponse>() {
+            @Override
+            public String toString(CategoryResponse category) {
+                return category == null ? "" : category.getName();
+            }
+
+            @Override
+            public CategoryResponse fromString(String string) {
+                return null; // فقط برای انتخاب از لیست استفاده می‌شود، نه تایپ آزاد
+            }
+        });
+
+        cityComboBox.setConverter(new javafx.util.StringConverter<CityResponse>() {
+            @Override
+            public String toString(CityResponse city) {
+                return city == null ? "" : city.getName();
+            }
+
+            @Override
+            public CityResponse fromString(String string) {
+                return null;
+            }
+        });
     }
 
     // بر اساس اینکه کاربر لاگین کرده یا نه، یکی از دو باکس بالای صفحه رو نشون می‌ده
@@ -88,9 +111,29 @@ public class HomeController implements Initializable {
         runAsync(categoryService::getAllCategories, categories -> {
             CategoryResponse allOption = CategoryResponse.builder().id(null).name("همه دسته‌بندی‌ها").build();
             categoryComboBox.getItems().add(allOption);
-            categoryComboBox.getItems().addAll(categories);
+            categoryComboBox.getItems().addAll(flattenCategories(categories, 0));
             categoryComboBox.getSelectionModel().select(allOption);
         }, "خطا در دریافت دسته‌بندی‌ها");
+    }
+
+    // درخت دسته‌بندی‌ها را به یک لیست تخت با نمایش تورفته تبدیل می‌کند
+// تا کاربر بتواند هم دسته‌ی والد و هم هر زیردسته را مستقیماً انتخاب کند
+    private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
+        List<CategoryResponse> result = new java.util.ArrayList<>();
+        for (CategoryResponse category : categories) {
+            String prefix = "—".repeat(depth) + (depth > 0 ? " " : "");
+            result.add(CategoryResponse.builder()
+                    .id(category.getId())
+                    .name(prefix + category.getName())
+                    .parentId(category.getParentId())
+                    .active(category.isActive())
+                    .build());
+
+            if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
+                result.addAll(flattenCategories(category.getSubCategories(), depth + 1));
+            }
+        }
+        return result;
     }
 
     private void loadCities() {
