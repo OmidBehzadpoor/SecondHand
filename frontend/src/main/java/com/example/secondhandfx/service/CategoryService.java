@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CategoryService {
     List<CategoryResponse> getAllCategories() throws ApiException;
+    CategoryResponse createCategory(String name) throws ApiException;
+    void deleteCategory(Long id) throws ApiException;
 }
