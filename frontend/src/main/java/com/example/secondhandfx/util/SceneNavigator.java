@@ -23,6 +23,7 @@ public class SceneNavigator {
             FXMLLoader loader = new FXMLLoader(SceneNavigator.class.getResource(fxmlPath));
             Parent root = loader.load();
             Scene scene = new Scene(root);
+            ThemeManager.applyTheme(scene);
             primaryStage.setScene(scene);
             primaryStage.setTitle(title);
             return loader;
