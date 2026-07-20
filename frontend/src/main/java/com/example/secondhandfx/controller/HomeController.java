@@ -90,6 +90,22 @@ public class HomeController implements Initializable {
                 return null;
             }
         });
+
+        categoryComboBox.setCellFactory(listView -> new javafx.scene.control.ListCell<>() {
+            @Override
+            protected void updateItem(CategoryResponse category, boolean empty) {
+                super.updateItem(category, empty);
+                if (empty || category == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    int depth = categoryDepthMap.getOrDefault(category.getId(), 0);
+                    setText(category.getName());
+                    setStyle("-fx-padding: 4 4 4 " + (depth * 18) + "px;"
+                            + (depth == 0 ? " -fx-font-weight: bold;" : " -fx-text-fill: #555;"));
+                }
+            }
+        });
     }
 
     // بر اساس اینکه کاربر لاگین کرده یا نه، یکی از دو باکس بالای صفحه رو نشون می‌ده
@@ -118,16 +134,13 @@ public class HomeController implements Initializable {
 
     // درخت دسته‌بندی‌ها را به یک لیست تخت با نمایش تورفته تبدیل می‌کند
 // تا کاربر بتواند هم دسته‌ی والد و هم هر زیردسته را مستقیماً انتخاب کند
+    private final java.util.Map<Long, Integer> categoryDepthMap = new java.util.HashMap<>();
+
     private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
         List<CategoryResponse> result = new java.util.ArrayList<>();
         for (CategoryResponse category : categories) {
-            String prefix = "—".repeat(depth) + (depth > 0 ? " " : "");
-            result.add(CategoryResponse.builder()
-                    .id(category.getId())
-                    .name(prefix + category.getName())
-                    .parentId(category.getParentId())
-                    .active(category.isActive())
-                    .build());
+            categoryDepthMap.put(category.getId(), depth);
+            result.add(category);
 
             if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
                 result.addAll(flattenCategories(category.getSubCategories(), depth + 1));
