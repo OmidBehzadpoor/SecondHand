@@ -17,11 +17,7 @@ import com.example.secondhandfx.util.ValidationUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
@@ -40,7 +36,10 @@ public class AdvertisementFormController {
     @FXML private ComboBox<CityResponse> cityComboBox;
     @FXML private ListView<File> selectedImagesListView;
     @FXML private Button submitButton;
+    @FXML private Label pageTitleLabel;
 
+    private Long editingAdvertisementId;
+    
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
     private final CityService cityService = new CityServiceImpl();
