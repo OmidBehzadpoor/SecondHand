@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox layoutX="50.0" layoutY="60.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.secondhandfx.controller.LoginController">
+   <children>
+      <Label text="ورود به اکانت" translateX="250.0" />
+      <Label layoutX="50.0" layoutY="4.0" text="نام کاربری" translateX="495.0" />
+      <TextField fx:id="usernameField" />
+      <Label prefHeight="18.0" prefWidth="47.0" text="رمز عبور" translateX="505.0" />
+      <PasswordField fx:id="passwordField" />
+      <Button mnemonicParsing="false" onAction="#onLoginButtonClick" text="ورود" translateX="270.0" translateY="50.0" />
+      <Hyperlink onAction="#onRegisterLinkClick" text="حساب کاربری ندارید؟" translateX="230.0" translateY="50.0" />
+   </children>
+</VBox>
