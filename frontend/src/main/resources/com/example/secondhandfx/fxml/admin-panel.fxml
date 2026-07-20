@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.secondhandfx.controller.AdminPanelController"
@@ -30,6 +32,40 @@
                         <TableColumn fx:id="userActionsColumn" text="عملیات" prefWidth="160"/>
                     </columns>
                 </TableView>
+            </Tab>
+
+            <Tab text="دسته‌بندی‌ها و شهرها">
+                <HBox spacing="20" style="-fx-padding: 15;">
+
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <Label text="دسته‌بندی‌ها" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
+                        <HBox spacing="8">
+                            <TextField fx:id="newCategoryField" promptText="نام دسته‌بندی جدید" HBox.hgrow="ALWAYS"/>
+                            <Button text="افزودن" onAction="#onAddCategoryClick"/>
+                        </HBox>
+                        <TableView fx:id="categoriesTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="categoryNameColumn" text="نام" prefWidth="140"/>
+                                <TableColumn fx:id="categoryActionsColumn" text="عملیات" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <Label text="شهرها" style="-fx-font-weight: bold; -fx-font-size: 15px;"/>
+                        <HBox spacing="8">
+                            <TextField fx:id="newCityField" promptText="نام شهر جدید" HBox.hgrow="ALWAYS"/>
+                            <Button text="افزودن" onAction="#onAddCityClick"/>
+                        </HBox>
+                        <TableView fx:id="citiesTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="cityNameColumn" text="نام" prefWidth="140"/>
+                                <TableColumn fx:id="cityActionsColumn" text="عملیات" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                </HBox>
             </Tab>
 
         </TabPane>
