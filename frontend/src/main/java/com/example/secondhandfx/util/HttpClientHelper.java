@@ -6,16 +6,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 public class HttpClientHelper {
 
-    private static final String BASE_URL = "http://localhost:8080";
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final String BASE_URL = Config.getApiBaseUrl();
+    private static final HttpClient client = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(5))
+            .build();
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
 
@@ -46,6 +51,7 @@ public class HttpClientHelper {
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(BASE_URL + path))
+                    .timeout(Duration.ofSeconds(10))
                     .header("Content-Type", "application/json; charset=UTF-8");
 
             String token = SessionManager.getInstance().getToken();
@@ -63,8 +69,12 @@ public class HttpClientHelper {
 
             return parseResponse(response, responseType);
 
-        } catch (IOException | InterruptedException e) {
+        } catch (ConnectException e) {
             throw new ApiException("امکان برقراری ارتباط با سرور وجود ندارد. لطفاً مطمئن شوید سرور در حال اجراست.", 0);
+        } catch (HttpTimeoutException e) {
+            throw new ApiException("سرور در زمان مناسب پاسخ نداد. لطفاً دوباره تلاش کنید.", 0);
+        } catch (IOException | InterruptedException e) {
+            throw new ApiException("مشکلی در ارتباط با سرور پیش آمد. لطفاً دوباره تلاش کنید.", 0);
         }
     }
 

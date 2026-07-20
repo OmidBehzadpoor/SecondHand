@@ -1,0 +1,63 @@
+name: Package JavaFX Frontend
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "frontend/**"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build fat jar
+        run: cd frontend && mvn -B clean package --file pom.xml
+
+      - name: Rename jar with OS suffix
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp frontend/target/secondhand-frontend.jar "dist/secondhand-frontend-${{ matrix.os }}.jar"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-jar-${{ matrix.os }}
+          path: dist/*.jar
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all jars
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Update rolling "latest" release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: latest-frontend
+          name: "Latest Frontend Build (Desktop)"
+          allowUpdates: true
+          removeArtifacts: true
+          replacesArtifacts: true
+          artifacts: "artifacts/*.jar"
+          body: "Automated build from commit ${{ github.sha }}"
