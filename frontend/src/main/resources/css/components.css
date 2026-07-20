@@ -1,0 +1,90 @@
+.root {
+    -fx-font-family: "Segoe UI", "Vazirmatn", "Tahoma", sans-serif;
+    -fx-background-color: -color-bg;
+    -fx-font-size: 13px;
+}
+
+.top-bar, .bottom-bar {
+    -fx-background-color: -color-surface;
+}
+
+.top-bar {
+    -fx-effect: dropshadow(gaussian, -color-shadow, 6, 0, 0, 2);
+}
+
+.title-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+.muted-label {
+    -fx-text-fill: -color-text-muted;
+}
+
+.text-field, .password-field, .text-area, .combo-box {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: -color-text;
+}
+
+.btn {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+    -fx-background-radius: 6;
+    -fx-padding: 6 14;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.btn:hover {
+    -fx-opacity: 0.85;
+}
+
+.btn-primary {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+}
+.btn-primary:hover {
+    -fx-background-color: -color-primary-hover;
+}
+
+.btn-success {
+    -fx-background-color: -color-success;
+    -fx-text-fill: white;
+}
+
+.btn-danger {
+    -fx-background-color: -color-danger;
+    -fx-text-fill: white;
+}
+
+.btn-icon {
+    -fx-background-color: transparent;
+    -fx-font-size: 16px;
+    -fx-padding: 4 8;
+    -fx-cursor: hand;
+}
+
+.card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 8, 0, 0, 2);
+}
+
+.badge {
+    -fx-text-fill: white;
+    -fx-padding: 2 10;
+    -fx-background-radius: 10;
+    -fx-font-size: 11px;
+}
+
+.transparent-scroll, .transparent-scroll .viewport {
+    -fx-background-color: transparent;
+}
