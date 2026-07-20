@@ -23,17 +23,27 @@ import java.util.stream.Collectors;
 
 public class MyAdvertisementsController {
 
-    @FXML private Tab approvedTab;
-    @FXML private Tab pendingTab;
-    @FXML private Tab rejectedTab;
-    @FXML private Tab soldTab;
-    @FXML private Tab deletedTab;
+    @FXML
+    private Tab approvedTab;
+    @FXML
+    private Tab pendingTab;
+    @FXML
+    private Tab rejectedTab;
+    @FXML
+    private Tab soldTab;
+    @FXML
+    private Tab deletedTab;
 
-    @FXML private FlowPane approvedContainer;
-    @FXML private FlowPane pendingContainer;
-    @FXML private FlowPane rejectedContainer;
-    @FXML private FlowPane soldContainer;
-    @FXML private FlowPane deletedContainer;
+    @FXML
+    private FlowPane approvedContainer;
+    @FXML
+    private FlowPane pendingContainer;
+    @FXML
+    private FlowPane rejectedContainer;
+    @FXML
+    private FlowPane soldContainer;
+    @FXML
+    private FlowPane deletedContainer;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
 
@@ -84,7 +94,7 @@ public class MyAdvertisementsController {
                 MyAdvertisementCardController controller = loader.getController();
                 controller.setData(ad);
                 controller.setOnView(() -> openDetails(ad.getId()));
-                controller.setOnEdit(() -> AlertUtil.showSuccess("صفحه‌ی ویرایش آگهی به زودی اضافه می‌شود!"));
+                controller.setOnEdit(() -> openEditForm(ad.getId()));
                 controller.setOnMarkAsSold(() -> markAsSold(ad.getId()));
                 controller.setOnDelete(() -> confirmAndDelete(ad.getId()));
                 container.getChildren().add(card);
@@ -101,6 +111,13 @@ public class MyAdvertisementsController {
         controller.setAdvertisementId(id);
     }
 
+    private void openEditForm(Long id) {
+        FXMLLoader loader = SceneNavigator.navigateTo(
+                "/com/example/secondhandfx/fxml/advertisement-form.fxml", "ویرایش آگهی");
+        AdvertisementFormController controller = loader.getController();
+        controller.setAdvertisementId(id);
+    }
+    
     private void markAsSold(Long id) {
         runAsync(
                 () -> advertisementService.markAsSold(id),
