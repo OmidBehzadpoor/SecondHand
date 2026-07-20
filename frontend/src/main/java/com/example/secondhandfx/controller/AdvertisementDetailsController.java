@@ -38,6 +38,7 @@ public class AdvertisementDetailsController {
     @FXML private Label descriptionLabel;
     @FXML private Label sellerLabel;
     @FXML private Label ratingLabel;
+    @FXML private Label rejectionReasonLabel;
 
     // ناحیه‌ی دکمه‌ها بسته به اینکه بیننده صاحب آگهیه یا نه، عوض می‌شه
     @FXML private HBox buyerActionsBox;
@@ -66,6 +67,7 @@ public class AdvertisementDetailsController {
         titleLabel.setText(ad.getTitle());
         priceLabel.setText(formatPrice(ad.getPrice()) + " تومان");
         statusLabel.setText(mapStatus(ad.getStatus()));
+        applyRejectionReason(ad.getStatus(), ad.getRejectionReason());
         cityLabel.setText("شهر: " + ad.getCityName());
         categoryLabel.setText("دسته‌بندی: " + ad.getCategoryName());
         descriptionLabel.setText(ad.getDescription());
@@ -246,5 +248,16 @@ public class AdvertisementDetailsController {
     @FunctionalInterface
     private interface ThrowingRunnable {
         void run() throws ApiException;
+    }
+    private void applyRejectionReason(String status, String rejectionReason) {
+        boolean shouldShow = "REJECTED".equals(status)
+                && rejectionReason != null && !rejectionReason.isBlank();
+
+        rejectionReasonLabel.setVisible(shouldShow);
+        rejectionReasonLabel.setManaged(shouldShow);
+
+        if (shouldShow) {
+            rejectionReasonLabel.setText("دلیل رد آگهی: " + rejectionReason);
+        }
     }
 }
