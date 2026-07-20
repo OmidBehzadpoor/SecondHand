@@ -2,6 +2,7 @@ package com.example.secondhand.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +21,7 @@ public class RegisterRequest {
     private String password;
 
     @NotBlank(message = "شماره تماس نمی‌تواند خالی باشد")
+    @Pattern(regexp = "^09\\d{9}$", message = "شماره تماس باید ۱۱ رقم و با ۰۹ شروع شود")
     private String phone;
 
     @NotBlank(message = "ایمیل نمی‌تواند خالی باشد")
