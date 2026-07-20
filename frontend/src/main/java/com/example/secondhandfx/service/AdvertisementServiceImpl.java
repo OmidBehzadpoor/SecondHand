@@ -107,6 +107,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return response.getData();
     }
 
+    @Override
+    public AdvertisementResponse update(Long id, AdvertisementRequest request) throws ApiException {
+        ApiResponse<AdvertisementResponse> response = HttpClientHelper.put(
+                "/api/advertisements/" + id,
+                request,
+                new TypeReference<ApiResponse<AdvertisementResponse>>() {}
+        );
+        return response.getData();
+    }
+
     private String encode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
