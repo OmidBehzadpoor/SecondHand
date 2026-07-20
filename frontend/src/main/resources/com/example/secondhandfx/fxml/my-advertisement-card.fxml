@@ -14,6 +14,8 @@
     <Label fx:id="titleLabel" wrapText="true" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
     <Label fx:id="priceLabel" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
     <Label fx:id="statusBadgeLabel"/>
+    <Label fx:id="rejectionReasonLabel" wrapText="true"
+           style="-fx-text-fill: #c0392b; -fx-font-size: 11px;"/>
 
     <HBox spacing="6">
         <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick"
