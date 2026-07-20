@@ -3,13 +3,11 @@ package com.example.secondhandfx.controller;
 import com.example.secondhandfx.exception.ApiException;
 import com.example.secondhandfx.model.LoginRequest;
 import com.example.secondhandfx.model.LoginResponse;
-import com.example.secondhandfx.model.Role;
 import com.example.secondhandfx.service.AuthService;
 import com.example.secondhandfx.service.AuthServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -62,7 +60,7 @@ public class LoginController {
             AlertUtil.showSuccess("خوش آمدید " + response.getUsername());
             // تغییر به صفحه‌ی اصلی (فعلاً یک صفحه‌ی موقت)
             // بعداً با صفحه‌ی لیست آگهی‌ها جایگزین می‌شود
-            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/dashboard.fxml", "داشبورد");
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
         });
 
         loginTask.setOnFailed(event -> {
