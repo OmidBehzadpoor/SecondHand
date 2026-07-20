@@ -259,8 +259,10 @@ public class HomeController implements Initializable {
 
     private void openAdvertisementDetails(Long id) {
         // صفحه‌ی جزئیات آگهی بدون نیاز به لاگین باز می‌شه (طبق داک پروژه)
-        // TODO: ناوبری به advertisement-details.fxml بعد از ساخته شدنش
-        AlertUtil.showSuccess("صفحه‌ی جزئیات آگهی #" + id + " به زودی اضافه می‌شود!");
+        FXMLLoader loader = SceneNavigator.navigateTo(
+                "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
+        AdvertisementDetailsController controller = loader.getController();
+        controller.setAdvertisementId(id);
     }
 
     private String mapSortOption(String label) {
