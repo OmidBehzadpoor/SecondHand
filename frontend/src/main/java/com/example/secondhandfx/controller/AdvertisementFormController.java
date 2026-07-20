@@ -302,8 +302,19 @@ public class AdvertisementFormController {
 // قبل از مقایسه با نام خام آگهی، پیشوند باید حذف بشه
     private CategoryResponse findByPlainName(List<CategoryResponse> categories, String plainName) {
         return categories.stream()
-                .filter(category -> category.getName().equals(plainName))
+                .filter(category -> stripPrefix(category.getName()).equals(plainName))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private String stripPrefix(String displayName) {
+        int i = 0;
+        while (i < displayName.length() && displayName.charAt(i) == '—') {
+            i++;
+        }
+        if (i < displayName.length() && displayName.charAt(i) == ' ') {
+            i++;
+        }
+        return displayName.substring(i);
     }
 }
