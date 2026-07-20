@@ -30,6 +30,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import com.example.secondhandfx.util.ThemeManager;
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
 
 public class HomeController implements Initializable {
 
@@ -321,6 +324,12 @@ public class HomeController implements Initializable {
         });
     }
 
+    @FXML
+    private void onToggleThemeClick(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        ThemeManager.toggleTheme(source.getScene());
+    }
+    
     @FunctionalInterface
     private interface ThrowingSupplier<T> {
         T get() throws ApiException;
