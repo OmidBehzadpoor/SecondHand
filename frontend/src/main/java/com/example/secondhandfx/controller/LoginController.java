@@ -77,6 +77,10 @@ public class LoginController {
 
         new Thread(loginTask).start();
     }
+    @FXML
+    private void onBackToHomeClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+    }
 
     @FXML
     private void onRegisterLinkClick() {
