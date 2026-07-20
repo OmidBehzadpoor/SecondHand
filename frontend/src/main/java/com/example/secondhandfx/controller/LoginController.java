@@ -8,6 +8,7 @@ import com.example.secondhandfx.service.AuthServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
+import com.example.secondhandfx.util.ValidationUtil;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -28,8 +29,7 @@ public class LoginController {
         String username = usernameField.getText().trim();
         String password = passwordField.getText().trim();
 
-        // اعتبارسنجی سمت کلاینت
-        if (username.isEmpty() || password.isEmpty()) {
+        if (ValidationUtil.isBlank(username) || ValidationUtil.isBlank(password)) {
             AlertUtil.showError("لطفاً نام کاربری و رمز عبور را وارد کنید.");
             return;
         }
