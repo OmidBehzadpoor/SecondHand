@@ -59,6 +59,21 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return response.getData();
     }
 
+    @Override
+    public void delete(Long id) throws ApiException {
+        HttpClientHelper.delete("/api/advertisements/" + id, new TypeReference<ApiResponse<Void>>() {});
+    }
+
+    @Override
+    public AdvertisementResponse markAsSold(Long id) throws ApiException {
+        ApiResponse<AdvertisementResponse> response = HttpClientHelper.patch(
+                "/api/advertisements/" + id + "/sold",
+                null,
+                new TypeReference<ApiResponse<AdvertisementResponse>>() {}
+        );
+        return response.getData();
+    }
+
     private String encode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }

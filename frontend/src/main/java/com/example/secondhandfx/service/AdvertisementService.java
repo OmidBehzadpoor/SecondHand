@@ -16,4 +16,8 @@ public interface AdvertisementService {
                                                 int size) throws ApiException;
 
     AdvertisementResponse getById(Long id) throws ApiException;
+
+    void delete(Long id) throws ApiException;
+
+    AdvertisementResponse markAsSold(Long id) throws ApiException;
 }
