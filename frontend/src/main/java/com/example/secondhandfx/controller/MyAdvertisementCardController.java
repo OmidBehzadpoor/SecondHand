@@ -19,6 +19,7 @@ public class MyAdvertisementCardController {
     @FXML private Button editButton;
     @FXML private Button markAsSoldButton;
     @FXML private Button deleteButton;
+    @FXML private Label rejectionReasonLabel;
 
     private Runnable onView;
     private Runnable onEdit;
@@ -31,6 +32,7 @@ public class MyAdvertisementCardController {
 
         applyStatusBadge(ad.getStatus());
         applyActionVisibility(ad.getStatus());
+        applyRejectionReason(ad.getStatus(), ad.getRejectionReason());
     }
 
     public void setOnView(Runnable handler) {
@@ -106,5 +108,18 @@ public class MyAdvertisementCardController {
     private String formatPrice(Long price) {
         if (price == null) return "-";
         return NumberFormat.getNumberInstance(Locale.US).format(price);
+    }
+
+    // فقط وقتی آگهی رد شده و دلیلی هم ثبت شده، این لیبل رو نشون می‌ده
+    private void applyRejectionReason(String status, String rejectionReason) {
+        boolean shouldShow = "REJECTED".equals(status)
+                && rejectionReason != null && !rejectionReason.isBlank();
+
+        rejectionReasonLabel.setVisible(shouldShow);
+        rejectionReasonLabel.setManaged(shouldShow);
+
+        if (shouldShow) {
+            rejectionReasonLabel.setText("دلیل رد: " + rejectionReason);
+        }
     }
 }
