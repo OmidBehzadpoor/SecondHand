@@ -211,6 +211,7 @@ public class AdvertisementService {
                 .cityName(advertisement.getCity().getName())
                 .categoryName(advertisement.getCategory().getName())
                 .status(advertisement.getStatus())
+                .rejectionReason(advertisement.getRejectionReason())
                 .ownerId(advertisement.getSeller().getId())
                 .ownerUsername(advertisement.getSeller().getUsername())
                 .sellerAverageRating(ratingSummary.getAverageRating())
