@@ -18,16 +18,30 @@
     <top>
         <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15;">
             <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label fx:id="welcomeLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Label text="آگهی‌های فعال" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
                 <HBox HBox.hgrow="ALWAYS"/>
+
                 <Button text="آگهی‌های من" onAction="#onMyAdvertisementsClick"
                         style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
                 <Button text="علاقه‌مندی‌ها" onAction="#onFavoritesClick"
                         style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
                 <Button text="ثبت آگهی جدید" onAction="#onCreateAdvertisementClick"
                         style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 6 14;"/>
-                <Button text="خروج" onAction="#onLogoutButtonClick"
-                        style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 6 14;"/>
+
+                <!-- حالت مهمون: دکمه‌های ورود و ثبت‌نام -->
+                <HBox fx:id="guestAuthBox" spacing="8" alignment="CENTER_LEFT">
+                    <Button text="ورود" onAction="#onLoginClick"
+                            style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 6 14;"/>
+                    <Button text="ثبت‌نام" onAction="#onRegisterClick"
+                            style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
+                </HBox>
+
+                <!-- حالت لاگین‌شده: نام کاربر و دکمه‌ی خروج -->
+                <HBox fx:id="userAuthBox" spacing="10" alignment="CENTER_LEFT">
+                    <Label fx:id="welcomeLabel" style="-fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
+                    <Button text="خروج" onAction="#onLogoutButtonClick"
+                            style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 6 14;"/>
+                </HBox>
             </HBox>
 
             <HBox spacing="10" alignment="CENTER_LEFT">
