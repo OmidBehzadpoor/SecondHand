@@ -4,6 +4,8 @@ import com.example.secondhandfx.exception.ApiException;
 import com.example.secondhandfx.model.AdvertisementResponse;
 import com.example.secondhandfx.service.AdvertisementService;
 import com.example.secondhandfx.service.AdvertisementServiceImpl;
+import com.example.secondhandfx.service.FavoriteService;
+import com.example.secondhandfx.service.FavoriteServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.Config;
 import com.example.secondhandfx.util.SceneNavigator;
@@ -48,6 +50,7 @@ public class AdvertisementDetailsController {
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
 
     private AdvertisementResponse advertisement;
+    private final FavoriteService favoriteService = new FavoriteServiceImpl();
     private List<String> imageUrls;
     private int currentImageIndex = 0;
 
@@ -166,7 +169,11 @@ public class AdvertisementDetailsController {
 
     @FXML
     private void onAddFavoriteClick() {
-        requireLoginThen(() -> AlertUtil.showSuccess("افزودن به علاقه‌مندی‌ها به زودی اضافه می‌شود!"));
+        requireLoginThen(() -> runAsyncVoid(
+                () -> favoriteService.addFavorite(advertisement.getId()),
+                () -> AlertUtil.showSuccess("آگهی به علاقه‌مندی‌ها اضافه شد."),
+                "خطا در افزودن به علاقه‌مندی‌ها"
+        ));
     }
 
     @FXML
