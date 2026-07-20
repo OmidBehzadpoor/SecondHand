@@ -1,5 +1,7 @@
 package com.example.secondhandfx.util;
 
+import com.example.secondhandfx.exception.ApiException;
+import com.example.secondhandfx.model.ApiRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,26 +30,26 @@ public class HttpClientHelper {
     }
 
     public static <T> T get(String path, TypeReference<T> responseType) throws ApiException {
-        return send("GET", path, null, responseType);
+        return send(HttpMethod.GET, path, null, responseType);
     }
 
-    public static <T> T post(String path, Object body, TypeReference<T> responseType) throws ApiException {
-        return send("POST", path, body, responseType);
+    public static <T> T post(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
+        return send(HttpMethod.POST, path, body, responseType);
     }
 
-    public static <T> T put(String path, Object body, TypeReference<T> responseType) throws ApiException {
-        return send("PUT", path, body, responseType);
+    public static <T> T put(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
+        return send(HttpMethod.PUT, path, body, responseType);
     }
 
-    public static <T> T patch(String path, Object body, TypeReference<T> responseType) throws ApiException {
-        return send("PATCH", path, body, responseType);
+    public static <T> T patch(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
+        return send(HttpMethod.PATCH, path, body, responseType);
     }
 
     public static <T> T delete(String path, TypeReference<T> responseType) throws ApiException {
-        return send("DELETE", path, null, responseType);
+        return send(HttpMethod.DELETE, path, null, responseType);
     }
 
-    private static <T> T send(String method, String path, Object body, TypeReference<T> responseType) throws ApiException {
+    private static <T> T send(HttpMethod method, String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(BASE_URL + path))
@@ -63,7 +65,7 @@ public class HttpClientHelper {
                     ? HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body), StandardCharsets.UTF_8)
                     : HttpRequest.BodyPublishers.noBody();
 
-            builder.method(method, bodyPublisher);
+            builder.method(method.name(), bodyPublisher);
 
             HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
@@ -82,11 +84,7 @@ public class HttpClientHelper {
         JsonNode root = objectMapper.readTree(response.body());
 
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
-            JsonNode dataNode = root.get("data");
-            if (dataNode == null || dataNode.isNull()) {
-                return null;
-            }
-            return objectMapper.convertValue(dataNode, objectMapper.getTypeFactory().constructType(responseType));
+            return objectMapper.convertValue(root, objectMapper.getTypeFactory().constructType(responseType));
         }
 
         String errorMessage = root.has("error") ? root.get("error").asText() : "خطای نامشخصی رخ داد";
