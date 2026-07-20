@@ -24,9 +24,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -40,10 +40,14 @@ public class HomeController implements Initializable {
     @FXML private TextField maxPriceField;
     @FXML private ComboBox<String> sortComboBox;
     @FXML private FlowPane advertisementsContainer;
-    @FXML private Label welcomeLabel;
     @FXML private Label pageIndicatorLabel;
     @FXML private Button prevPageButton;
     @FXML private Button nextPageButton;
+
+    // ناحیه‌ی سمت راست بالای صفحه که بین حالت مهمون و حالت لاگین‌شده جابه‌جا می‌شود
+    @FXML private HBox guestAuthBox;
+    @FXML private HBox userAuthBox;
+    @FXML private Label welcomeLabel;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
@@ -55,8 +59,7 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String username = SessionManager.getInstance().getUsername();
-        welcomeLabel.setText(username != null ? "سلام، " + username : "آگهی‌های فعال");
+        setupAuthArea();
 
         sortComboBox.getItems().addAll("جدیدترین", "قدیمی‌ترین", "ارزان‌ترین", "گران‌ترین");
         sortComboBox.getSelectionModel().selectFirst();
@@ -64,6 +67,21 @@ public class HomeController implements Initializable {
         loadCategories();
         loadCities();
         loadAdvertisements();
+    }
+
+    // بر اساس اینکه کاربر لاگین کرده یا نه، یکی از دو باکس بالای صفحه رو نشون می‌ده
+    private void setupAuthArea() {
+        boolean loggedIn = SessionManager.getInstance().isLoggedIn();
+
+        guestAuthBox.setVisible(!loggedIn);
+        guestAuthBox.setManaged(!loggedIn);
+
+        userAuthBox.setVisible(loggedIn);
+        userAuthBox.setManaged(loggedIn);
+
+        if (loggedIn) {
+            welcomeLabel.setText("سلام، " + SessionManager.getInstance().getUsername());
+        }
     }
 
     private void loadCategories() {
@@ -107,24 +125,44 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    private void onLogoutButtonClick() {
-        SessionManager.getInstance().clearSession();
+    private void onLoginClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/login.fxml", "ورود");
     }
 
     @FXML
+    private void onRegisterClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/register.fxml", "ثبت‌نام");
+    }
+
+    @FXML
+    private void onLogoutButtonClick() {
+        SessionManager.getInstance().clearSession();
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+    }
+
+    @FXML
     private void onCreateAdvertisementClick() {
-        AlertUtil.showSuccess("صفحه‌ی ثبت آگهی به زودی اضافه می‌شود!");
+        requireLoginThen(() -> AlertUtil.showSuccess("صفحه‌ی ثبت آگهی به زودی اضافه می‌شود!"));
     }
 
     @FXML
     private void onMyAdvertisementsClick() {
-        AlertUtil.showSuccess("صفحه‌ی آگهی‌های من به زودی اضافه می‌شود!");
+        requireLoginThen(() -> AlertUtil.showSuccess("صفحه‌ی آگهی‌های من به زودی اضافه می‌شود!"));
     }
 
     @FXML
     private void onFavoritesClick() {
-        AlertUtil.showSuccess("صفحه‌ی علاقه‌مندی‌ها به زودی اضافه می‌شود!");
+        requireLoginThen(() -> AlertUtil.showSuccess("صفحه‌ی علاقه‌مندی‌ها به زودی اضافه می‌شود!"));
+    }
+
+    // اگه کاربر لاگین نکرده، به‌جای اجرای عملیات، می‌فرسته‌ش صفحه‌ی لاگین
+    private void requireLoginThen(Runnable action) {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AlertUtil.showError("برای این کار ابتدا باید وارد حساب کاربری خود شوید.");
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/login.fxml", "ورود");
+            return;
+        }
+        action.run();
     }
 
     private void loadAdvertisements() {
@@ -177,7 +215,8 @@ public class HomeController implements Initializable {
     }
 
     private void openAdvertisementDetails(Long id) {
-        // TODO: navigate to advertisement-details.fxml once that page exists
+        // صفحه‌ی جزئیات آگهی بدون نیاز به لاگین باز می‌شه (طبق داک پروژه)
+        // TODO: ناوبری به advertisement-details.fxml بعد از ساخته شدنش
         AlertUtil.showSuccess("صفحه‌ی جزئیات آگهی #" + id + " به زودی اضافه می‌شود!");
     }
 
