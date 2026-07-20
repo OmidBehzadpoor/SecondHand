@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CityService {
     List<CityResponse> getAllCities() throws ApiException;
+    CityResponse createCity(String name) throws ApiException;
+    void deleteCity(Long id) throws ApiException;
 }
