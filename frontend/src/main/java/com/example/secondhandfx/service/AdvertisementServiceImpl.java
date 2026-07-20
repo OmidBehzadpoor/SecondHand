@@ -6,7 +6,10 @@ import com.example.secondhandfx.model.ApiResponse;
 import com.example.secondhandfx.model.PageResponse;
 import com.example.secondhandfx.util.HttpClientHelper;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.example.secondhandfx.model.AdvertisementImageResponse;
+import com.example.secondhandfx.model.AdvertisementRequest;
 
+import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -70,6 +73,26 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                 "/api/advertisements/" + id + "/sold",
                 null,
                 new TypeReference<ApiResponse<AdvertisementResponse>>() {}
+        );
+        return response.getData();
+    }
+
+    @Override
+    public AdvertisementResponse create(AdvertisementRequest request) throws ApiException {
+        ApiResponse<AdvertisementResponse> response = HttpClientHelper.post(
+                "/api/advertisements",
+                request,
+                new TypeReference<ApiResponse<AdvertisementResponse>>() {}
+        );
+        return response.getData();
+    }
+
+    @Override
+    public AdvertisementImageResponse uploadImage(Long advertisementId, File file) throws ApiException {
+        ApiResponse<AdvertisementImageResponse> response = HttpClientHelper.uploadFile(
+                "/api/advertisements/" + advertisementId + "/images",
+                file,
+                new TypeReference<ApiResponse<AdvertisementImageResponse>>() {}
         );
         return response.getData();
     }
