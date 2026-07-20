@@ -2,10 +2,7 @@ package com.example.secondhandfx.controller;
 
 import com.example.secondhandfx.exception.ApiException;
 import com.example.secondhandfx.model.AdvertisementResponse;
-import com.example.secondhandfx.service.AdvertisementService;
-import com.example.secondhandfx.service.AdvertisementServiceImpl;
-import com.example.secondhandfx.service.FavoriteService;
-import com.example.secondhandfx.service.FavoriteServiceImpl;
+import com.example.secondhandfx.service.*;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.Config;
 import com.example.secondhandfx.util.SceneNavigator;
@@ -65,7 +62,7 @@ public class AdvertisementDetailsController {
     private Button markAsSoldButton;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
-
+    private final ChatService chatService = new ChatServiceImpl();
     private AdvertisementResponse advertisement;
     private final FavoriteService favoriteService = new FavoriteServiceImpl();
     private List<String> imageUrls;
@@ -184,7 +181,12 @@ public class AdvertisementDetailsController {
 
     @FXML
     private void onMessageSellerClick() {
-        requireLoginThen(() -> AlertUtil.showSuccess("صفحه‌ی گفت‌وگو با فروشنده به زودی اضافه می‌شود!"));
+        requireLoginThen(() -> runAsync(
+                () -> chatService.startOrGetConversation(advertisement.getId()),
+                conversation -> SceneNavigator.navigateTo(
+                        "/com/example/secondhandfx/fxml/conversation-list.fxml", "گفتگوها"),
+                "خطا در شروع گفتگو با فروشنده"
+        ));
     }
 
     @FXML
