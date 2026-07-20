@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RegisterRequest {
+public class RegisterRequest implements ApiRequest {
     private String name;
     private String username;
     private String password;

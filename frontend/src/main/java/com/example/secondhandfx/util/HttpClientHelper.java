@@ -1,5 +1,6 @@
 package com.example.secondhandfx.util;
 
+import com.example.secondhandfx.model.ApiRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +12,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
@@ -28,26 +28,26 @@ public class HttpClientHelper {
     }
 
     public static <T> T get(String path, TypeReference<T> responseType) throws ApiException {
-        return send("GET", path, null, responseType);
+        return send(HttpMethod.GET, path, null, responseType);
     }
 
-    public static <T> T post(String path, Object body, TypeReference<T> responseType) throws ApiException {
-        return send("POST", path, body, responseType);
+    public static <T> T post(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
+        return send(HttpMethod.POST, path, body, responseType);
     }
 
-    public static <T> T put(String path, Object body, TypeReference<T> responseType) throws ApiException {
-        return send("PUT", path, body, responseType);
+    public static <T> T put(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
+        return send(HttpMethod.PUT, path, body, responseType);
     }
 
-    public static <T> T patch(String path, Object body, TypeReference<T> responseType) throws ApiException {
-        return send("PATCH", path, body, responseType);
+    public static <T> T patch(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
+        return send(HttpMethod.PATCH, path, body, responseType);
     }
 
     public static <T> T delete(String path, TypeReference<T> responseType) throws ApiException {
-        return send("DELETE", path, null, responseType);
+        return send(HttpMethod.DELETE, path, null, responseType);
     }
 
-    private static <T> T send(String method, String path, Object body, TypeReference<T> responseType) throws ApiException {
+    private static <T> T send(HttpMethod method, String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(BASE_URL + path))
@@ -63,7 +63,7 @@ public class HttpClientHelper {
                     ? HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body), StandardCharsets.UTF_8)
                     : HttpRequest.BodyPublishers.noBody();
 
-            builder.method(method, bodyPublisher);
+            builder.method(method.name(), bodyPublisher);
 
             HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
@@ -71,8 +71,6 @@ public class HttpClientHelper {
 
         } catch (ConnectException e) {
             throw new ApiException("امکان برقراری ارتباط با سرور وجود ندارد. لطفاً مطمئن شوید سرور در حال اجراست.", 0);
-        } catch (HttpTimeoutException e) {
-            throw new ApiException("سرور در زمان مناسب پاسخ نداد. لطفاً دوباره تلاش کنید.", 0);
         } catch (IOException | InterruptedException e) {
             throw new ApiException("مشکلی در ارتباط با سرور پیش آمد. لطفاً دوباره تلاش کنید.", 0);
         }
