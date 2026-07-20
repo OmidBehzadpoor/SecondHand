@@ -31,4 +31,6 @@ public interface AdvertisementService {
     AdvertisementImageResponse uploadImage(Long advertisementId, File file) throws ApiException;
 
     List<AdvertisementResponse> getMyAdvertisements() throws ApiException;
+
+    AdvertisementResponse update(Long id, AdvertisementRequest request) throws ApiException;
 }
