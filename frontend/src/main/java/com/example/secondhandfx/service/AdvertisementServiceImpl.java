@@ -12,6 +12,7 @@ import com.example.secondhandfx.model.AdvertisementRequest;
 import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class AdvertisementServiceImpl implements AdvertisementService {
 
@@ -93,6 +94,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                 "/api/advertisements/" + advertisementId + "/images",
                 file,
                 new TypeReference<ApiResponse<AdvertisementImageResponse>>() {}
+        );
+        return response.getData();
+    }
+
+    @Override
+    public List<AdvertisementResponse> getMyAdvertisements() throws ApiException {
+        ApiResponse<List<AdvertisementResponse>> response = HttpClientHelper.get(
+                "/api/advertisements/mine",
+                new TypeReference<ApiResponse<List<AdvertisementResponse>>>() {}
         );
         return response.getData();
     }
