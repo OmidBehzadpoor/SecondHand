@@ -191,7 +191,8 @@ public class HomeController implements Initializable {
 
     @FXML
     private void onMyAdvertisementsClick() {
-        requireLoginThen(() -> AlertUtil.showSuccess("صفحه‌ی آگهی‌های من به زودی اضافه می‌شود!"));
+        requireLoginThen(() ->
+                SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/my-advertisements.fxml", "آگهی‌های من"));
     }
 
     @FXML
