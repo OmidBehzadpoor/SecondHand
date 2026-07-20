@@ -1,10 +1,12 @@
 package com.example.secondhandfx.controller;
 
+import com.example.secondhandfx.model.Role;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.net.URL;
@@ -15,6 +17,9 @@ public class DashboardController implements Initializable {
     @FXML
     private Label welcomeLabel;
 
+    @FXML
+    private Button adminPanelButton;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String username = SessionManager.getInstance().getUsername();
@@ -23,14 +28,16 @@ public class DashboardController implements Initializable {
         } else {
             welcomeLabel.setText("خوش آمدید!");
         }
+
+        Role role = SessionManager.getInstance().getRole();
+        adminPanelButton.setVisible(role == Role.ADMIN);
+        adminPanelButton.setManaged(role == Role.ADMIN);
     }
 
     @FXML
     private void onLogoutButtonClick() {
         SessionManager.getInstance().clearSession();
-
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/login.fxml", "ورود");
-
         AlertUtil.showSuccess("با موفقیت خارج شدید.");
     }
 
@@ -41,6 +48,11 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void onMyAdvertisementsClick() {
-        AlertUtil.showSuccess("صفحه‌ی آگهی‌های من به زودی اضافه می‌شود!");
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/conversation-list.fxml", "گفتگوها");
+    }
+
+    @FXML
+    private void onAdminPanelClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/admin-panel.fxml", "پنل ادمین");
     }
 }
