@@ -1,5 +1,6 @@
 package com.example.secondhandfx.util;
 
+import com.example.secondhandfx.exception.ApiException;
 import com.example.secondhandfx.model.ApiRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;

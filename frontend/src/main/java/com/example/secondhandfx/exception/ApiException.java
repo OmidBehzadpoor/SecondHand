@@ -1,4 +1,4 @@
-package com.example.secondhandfx.util;
+package com.example.secondhandfx.exception;
 
 public class ApiException extends Exception {
 
