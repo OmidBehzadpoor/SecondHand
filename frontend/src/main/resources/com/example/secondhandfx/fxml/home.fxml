@@ -13,34 +13,34 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.secondhandfx.controller.HomeController"
-            prefWidth="900" prefHeight="650" style="-fx-background-color: #f4f4f4;">
+            prefWidth="900" prefHeight="650" styleClass="root">
 
     <top>
-        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15;">
+        <VBox spacing="10" styleClass="top-bar">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
             <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label text="آگهی‌های فعال" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Label text="آگهی‌های فعال" styleClass="title-label"/>
                 <HBox HBox.hgrow="ALWAYS"/>
 
-                <Button text="آگهی‌های من" onAction="#onMyAdvertisementsClick"
-                        style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
-                <Button text="علاقه‌مندی‌ها" onAction="#onFavoritesClick"
-                        style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
-                <Button text="ثبت آگهی جدید" onAction="#onCreateAdvertisementClick"
-                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 6 14;"/>
+                <Button fx:id="themeToggleButton" text="🌙" onAction="#onToggleThemeClick"
+                        styleClass="btn, btn-icon"/>
+
+                <Button text="آگهی‌های من" onAction="#onMyAdvertisementsClick" styleClass="btn"/>
+                <Button text="علاقه‌مندی‌ها" onAction="#onFavoritesClick" styleClass="btn"/>
+                <Button text="ثبت آگهی جدید" onAction="#onCreateAdvertisementClick" styleClass="btn, btn-primary"/>
 
                 <!-- حالت مهمون: دکمه‌های ورود و ثبت‌نام -->
                 <HBox fx:id="guestAuthBox" spacing="8" alignment="CENTER_LEFT">
-                    <Button text="ورود" onAction="#onLoginClick"
-                            style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 6 14;"/>
-                    <Button text="ثبت‌نام" onAction="#onRegisterClick"
-                            style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
+                    <Button text="ورود" onAction="#onLoginClick" styleClass="btn, btn-success"/>
+                    <Button text="ثبت‌نام" onAction="#onRegisterClick" styleClass="btn"/>
                 </HBox>
 
                 <!-- حالت لاگین‌شده: نام کاربر و دکمه‌ی خروج -->
                 <HBox fx:id="userAuthBox" spacing="10" alignment="CENTER_LEFT">
-                    <Label fx:id="welcomeLabel" style="-fx-font-size: 14px; -fx-text-fill: #2c3e50;"/>
-                    <Button text="خروج" onAction="#onLogoutButtonClick"
-                            style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 6 14;"/>
+                    <Label fx:id="welcomeLabel" styleClass="muted-label"/>
+                    <Button text="خروج" onAction="#onLogoutButtonClick" styleClass="btn, btn-danger"/>
                 </HBox>
             </HBox>
 
@@ -51,14 +51,13 @@
                 <TextField fx:id="minPriceField" promptText="حداقل قیمت" prefWidth="100"/>
                 <TextField fx:id="maxPriceField" promptText="حداکثر قیمت" prefWidth="100"/>
                 <ComboBox fx:id="sortComboBox" promptText="مرتب‌سازی" prefWidth="120"/>
-                <Button text="اعمال فیلتر" onAction="#onSearchClick"
-                        style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 6 14;"/>
+                <Button text="اعمال فیلتر" onAction="#onSearchClick" styleClass="btn, btn-success"/>
             </HBox>
         </VBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+        <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
             <FlowPane fx:id="advertisementsContainer" hgap="15" vgap="15">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
@@ -68,10 +67,13 @@
     </center>
 
     <bottom>
-        <HBox spacing="15" alignment="CENTER" style="-fx-padding: 12; -fx-background-color: white;">
-            <Button fx:id="prevPageButton" text="◀ قبلی" onAction="#onPrevPageClick"/>
+        <HBox spacing="15" alignment="CENTER" styleClass="bottom-bar">
+            <padding>
+                <Insets top="12" right="12" bottom="12" left="12"/>
+            </padding>
+            <Button fx:id="prevPageButton" text="◀ قبلی" onAction="#onPrevPageClick" styleClass="btn"/>
             <Label fx:id="pageIndicatorLabel" text="1 از 1"/>
-            <Button fx:id="nextPageButton" text="بعدی ▶" onAction="#onNextPageClick"/>
+            <Button fx:id="nextPageButton" text="بعدی ▶" onAction="#onNextPageClick" styleClass="btn"/>
         </HBox>
     </bottom>
 
