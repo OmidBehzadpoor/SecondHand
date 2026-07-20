@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.secondhandfx.controller.HomeController"
+            prefWidth="900" prefHeight="650" style="-fx-background-color: #f4f4f4;">
+
+    <top>
+        <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15;">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label fx:id="welcomeLabel" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Button text="آگهی‌های من" onAction="#onMyAdvertisementsClick"
+                        style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
+                <Button text="علاقه‌مندی‌ها" onAction="#onFavoritesClick"
+                        style="-fx-background-color: #ecf0f1; -fx-padding: 6 14;"/>
+                <Button text="ثبت آگهی جدید" onAction="#onCreateAdvertisementClick"
+                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 6 14;"/>
+                <Button text="خروج" onAction="#onLogoutButtonClick"
+                        style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 6 14;"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="جست‌وجو در عنوان و توضیحات..." prefWidth="220"/>
+                <ComboBox fx:id="categoryComboBox" promptText="دسته‌بندی" prefWidth="150"/>
+                <ComboBox fx:id="cityComboBox" promptText="شهر" prefWidth="130"/>
+                <TextField fx:id="minPriceField" promptText="حداقل قیمت" prefWidth="100"/>
+                <TextField fx:id="maxPriceField" promptText="حداکثر قیمت" prefWidth="100"/>
+                <ComboBox fx:id="sortComboBox" promptText="مرتب‌سازی" prefWidth="120"/>
+                <Button text="اعمال فیلتر" onAction="#onSearchClick"
+                        style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 6 14;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <FlowPane fx:id="advertisementsContainer" hgap="15" vgap="15">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+            </FlowPane>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="15" alignment="CENTER" style="-fx-padding: 12; -fx-background-color: white;">
+            <Button fx:id="prevPageButton" text="◀ قبلی" onAction="#onPrevPageClick"/>
+            <Label fx:id="pageIndicatorLabel" text="1 از 1"/>
+            <Button fx:id="nextPageButton" text="بعدی ▶" onAction="#onNextPageClick"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
