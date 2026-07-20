@@ -173,11 +173,19 @@ public class AdvertisementFormController {
         List<File> imagesToUpload = new ArrayList<>(selectedImagesListView.getItems());
         submitButton.setDisable(true);
 
-        runAsync(
-                () -> advertisementService.create(request),
-                createdAd -> uploadImagesThenNavigate(createdAd, imagesToUpload),
-                "خطا در ثبت آگهی"
-        );
+        if (editingAdvertisementId != null) {
+            runAsync(
+                    () -> advertisementService.update(editingAdvertisementId, request),
+                    updatedAd -> uploadImagesThenNavigate(updatedAd, imagesToUpload),
+                    "خطا در ویرایش آگهی"
+            );
+        } else {
+            runAsync(
+                    () -> advertisementService.create(request),
+                    createdAd -> uploadImagesThenNavigate(createdAd, imagesToUpload),
+                    "خطا در ثبت آگهی"
+            );
+        }
     }
 
     // بعد از ساخته‌شدن آگهی، تصویرها را یکی‌یکی آپلود می‌کند و در پایان کاربر را به صفحه‌ی جزئیات می‌فرستد
