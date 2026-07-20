@@ -301,12 +301,9 @@ public class AdvertisementFormController {
     // چون اسم دسته‌بندی‌ها در ComboBox با پیشوند خط‌تیره‌ی تورفته نمایش داده می‌شه،
 // قبل از مقایسه با نام خام آگهی، پیشوند باید حذف بشه
     private CategoryResponse findByPlainName(List<CategoryResponse> categories, String plainName) {
-        for (CategoryResponse category : categories) {
-            String withoutPrefix = category.getName().replaceFirst("^—+\\s*", "");
-            if (withoutPrefix.equals(plainName)) {
-                return category;
-            }
-        }
-        return null;
+        return categories.stream()
+                .filter(category -> category.getName().equals(plainName))
+                .findFirst()
+                .orElse(null);
     }
 }
