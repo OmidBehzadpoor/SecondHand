@@ -12,6 +12,7 @@ import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -27,25 +28,41 @@ import java.util.concurrent.Executors;
 
 public class AdvertisementDetailsController {
 
-    @FXML private ImageView mainImageView;
-    @FXML private Label imageIndicatorLabel;
-    @FXML private Button prevImageButton;
-    @FXML private Button nextImageButton;
+    @FXML
+    private ImageView mainImageView;
+    @FXML
+    private Label imageIndicatorLabel;
+    @FXML
+    private Button prevImageButton;
+    @FXML
+    private Button nextImageButton;
 
-    @FXML private Label titleLabel;
-    @FXML private Label priceLabel;
-    @FXML private Label statusLabel;
-    @FXML private Label cityLabel;
-    @FXML private Label categoryLabel;
-    @FXML private Label descriptionLabel;
-    @FXML private Label sellerLabel;
-    @FXML private Label ratingLabel;
-    @FXML private Label rejectionReasonLabel;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private Label priceLabel;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Label cityLabel;
+    @FXML
+    private Label categoryLabel;
+    @FXML
+    private Label descriptionLabel;
+    @FXML
+    private Label sellerLabel;
+    @FXML
+    private Label ratingLabel;
+    @FXML
+    private Label rejectionReasonLabel;
 
     // ناحیه‌ی دکمه‌ها بسته به اینکه بیننده صاحب آگهیه یا نه، عوض می‌شه
-    @FXML private HBox buyerActionsBox;
-    @FXML private HBox ownerActionsBox;
-    @FXML private Button markAsSoldButton;
+    @FXML
+    private HBox buyerActionsBox;
+    @FXML
+    private HBox ownerActionsBox;
+    @FXML
+    private Button markAsSoldButton;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
 
@@ -138,7 +155,10 @@ public class AdvertisementDetailsController {
 
     @FXML
     private void onEditClick() {
-        AlertUtil.showSuccess("صفحه‌ی ویرایش آگهی به زودی اضافه می‌شود!");
+        FXMLLoader loader = SceneNavigator.navigateTo(
+                "/com/example/secondhandfx/fxml/advertisement-form.fxml", "ویرایش آگهی");
+        AdvertisementFormController controller = loader.getController();
+        controller.setAdvertisementId(advertisement.getId());
     }
 
     @FXML
@@ -256,6 +276,7 @@ public class AdvertisementDetailsController {
     private interface ThrowingRunnable {
         void run() throws ApiException;
     }
+
     private void applyRejectionReason(String status, String rejectionReason) {
         boolean shouldShow = "REJECTED".equals(status)
                 && rejectionReason != null && !rejectionReason.isBlank();
