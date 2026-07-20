@@ -95,6 +95,11 @@ public class RegisterController {
     }
 
     @FXML
+    private void onBackToHomeClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+    }
+
+    @FXML
     private void onLoginLinkClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/login.fxml", "ورود");
     }
