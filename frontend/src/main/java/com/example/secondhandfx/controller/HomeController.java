@@ -329,7 +329,7 @@ public class HomeController implements Initializable {
         Node source = (Node) event.getSource();
         ThemeManager.toggleTheme(source.getScene());
     }
-    
+
     @FunctionalInterface
     private interface ThrowingSupplier<T> {
         T get() throws ApiException;
