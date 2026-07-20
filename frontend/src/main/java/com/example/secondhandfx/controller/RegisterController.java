@@ -6,6 +6,7 @@ import com.example.secondhandfx.service.AuthService;
 import com.example.secondhandfx.service.AuthServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
+import com.example.secondhandfx.util.ValidationUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
@@ -39,14 +40,25 @@ public class RegisterController {
         String phone = phoneField.getText().trim();
         String email = emailField.getText().trim();
 
-        if (name.isEmpty() || username.isEmpty() || password.isEmpty()
-                || phone.isEmpty() || email.isEmpty()) {
+        if (ValidationUtil.isBlank(name) || ValidationUtil.isBlank(username)
+                || ValidationUtil.isBlank(password) || ValidationUtil.isBlank(phone)
+                || ValidationUtil.isBlank(email)) {
             AlertUtil.showError("لطفاً همه‌ی فیلدها را پر کنید.");
             return;
         }
 
         if (password.length() < 4) {
             AlertUtil.showError("رمز عبور باید حداقل ۴ کاراکتر باشد.");
+            return;
+        }
+
+        if (!ValidationUtil.isValidEmail(email)) {
+            AlertUtil.showError("ایمیل واردشده معتبر نیست.");
+            return;
+        }
+
+        if (!ValidationUtil.isValidPhone(phone)) {
+            AlertUtil.showError("شماره تماس باید ۱۱ رقم و با ۰۹ شروع شود.");
             return;
         }
 
