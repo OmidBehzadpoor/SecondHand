@@ -246,4 +246,47 @@ public class AdvertisementFormController {
     private interface ThrowingSupplier<T> {
         T get() throws ApiException;
     }
+
+    public void setAdvertisementId(Long id) {
+        this.editingAdvertisementId = id;
+        pageTitleLabel.setText("ویرایش آگهی");
+        submitButton.setText("ذخیره‌ی تغییرات");
+
+        runAsync(
+                () -> advertisementService.getById(id),
+                this::populateFormForEdit,
+                "خطا در دریافت اطلاعات آگهی"
+        );
+    }
+
+    private void populateFormForEdit(AdvertisementResponse ad) {
+        titleField.setText(ad.getTitle());
+        descriptionArea.setText(ad.getDescription());
+        priceField.setText(String.valueOf(ad.getPrice()));
+
+        CategoryResponse matchedCategory = findByPlainName(categoryComboBox.getItems(), ad.getCategoryName());
+        if (matchedCategory != null) {
+            categoryComboBox.getSelectionModel().select(matchedCategory);
+        }
+
+        CityResponse matchedCity = cityComboBox.getItems().stream()
+                .filter(city -> city.getName().equals(ad.getCityName()))
+                .findFirst()
+                .orElse(null);
+        if (matchedCity != null) {
+            cityComboBox.getSelectionModel().select(matchedCity);
+        }
+    }
+
+    // چون اسم دسته‌بندی‌ها در ComboBox با پیشوند خط‌تیره‌ی تورفته نمایش داده می‌شه،
+// قبل از مقایسه با نام خام آگهی، پیشوند باید حذف بشه
+    private CategoryResponse findByPlainName(List<CategoryResponse> categories, String plainName) {
+        for (CategoryResponse category : categories) {
+            String withoutPrefix = category.getName().replaceFirst("^—+\\s*", "");
+            if (withoutPrefix.equals(plainName)) {
+                return category;
+            }
+        }
+        return null;
+    }
 }
