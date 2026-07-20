@@ -29,17 +29,25 @@ import java.util.concurrent.Executors;
 
 public class AdvertisementFormController {
 
-    @FXML private TextField titleField;
-    @FXML private TextArea descriptionArea;
-    @FXML private TextField priceField;
-    @FXML private ComboBox<CategoryResponse> categoryComboBox;
-    @FXML private ComboBox<CityResponse> cityComboBox;
-    @FXML private ListView<File> selectedImagesListView;
-    @FXML private Button submitButton;
-    @FXML private Label pageTitleLabel;
+    @FXML
+    private TextField titleField;
+    @FXML
+    private TextArea descriptionArea;
+    @FXML
+    private TextField priceField;
+    @FXML
+    private ComboBox<CategoryResponse> categoryComboBox;
+    @FXML
+    private ComboBox<CityResponse> cityComboBox;
+    @FXML
+    private ListView<File> selectedImagesListView;
+    @FXML
+    private Button submitButton;
+    @FXML
+    private Label pageTitleLabel;
 
     private Long editingAdvertisementId;
-    
+
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
     private final CityService cityService = new CityServiceImpl();
@@ -209,7 +217,11 @@ public class AdvertisementFormController {
                 } else if (!failedFileNames.isEmpty()) {
                     AlertUtil.showError("آگهی ثبت شد، اما آپلود " + failedFileNames.size() + " تصویر ناموفق بود.");
                 } else {
-                    AlertUtil.showSuccess("آگهی با موفقیت ثبت شد و پس از بررسی مدیر نمایش داده می‌شود.");
+                    if (editingAdvertisementId != null) {
+                        AlertUtil.showSuccess("آگهی با موفقیت ویرایش شد و پس از بررسی مدیر دوباره نمایش داده می‌شود.");
+                    } else {
+                        AlertUtil.showSuccess("آگهی با موفقیت ثبت شد و پس از بررسی مدیر نمایش داده می‌شود.");
+                    }
                 }
 
                 openCreatedAdvertisement(createdAd.getId());
