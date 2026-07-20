@@ -10,6 +10,7 @@ public class MainApplication extends Application {
     public void start(Stage primaryStage) {
         SceneNavigator.setPrimaryStage(primaryStage);
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
