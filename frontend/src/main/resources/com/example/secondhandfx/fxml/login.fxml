@@ -12,23 +12,21 @@
       prefHeight="400.0" prefWidth="400.0" spacing="10" alignment="TOP_CENTER"
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.LoginController"
-      style="-fx-background-color: #f4f4f4;">
+      styleClass="root">
    <padding>
       <Insets top="30" right="30" bottom="20" left="30"/>
    </padding>
    <children>
-      <Button text="← بازگشت به صفحه اصلی" onAction="#onBackToHomeClick"
-              style="-fx-background-color: transparent; -fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
-      <Label text="ورود به اکانت" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+      <Button text="← بازگشت به صفحه اصلی" onAction="#onBackToHomeClick" styleClass="back-link"/>
+      <Label text="ورود به اکانت" styleClass="page-title"/>
 
-      <Label text="نام کاربری"/>
+      <Label text="نام کاربری" styleClass="muted-label"/>
       <TextField fx:id="usernameField"/>
 
-      <Label text="رمز عبور"/>
+      <Label text="رمز عبور" styleClass="muted-label"/>
       <PasswordField fx:id="passwordField"/>
 
-      <Button text="ورود" onAction="#onLoginButtonClick"
-              style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 8 30;"/>
+      <Button text="ورود" onAction="#onLoginButtonClick" styleClass="btn, btn-primary"/>
 
       <Hyperlink text="حساب کاربری ندارید؟ ثبت‌نام" onAction="#onRegisterLinkClick"/>
    </children>

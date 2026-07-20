@@ -88,3 +88,35 @@
 .transparent-scroll, .transparent-scroll .viewport {
     -fx-background-color: transparent;
 }
+.combo-box-popup .list-view {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-padding: 6 10;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: -color-surface-alt;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+}
+
+.back-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.page-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
