@@ -1,6 +1,8 @@
 package com.example.secondhand.service;
 
 import com.example.secondhand.dto.AdvertisementRequest;
+import com.example.secondhand.dto.SellerRatingSummary;
+import com.example.secondhand.dto.response.AdminAdvertisementResponse;
 import com.example.secondhand.dto.response.AdvertisementResponse;
 import com.example.secondhand.exception.AdvertisementNotFoundException;
 import com.example.secondhand.exception.CategoryNotFoundException;
@@ -12,9 +14,13 @@ import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
 import com.example.secondhand.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class AdvertisementService {
     private final AdvertisementRepository advertisementRepository;
     private final CategoryRepository categoryRepository;
     private final CityRepository cityRepository;
+    private final SellerRatingService sellerRatingService;
 
     public AdvertisementResponse create(AdvertisementRequest request, User currentUser) {
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -42,7 +49,7 @@ public class AdvertisementService {
 
         addImages(advertisement, request.getImageUrls());
 
-        return mapToResponse(advertisementRepository.save(advertisement));
+        return mapToResponse(advertisementRepository.save(advertisement), ratingSummaryFor(currentUser.getId()));
     }
 
     public AdvertisementResponse getById(Long id, User currentUser) {
@@ -61,30 +68,42 @@ public class AdvertisementService {
             throw new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد");
         }
 
-        return mapToResponse(advertisement);
+        return mapToResponse(advertisement, ratingSummaryFor(advertisement.getSeller().getId()));
     }
 
-    public List<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
-        List<Advertisement> advertisements;
+    @Transactional(readOnly = true)
+    public Page<AdvertisementResponse> getAll(Long categoryId, Long cityId) {
+        return getAll(null, categoryId, cityId, null, null, null, Pageable.unpaged());
+    }
 
-        if (categoryId != null && cityId != null) {
-            advertisements = advertisementRepository.findByStatusAndCategoryIdAndCityId(
-                    AdvertisementStatus.APPROVED, categoryId, cityId);
-        } else if (categoryId != null) {
-            advertisements = advertisementRepository.findByStatusAndCategoryId(AdvertisementStatus.APPROVED, categoryId);
-        } else if (cityId != null) {
-            advertisements = advertisementRepository.findByStatusAndCityId(AdvertisementStatus.APPROVED, cityId);
-        } else {
-            advertisements = advertisementRepository.findByStatus(AdvertisementStatus.APPROVED);
+    @Transactional(readOnly = true)
+    public Page<AdvertisementResponse> getAll(String keyword, Long categoryId, Long cityId,
+                                              Long minPrice, Long maxPrice, SortOption sortBy,
+                                              Pageable pageable) {
+
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new InvalidAdvertisementStateException("حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد");
         }
 
-        return advertisements.stream().map(this::mapToResponse).toList();
+        String sortByName = sortBy != null ? sortBy.name() : null;
+
+        Page<Advertisement> advertisementsPage = advertisementRepository
+                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName, pageable);
+
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisementsPage.getContent());
+
+        return advertisementsPage.map(advertisement -> mapToResponse(advertisement, ratingSummaries));
     }
+
 
     public List<AdvertisementResponse> getMyAdvertisements(User currentUser) {
         List<Advertisement> advertisements = advertisementRepository.findBySellerId(currentUser.getId());
 
-        return advertisements.stream().map(this::mapToResponse).toList();
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisements);
+
+        return advertisements.stream()
+                .map(advertisement -> mapToResponse(advertisement, ratingSummaries))
+                .toList();
     }
 
     public AdvertisementResponse update(Long id, AdvertisementRequest request, User currentUser) {
@@ -113,7 +132,7 @@ public class AdvertisementService {
             syncImages(advertisement, request.getImageUrls());
         }
 
-        return mapToResponse(advertisementRepository.save(advertisement));
+        return mapToResponse(advertisementRepository.save(advertisement), ratingSummaryFor(currentUser.getId()));
     }
 
     public void delete(Long id, User currentUser) {
@@ -142,7 +161,7 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.SOLD);
 
-        return mapToResponse(advertisementRepository.save(advertisement));
+        return mapToResponse(advertisementRepository.save(advertisement), ratingSummaryFor(currentUser.getId()));
     }
 
     private void addImages(Advertisement advertisement, List<String> imageUrls) {
@@ -180,7 +199,10 @@ public class AdvertisementService {
         advertisement.getImages().addAll(newImages);
     }
 
-    private AdvertisementResponse mapToResponse(Advertisement advertisement) {
+    private AdvertisementResponse mapToResponse(Advertisement advertisement, Map<Long, SellerRatingSummary> ratingSummaries) {
+        SellerRatingSummary ratingSummary = ratingSummaries.getOrDefault(
+                advertisement.getSeller().getId(), SellerRatingSummary.EMPTY);
+
         return AdvertisementResponse.builder()
                 .id(advertisement.getId())
                 .title(advertisement.getTitle())
@@ -191,8 +213,101 @@ public class AdvertisementService {
                 .status(advertisement.getStatus())
                 .ownerId(advertisement.getSeller().getId())
                 .ownerUsername(advertisement.getSeller().getUsername())
+                .sellerAverageRating(ratingSummary.getAverageRating())
+                .sellerRatingCount(ratingSummary.getRatingCount())
                 .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
                 .createdAt(advertisement.getCreatedAt())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminAdvertisementResponse> getPendingAdvertisements() {
+        List<Advertisement> advertisements = advertisementRepository.findByStatus(AdvertisementStatus.PENDING);
+
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisements);
+
+        return advertisements.stream()
+                .map(advertisement -> mapToAdminResponse(advertisement, ratingSummaries))
+                .toList();
+    }
+
+    @Transactional
+    public AdminAdvertisementResponse approve(Long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.PENDING) {
+            throw new InvalidAdvertisementStateException("فقط آگهی‌های در انتظار بررسی قابل تایید هستند");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.APPROVED);
+        advertisement.setRejectionReason(null);
+        return mapToAdminResponse(advertisementRepository.save(advertisement),
+                ratingSummaryFor(advertisement.getSeller().getId()));
+    }
+
+    @Transactional
+    public AdminAdvertisementResponse reject(Long id, String reason) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() != AdvertisementStatus.PENDING) {
+            throw new InvalidAdvertisementStateException("فقط آگهی‌های در انتظار بررسی قابل رد هستند");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.REJECTED);
+        advertisement.setRejectionReason(reason);
+        return mapToAdminResponse(advertisementRepository.save(advertisement),
+                ratingSummaryFor(advertisement.getSeller().getId()));
+    }
+
+    @Transactional
+    public void adminDelete(Long id) {
+        Advertisement advertisement = advertisementRepository.findById(id)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        if (advertisement.getStatus() == AdvertisementStatus.DELETED) {
+            throw new InvalidAdvertisementStateException("این آگهی قبلاً حذف شده است");
+        }
+
+        advertisement.setStatus(AdvertisementStatus.DELETED);
+        advertisementRepository.save(advertisement);
+    }
+
+    private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement, Map<Long, SellerRatingSummary> ratingSummaries) {
+        SellerRatingSummary ratingSummary = ratingSummaries.getOrDefault(
+                advertisement.getSeller().getId(), SellerRatingSummary.EMPTY);
+
+        return AdminAdvertisementResponse.builder()
+                .id(advertisement.getId())
+                .title(advertisement.getTitle())
+                .description(advertisement.getDescription())
+                .price(advertisement.getPrice())
+                .categoryName(advertisement.getCategory().getName())
+                .cityName(advertisement.getCity().getName())
+                .status(advertisement.getStatus())
+                .sellerId(advertisement.getSeller().getId())
+                .sellerUsername(advertisement.getSeller().getUsername())
+                .sellerName(advertisement.getSeller().getName())
+                .sellerPhone(advertisement.getSeller().getPhone())
+                .sellerEmail(advertisement.getSeller().getEmail())
+                .sellerAverageRating(ratingSummary.getAverageRating())
+                .sellerRatingCount(ratingSummary.getRatingCount())
+                .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())
+                .rejectionReason(advertisement.getRejectionReason())
+                .createdAt(advertisement.getCreatedAt())
+                .build();
+    }
+
+    private Map<Long, SellerRatingSummary> ratingSummariesFor(List<Advertisement> advertisements) {
+        List<Long> sellerIds = advertisements.stream()
+                .map(advertisement -> advertisement.getSeller().getId())
+                .toList();
+
+        return sellerRatingService.getRatingSummariesForSellers(sellerIds);
+    }
+
+    private Map<Long, SellerRatingSummary> ratingSummaryFor(Long sellerId) {
+        return sellerRatingService.getRatingSummariesForSellers(List.of(sellerId));
     }
 }

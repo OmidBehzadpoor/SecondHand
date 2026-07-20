@@ -1,6 +1,7 @@
 package com.example.secondhand.security;
 
 import com.example.secondhand.model.User;
+import com.example.secondhand.model.UserStatus;
 import com.example.secondhand.repository.UserRepository;
 import com.example.secondhand.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -48,6 +49,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 User user = userRepository.findByUsername(username).orElse(null);
+
+                if (user != null && user.getStatus() != UserStatus.ACTIVE) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
 
                 if (user != null && jwtService.validateToken(token, username)) {
 

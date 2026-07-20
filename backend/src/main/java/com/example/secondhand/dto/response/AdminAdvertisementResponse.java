@@ -1,29 +1,30 @@
 package com.example.secondhand.dto.response;
 
 import com.example.secondhand.model.AdvertisementStatus;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class AdvertisementResponse
-{
+public class AdminAdvertisementResponse {
     private Long id;
     private String title;
     private String description;
     private Long price;
-    private String cityName;
     private String categoryName;
+    private String cityName;
     private AdvertisementStatus status;
-    private Long ownerId;
-    private String ownerUsername;
+    private Long sellerId;
+    private String sellerUsername;
+    private String sellerName;
+    private String sellerPhone;
+    private String sellerEmail;
     private Double sellerAverageRating;
     private Long sellerRatingCount;
     private List<String> imageUrls;
+    private String rejectionReason;
     private LocalDateTime createdAt;
 }
