@@ -197,7 +197,8 @@ public class HomeController implements Initializable {
 
     @FXML
     private void onFavoritesClick() {
-        requireLoginThen(() -> AlertUtil.showSuccess("صفحه‌ی علاقه‌مندی‌ها به زودی اضافه می‌شود!"));
+        requireLoginThen(() ->
+                SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/favorites.fxml", "علاقه‌مندی‌های من"));
     }
 
     // اگه کاربر لاگین نکرده، به‌جای اجرای عملیات، می‌فرسته‌ش صفحه‌ی لاگین
