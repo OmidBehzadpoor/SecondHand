@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
 <VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.DashboardController"
       alignment="CENTER" spacing="20" prefHeight="400" prefWidth="600"
       style="-fx-background-color: #f4f4f4;">
-
     <Label fx:id="welcomeLabel" text=""
            style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-
     <Label text="به داشبورد خوش آمدید!"
            style="-fx-font-size: 16px; -fx-text-fill: #7f8c8d;"/>
-
     <HBox spacing="20" alignment="CENTER">
         <Button text="ثبت آگهی جدید" onAction="#onCreateAdvertisementClick"
                 style="-fx-font-size: 14px; -fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 10 20;"/>
         <Button text="آگهی‌های من" onAction="#onMyAdvertisementsClick"
                 style="-fx-font-size: 14px; -fx-background-color: #2ecc71; -fx-text-fill: white; -fx-padding: 10 20;"/>
+        <Button fx:id="adminPanelButton" text="پنل ادمین" onAction="#onAdminPanelClick"
+                style="-fx-font-size: 14px; -fx-background-color: #9b59b6; -fx-text-fill: white; -fx-padding: 10 20;"/>
     </HBox>
-
     <Button text="خروج" onAction="#onLogoutButtonClick"
             style="-fx-font-size: 14px; -fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 8 30;"/>
-
 </VBox>

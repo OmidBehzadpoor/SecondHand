@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.secondhandfx.controller.AdminPanelController"
+            prefWidth="800" prefHeight="550">
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+
+            <Tab text="آگهی‌های در انتظار بررسی">
+                <TableView fx:id="pendingAdsTable">
+                    <columns>
+                        <TableColumn fx:id="adTitleColumn" text="عنوان" prefWidth="180"/>
+                        <TableColumn fx:id="adSellerColumn" text="فروشنده" prefWidth="120"/>
+                        <TableColumn fx:id="adPriceColumn" text="قیمت" prefWidth="100"/>
+                        <TableColumn fx:id="adActionsColumn" text="عملیات" prefWidth="200"/>
+                    </columns>
+                </TableView>
+            </Tab>
+
+            <Tab text="کاربران">
+                <TableView fx:id="usersTable">
+                    <columns>
+                        <TableColumn fx:id="userNameColumn" text="نام کاربری" prefWidth="140"/>
+                        <TableColumn fx:id="userRoleColumn" text="نقش" prefWidth="100"/>
+                        <TableColumn fx:id="userStatusColumn" text="وضعیت" prefWidth="100"/>
+                        <TableColumn fx:id="userActionsColumn" text="عملیات" prefWidth="160"/>
+                    </columns>
+                </TableView>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+</BorderPane>

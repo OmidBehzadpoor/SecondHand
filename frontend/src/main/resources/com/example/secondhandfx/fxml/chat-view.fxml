@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.secondhandfx.controller.ChatViewController"
+            prefWidth="600" prefHeight="500">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
+            <Label fx:id="headerLabel" text=""
+                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"
+                   HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button fx:id="rateSellerButton" text="امتیازدهی به فروشنده" onAction="#onRateSellerClick"
+                    style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ListView fx:id="messageListView"/>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 10;">
+            <TextField fx:id="messageInputField" promptText="پیام خود را بنویسید..." HBox.hgrow="ALWAYS"/>
+            <Button text="ارسال" onAction="#onSendButtonClick"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

@@ -58,9 +58,7 @@ public class LoginController {
             );
             // نمایش پیام موفقیت
             AlertUtil.showSuccess("خوش آمدید " + response.getUsername());
-            // تغییر به صفحه‌ی اصلی (فعلاً یک صفحه‌ی موقت)
-            // بعداً با صفحه‌ی لیست آگهی‌ها جایگزین می‌شود
-            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/main-shell.fxml", "خانه");
         });
 
         loginTask.setOnFailed(event -> {
@@ -77,6 +75,7 @@ public class LoginController {
 
         new Thread(loginTask).start();
     }
+
     @FXML
     private void onBackToHomeClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
