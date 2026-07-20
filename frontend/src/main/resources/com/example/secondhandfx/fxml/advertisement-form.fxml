@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.secondhandfx.controller.AdvertisementFormController"
+            prefWidth="900" prefHeight="650" style="-fx-background-color: #f4f4f4;">
+
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 15;">
+            <Label text="ثبت آگهی جدید" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="15" style="-fx-padding: 20;">
+
+                <VBox spacing="8" style="-fx-background-color: white; -fx-padding: 15;">
+                    <Label text="عنوان آگهی"/>
+                    <TextField fx:id="titleField"/>
+
+                    <Label text="توضیحات"/>
+                    <TextArea fx:id="descriptionArea" prefRowCount="5" wrapText="true"/>
+
+                    <Label text="قیمت (تومان)"/>
+                    <TextField fx:id="priceField"/>
+
+                    <HBox spacing="15">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="دسته‌بندی"/>
+                            <ComboBox fx:id="categoryComboBox" promptText="انتخاب دسته‌بندی" maxWidth="Infinity"/>
+                        </VBox>
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="شهر"/>
+                            <ComboBox fx:id="cityComboBox" promptText="انتخاب شهر" maxWidth="Infinity"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <VBox spacing="8" style="-fx-background-color: white; -fx-padding: 15;">
+                    <Label text="تصاویر آگهی"/>
+                    <ListView fx:id="selectedImagesListView" prefHeight="120"/>
+                    <HBox spacing="10">
+                        <Button text="افزودن تصویر" onAction="#onAddImageClick"/>
+                        <Button text="حذف تصویر انتخاب‌شده" onAction="#onRemoveImageClick"/>
+                    </HBox>
+                </VBox>
+
+                <HBox spacing="10">
+                    <Button fx:id="submitButton" text="ثبت آگهی" onAction="#onSubmitClick"
+                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 8 20;"/>
+                    <Button text="انصراف" onAction="#onCancelClick"
+                            style="-fx-background-color: #ecf0f1; -fx-padding: 8 20;"/>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
