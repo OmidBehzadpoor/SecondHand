@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.secondhandfx.controller.MainShellController"
+            prefWidth="900" prefHeight="600">
+
+    <left>
+        <VBox spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 20;" prefWidth="200">
+            <Label fx:id="welcomeLabel" text=""
+                   style="-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <Button text="آگهی‌های من" maxWidth="Infinity" onAction="#onMyAdvertisementsClick"
+                    style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: baseline-right;"/>
+
+            <Button text="ثبت آگهی جدید" maxWidth="Infinity" onAction="#onCreateAdvertisementClick"
+                    style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: baseline-right;"/>
+
+            <Button text="گفتگوها" maxWidth="Infinity" onAction="#onConversationsClick"
+                    style="-fx-background-color: #34495e; -fx-text-fill: white; -fx-alignment: baseline-right;"/>
+
+            <Button fx:id="adminPanelButton" text="پنل ادمین" maxWidth="Infinity" onAction="#onAdminPanelClick"
+                    style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-alignment: baseline-right;"/>
+
+            <Button text="خروج" maxWidth="Infinity" onAction="#onLogoutButtonClick"
+                    style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-alignment: baseline-right;"/>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentArea" style="-fx-background-color: white;"/>
+    </center>
+
+</BorderPane>
