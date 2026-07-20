@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.secondhandfx.controller.AdvertisementCardController"
+      fx:id="root" spacing="6" prefWidth="260" prefHeight="150"
+      onMouseClicked="#onCardClick"
+      style="-fx-background-color: white; -fx-background-radius: 8; -fx-padding: 12;
+             -fx-border-color: #dcdde1; -fx-border-radius: 8; -fx-cursor: hand;">
+
+    <Label fx:id="titleLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" wrapText="true"/>
+    <Label fx:id="priceLabel" style="-fx-font-size: 14px; -fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
+    <Label fx:id="categoryLabel" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+    <Label fx:id="cityLabel" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+    <Label fx:id="ratingLabel" style="-fx-font-size: 12px; -fx-text-fill: #f39c12;"/>
+
+</VBox>
