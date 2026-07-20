@@ -7,6 +7,7 @@ import com.example.secondhandfx.model.AdvertisementImageResponse;
 import com.example.secondhandfx.model.AdvertisementRequest;
 
 import java.io.File;
+import java.util.List;
 
 public interface AdvertisementService {
 
@@ -28,4 +29,6 @@ public interface AdvertisementService {
     AdvertisementResponse create(AdvertisementRequest request) throws ApiException;
 
     AdvertisementImageResponse uploadImage(Long advertisementId, File file) throws ApiException;
+
+    List<AdvertisementResponse> getMyAdvertisements() throws ApiException;
 }
