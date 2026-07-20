@@ -16,7 +16,7 @@ import java.time.Duration;
 
 public class HttpClientHelper {
 
-    private static final String BASE_URL = "http://localhost:8080";
+    private static final String BASE_URL = Config.getApiBaseUrl();
     private static final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(5))
             .build();
