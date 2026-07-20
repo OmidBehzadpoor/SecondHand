@@ -20,6 +20,7 @@ public class AdvertisementResponse
     private String cityName;
     private String categoryName;
     private AdvertisementStatus status;
+    private String rejectionReason;
     private Long ownerId;
     private String ownerUsername;
     private Double sellerAverageRating;
