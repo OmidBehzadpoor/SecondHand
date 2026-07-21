@@ -12,10 +12,15 @@
             prefWidth="600" prefHeight="500">
 
     <top>
-        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 10 15;">
+            <!-- دکمه‌ی بازگشت به لیست گفتگوها -->
+            <Button text="← بازگشت" onAction="#onBackClick"
+                    style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand;"/>
+
             <Label fx:id="headerLabel" text=""
                    style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"
                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+
             <Button fx:id="rateSellerButton" text="امتیازدهی به فروشنده" onAction="#onRateSellerClick"
                     style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
         </HBox>
