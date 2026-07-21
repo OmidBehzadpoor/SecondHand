@@ -45,8 +45,12 @@ public class CategoryService {
             throw new CategoryHasChildrenException("این دسته‌بندی زیردسته دارد و قابل حذف نیست");
         }
 
-        if (advertisementRepository.existsByCategoryId(id)) {
-            throw new CategoryInUseException("این دسته‌بندی در آگهی‌های فعال استفاده شده و قابل حذف نیست");
+        boolean hasActiveOrPendingAds = advertisementRepository.existsByCategoryIdAndStatusIn(
+                id,
+                List.of(AdvertisementStatus.APPROVED, AdvertisementStatus.PENDING)
+        );
+        if (hasActiveOrPendingAds) {
+            throw new CategoryInUseException("این دسته‌بندی دارای آگهی فعال یا در انتظار است و قابل حذف نیست");
         }
 
         categoryRepository.delete(category);
