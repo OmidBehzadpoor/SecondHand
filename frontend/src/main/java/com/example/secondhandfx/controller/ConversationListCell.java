@@ -28,13 +28,13 @@ public class ConversationListCell extends ListCell<ConversationResponse> {
                 : conversation.getBuyerUsername();
 
         Label titleLabel = new Label(conversation.getAdvertisementTitle() + " — " + otherPartyUsername);
-        titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        titleLabel.getStyleClass().add("list-cell-title");
 
         String preview = conversation.getLastMessage() != null
                 ? conversation.getLastMessage()
                 : "هنوز پیامی ارسال نشده";
         Label previewLabel = new Label(preview);
-        previewLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 12px;");
+        previewLabel.getStyleClass().add("list-cell-subtitle");
 
         VBox textBox = new VBox(4, titleLabel, previewLabel);
         HBox.setHgrow(textBox, Priority.ALWAYS);
@@ -44,10 +44,7 @@ public class ConversationListCell extends ListCell<ConversationResponse> {
 
         if (conversation.getUnreadCount() > 0) {
             Label unreadBadge = new Label(String.valueOf(conversation.getUnreadCount()));
-            unreadBadge.setStyle(
-                    "-fx-background-color: #e74c3c; -fx-text-fill: white; " +
-                            "-fx-background-radius: 12; -fx-padding: 2 8; -fx-font-size: 11px;"
-            );
+            unreadBadge.getStyleClass().addAll("badge", "badge-danger");
             row.getChildren().add(unreadBadge);
         }
 
