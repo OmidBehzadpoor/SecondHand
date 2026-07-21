@@ -202,7 +202,12 @@ public class AdvertisementDetailsController {
     @FXML
     private void onBackClick() {
         String target = returnPage != null ? returnPage : "/com/example/secondhandfx/fxml/home.fxml";
-        SceneNavigator.navigateTo(target, "آگهی‌ها");
+        FXMLLoader loader = SceneNavigator.navigateTo(target, "آگهی‌ها");
+
+        Object controller = loader.getController();
+        if (controller instanceof AdminPanelController) {
+            ((AdminPanelController) controller).setSelectedTabIndex(1);
+        }
     }
 
     private void requireLoginThen(Runnable action) {
