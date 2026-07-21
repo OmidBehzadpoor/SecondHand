@@ -58,8 +58,7 @@ public class LoginController {
             );
             // نمایش پیام موفقیت
             AlertUtil.showSuccess("خوش آمدید " + response.getUsername());
-            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/main-shell.fxml", "خانه");
-        });
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/main-shell.fxml", "آگهی‌ها");        });
 
         loginTask.setOnFailed(event -> {
             Throwable ex = loginTask.getException();

@@ -5,9 +5,11 @@ import com.example.secondhandfx.model.ConversationResponse;
 import com.example.secondhandfx.service.ChatService;
 import com.example.secondhandfx.service.ChatServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
+import com.example.secondhandfx.util.SceneNavigator;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 
@@ -62,6 +64,9 @@ public class ConversationListController implements Initializable {
     }
 
     private void onConversationSelected(ConversationResponse conversation) {
-        AlertUtil.showSuccess("صفحه‌ی چت به زودی اضافه می‌شود! (گفتگوی انتخاب‌شده: " + conversation.getAdvertisementTitle() + ")");
+        FXMLLoader loader = SceneNavigator.navigateTo(
+                "/com/example/secondhandfx/fxml/chat-view.fxml", "چت");
+        ChatViewController controller = loader.getController();
+        controller.setConversation(conversation);
     }
 }

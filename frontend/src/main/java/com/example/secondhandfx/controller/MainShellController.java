@@ -33,6 +33,7 @@ public class MainShellController {
         adminPanelButton.setVisible(role == Role.ADMIN);
         adminPanelButton.setManaged(role == Role.ADMIN);
 
+        // بارگذاری پیش‌فرض: گفتگوها
         onConversationsClick();
     }
 

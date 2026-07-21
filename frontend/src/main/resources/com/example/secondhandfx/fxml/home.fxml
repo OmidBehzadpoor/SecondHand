@@ -30,6 +30,7 @@
                 <Button text="آگهی‌های من" onAction="#onMyAdvertisementsClick" styleClass="btn"/>
                 <Button text="علاقه‌مندی‌ها" onAction="#onFavoritesClick" styleClass="btn"/>
                 <Button text="ثبت آگهی جدید" onAction="#onCreateAdvertisementClick" styleClass="btn, btn-primary"/>
+                <Button fx:id="conversationsButton" text="گفتگوها" onAction="#onConversationsClick" styleClass="btn"/>
 
                 <!-- حالت مهمون: دکمه‌های ورود و ثبت‌نام -->
                 <HBox fx:id="guestAuthBox" spacing="8" alignment="CENTER_LEFT">
@@ -40,6 +41,7 @@
                 <!-- حالت لاگین‌شده: نام کاربر و دکمه‌ی خروج -->
                 <HBox fx:id="userAuthBox" spacing="10" alignment="CENTER_LEFT">
                     <Label fx:id="welcomeLabel" styleClass="muted-label"/>
+                    <Button fx:id="adminPanelButton" text="پنل ادمین" onAction="#onAdminPanelClick" styleClass="btn"/>
                     <Button text="خروج" onAction="#onLogoutButtonClick" styleClass="btn, btn-danger"/>
                 </HBox>
             </HBox>

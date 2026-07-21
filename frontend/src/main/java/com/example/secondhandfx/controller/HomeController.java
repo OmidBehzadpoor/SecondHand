@@ -5,6 +5,7 @@ import com.example.secondhandfx.model.AdvertisementResponse;
 import com.example.secondhandfx.model.CategoryResponse;
 import com.example.secondhandfx.model.CityResponse;
 import com.example.secondhandfx.model.PageResponse;
+import com.example.secondhandfx.model.Role;
 import com.example.secondhandfx.service.AdvertisementService;
 import com.example.secondhandfx.service.AdvertisementServiceImpl;
 import com.example.secondhandfx.service.CategoryService;
@@ -51,7 +52,12 @@ public class HomeController implements Initializable {
     @FXML private HBox guestAuthBox;
     @FXML private HBox userAuthBox;
     @FXML private Label welcomeLabel;
+<<<<<<< Updated upstream
     @FXML private ComboBox<Integer> pageSizeComboBox;
+=======
+    @FXML private Button conversationsButton;
+    @FXML private Button adminPanelButton;
+>>>>>>> Stashed changes
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
@@ -129,8 +135,15 @@ public class HomeController implements Initializable {
         userAuthBox.setVisible(loggedIn);
         userAuthBox.setManaged(loggedIn);
 
+        conversationsButton.setVisible(loggedIn);
+        conversationsButton.setManaged(loggedIn);
+
         if (loggedIn) {
             welcomeLabel.setText("سلام، " + SessionManager.getInstance().getUsername());
+
+            boolean isAdmin = SessionManager.getInstance().getRole() == Role.ADMIN;
+            adminPanelButton.setVisible(isAdmin);
+            adminPanelButton.setManaged(isAdmin);
         }
     }
 
@@ -223,6 +236,17 @@ public class HomeController implements Initializable {
     private void onFavoritesClick() {
         requireLoginThen(() ->
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/favorites.fxml", "علاقه‌مندی‌های من"));
+    }
+
+    @FXML
+    private void onConversationsClick() {
+        requireLoginThen(() ->
+                SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/conversation-list.fxml", "گفتگوها"));
+    }
+
+    @FXML
+    private void onAdminPanelClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/admin-panel.fxml", "پنل ادمین");
     }
 
     // اگه کاربر لاگین نکرده، به‌جای اجرای عملیات، می‌فرسته‌ش صفحه‌ی لاگین
