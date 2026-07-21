@@ -123,7 +123,7 @@ public class RegisterController {
             );
             AlertUtil.showSuccess("ثبت‌نام و ورود با موفقیت انجام شد. خوش آمدید " + response.getUsername());
             // رفتن به صفحه‌ی اصلی
-            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/main-shell.fxml", "خانه");
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "خانه");
         });
 
         loginTask.setOnFailed(event -> {
