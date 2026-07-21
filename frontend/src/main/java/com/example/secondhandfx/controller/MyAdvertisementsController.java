@@ -110,6 +110,7 @@ public class MyAdvertisementsController {
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
         AdvertisementDetailsController controller = loader.getController();
         controller.setAdvertisementId(id);
+        controller.setReturnPage("/com/example/secondhandfx/fxml/my-advertisements.fxml");
     }
 
     private void openEditForm(Long id) {
