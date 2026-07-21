@@ -184,8 +184,12 @@ public class AdvertisementDetailsController {
     private void onMessageSellerClick() {
         requireLoginThen(() -> runAsync(
                 () -> chatService.startOrGetConversation(advertisement.getId()),
-                conversation -> SceneNavigator.navigateTo(
-                        "/com/example/secondhandfx/fxml/conversation-list.fxml", "گفتگوها"),
+                conversation -> {
+                    FXMLLoader loader = SceneNavigator.navigateTo(
+                            "/com/example/secondhandfx/fxml/chat-view.fxml", "چت");
+                    ChatViewController controller = loader.getController();
+                    controller.setConversation(conversation);
+                },
                 "خطا در شروع گفتگو با فروشنده"
         ));
     }

@@ -13,6 +13,7 @@ import com.example.secondhandfx.service.CategoryServiceImpl;
 import com.example.secondhandfx.service.CityService;
 import com.example.secondhandfx.service.CityServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
+import com.example.secondhandfx.util.Config;
 import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.ValidationUtil;
 import javafx.application.Platform;
