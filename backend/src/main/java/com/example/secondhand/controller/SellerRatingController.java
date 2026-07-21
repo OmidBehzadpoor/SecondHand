@@ -5,6 +5,7 @@ import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.SellerRatingResponse;
 import com.example.secondhand.model.User;
 import com.example.secondhand.service.SellerRatingService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ratings")
+@Tag(name = "Seller Ratings", description = "امتیازدهی به فروشنده")
 public class SellerRatingController {
 
     private final SellerRatingService sellerRatingService;

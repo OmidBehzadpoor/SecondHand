@@ -5,6 +5,7 @@ import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.model.User;
 import com.example.secondhand.exception.InvalidImageException;
 import com.example.secondhand.service.AdvertisementImageService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/advertisements/{advertisementId}/images")
 @RequiredArgsConstructor
+@Tag(name = "Advertisement Images", description = "آپلود و مدیریت تصاویر آگهی")
 public class AdvertisementImageController {
 
     private final AdvertisementImageService advertisementImageService;
