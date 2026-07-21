@@ -31,7 +31,7 @@
     </top>
 
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
+        <TabPane fx:id="adminTabPane" tabClosingPolicy="UNAVAILABLE">
 
             <!-- ====== تب جدید: آمار ====== -->
             <Tab text="آمار">
