@@ -19,6 +19,7 @@ public class SceneNavigator {
     }
 
     public static FXMLLoader navigateTo(String fxmlPath, String title) {
+        System.out.println("the page now is: " + fxmlPath);
         try {
             FXMLLoader loader = new FXMLLoader(SceneNavigator.class.getResource(fxmlPath));
             Parent root = loader.load();
