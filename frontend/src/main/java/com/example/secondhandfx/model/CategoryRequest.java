@@ -9,4 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class CategoryRequest implements ApiRequest {
     private String name;
+    private Long parentId;
 }
