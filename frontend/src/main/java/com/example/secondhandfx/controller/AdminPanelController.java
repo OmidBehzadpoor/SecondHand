@@ -226,12 +226,13 @@ public class AdminPanelController {
         };
         task.setOnSucceeded(e -> {
             pendingAds.remove(ad);
+            allAdsTable.getItems().remove(ad);
             AlertUtil.showSuccess("آگهی حذف شد.");
         });
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
     }
-
+    
     private void setupUsersTable() {
         userNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUsername()));
         userRoleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getRole().name()));
