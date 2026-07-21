@@ -217,3 +217,32 @@
 .app-dialog .button-bar .button:hover {
     -fx-background-color: -color-primary-hover;
 }
+.sidebar {
+    -fx-background-color: #1f2733;
+}
+
+.sidebar-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-btn {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-alignment: baseline-right;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 8 12;
+}
+.sidebar-btn:hover {
+    -fx-opacity: 0.85;
+}
+
+.sidebar-btn-primary {
+    -fx-background-color: -color-primary;
+}
+
+.sidebar-btn-danger {
+    -fx-background-color: -color-danger;
+}
