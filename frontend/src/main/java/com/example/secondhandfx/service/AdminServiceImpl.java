@@ -84,4 +84,12 @@ public class AdminServiceImpl implements AdminService {
                 new TypeReference<ApiResponse<AdminUserResponse>>() {}
         ).getData();
     }
+
+    @Override
+    public List<AdminAdvertisementResponse> getAllAdvertisements() throws ApiException {
+        return HttpClientHelper.get(
+                "/api/admin/advertisements/all",
+                new TypeReference<ApiResponse<List<AdminAdvertisementResponse>>>() {}
+        ).getData();
+    }
 }
