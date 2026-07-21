@@ -117,6 +117,7 @@ public class AdvertisementFormController {
         });
 
         setupExistingImagesListView();
+        setupSelectedImagesListView();
 
         loadCategories();
         loadCities();
@@ -154,8 +155,8 @@ public class AdvertisementFormController {
             private final HBox box = new HBox(10, thumb, nameLabel, deleteButton);
 
             {
-                thumb.setFitWidth(50);
-                thumb.setFitHeight(50);
+                thumb.setFitWidth(80);
+                thumb.setFitHeight(80);
                 thumb.setPreserveRatio(true);
                 HBox.setHgrow(nameLabel, Priority.ALWAYS);
                 deleteButton.getStyleClass().addAll("btn", "btn-danger");
@@ -175,6 +176,40 @@ public class AdvertisementFormController {
                 }
             }
         });
+        existingImagesListView.setPrefHeight(120);
+    }
+
+    private void setupSelectedImagesListView() {
+        selectedImagesListView.setCellFactory(listView -> new ListCell<>() {
+            private final ImageView thumb = new ImageView();
+            private final Label nameLabel = new Label();
+            private final HBox box = new HBox(10, thumb, nameLabel);
+
+            {
+                thumb.setFitWidth(80);
+                thumb.setFitHeight(80);
+                thumb.setPreserveRatio(true);
+                HBox.setHgrow(nameLabel, Priority.ALWAYS);
+            }
+
+            @Override
+            protected void updateItem(File file, boolean empty) {
+                super.updateItem(file, empty);
+                if (empty || file == null) {
+                    setGraphic(null);
+                } else {
+                    try {
+                        Image image = new Image(file.toURI().toString(), true);
+                        thumb.setImage(image);
+                    } catch (Exception e) {
+                        thumb.setImage(null);
+                    }
+                    nameLabel.setText(file.getName());
+                    setGraphic(box);
+                }
+            }
+        });
+        selectedImagesListView.setPrefHeight(120);
     }
 
     private String fileNameOf(String imageUrl) {
