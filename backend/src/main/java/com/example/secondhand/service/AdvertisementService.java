@@ -300,6 +300,15 @@ public class AdvertisementService {
         advertisementRepository.save(advertisement);
     }
 
+    @Transactional(readOnly = true)
+    public List<AdminAdvertisementResponse> getAllForAdmin() {
+        List<Advertisement> advertisements = advertisementRepository.findAll();
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisements);
+        return advertisements.stream()
+                .map(ad -> mapToAdminResponse(ad, ratingSummaries))
+                .toList();
+    }
+
     private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement, Map<Long, SellerRatingSummary> ratingSummaries) {
         SellerRatingSummary ratingSummary = ratingSummaries.getOrDefault(
                 advertisement.getSeller().getId(), SellerRatingSummary.EMPTY);
