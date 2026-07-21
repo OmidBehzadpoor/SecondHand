@@ -99,6 +99,23 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     @Override
+    public List<AdvertisementImageResponse> getImages(Long advertisementId) throws ApiException {
+        ApiResponse<List<AdvertisementImageResponse>> response = HttpClientHelper.get(
+                "/api/advertisements/" + advertisementId + "/images",
+                new TypeReference<ApiResponse<List<AdvertisementImageResponse>>>() {}
+        );
+        return response.getData();
+    }
+
+    @Override
+    public void deleteImage(Long advertisementId, Long imageId) throws ApiException {
+        HttpClientHelper.delete(
+                "/api/advertisements/" + advertisementId + "/images/" + imageId,
+                new TypeReference<ApiResponse<Void>>() {}
+        );
+    }
+
+    @Override
     public List<AdvertisementResponse> getMyAdvertisements() throws ApiException {
         ApiResponse<List<AdvertisementResponse>> response = HttpClientHelper.get(
                 "/api/advertisements/mine",
