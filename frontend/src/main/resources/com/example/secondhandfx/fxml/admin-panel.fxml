@@ -50,7 +50,7 @@
                         <TableColumn fx:id="adTitleColumn" text="عنوان" prefWidth="180"/>
                         <TableColumn fx:id="adSellerColumn" text="فروشنده" prefWidth="120"/>
                         <TableColumn fx:id="adPriceColumn" text="قیمت" prefWidth="100"/>
-                        <TableColumn fx:id="adActionsColumn" text="عملیات" prefWidth="280"/>
+                        <TableColumn fx:id="adActionsColumn" text="عملیات" prefWidth="360"/>
                     </columns>
                 </TableView>
             </Tab>
@@ -82,7 +82,7 @@
                         <TableView fx:id="categoriesTable" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="categoryNameColumn" text="نام" prefWidth="180"/>
-                                <TableColumn fx:id="categoryActionsColumn" text="عملیات" prefWidth="100"/>
+                                <TableColumn fx:id="categoryActionsColumn" text="عملیات" prefWidth="240"/>
                             </columns>
                         </TableView>
                     </VBox>
