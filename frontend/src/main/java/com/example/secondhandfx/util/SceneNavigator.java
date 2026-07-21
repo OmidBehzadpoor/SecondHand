@@ -1,6 +1,5 @@
 package com.example.secondhandfx.util;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,28 +22,26 @@ public class SceneNavigator {
         try {
             FXMLLoader loader = new FXMLLoader(SceneNavigator.class.getResource(fxmlPath));
             Parent root = loader.load();
-            Scene scene = new Scene(root);
-            ThemeManager.applyTheme(scene);
 
-            // قبل از عوض‌کردن صحنه، سایز فعلی پنجره رو نگه می‌داریم
+            // سایز واقعیِ صحنه‌ی قبلی (نه سایز پنجره که حاشیه/تایتل‌بار هم داره) رو نگه می‌داریم
             boolean wasMaximized = primaryStage.isMaximized();
-            double previousWidth = primaryStage.getWidth();
-            double previousHeight = primaryStage.getHeight();
+            Scene previousScene = primaryStage.getScene();
+            double previousWidth = previousScene != null ? previousScene.getWidth() : 0;
+            double previousHeight = previousScene != null ? previousScene.getHeight() : 0;
+
+            // سایز رو مستقیم موقع ساخت Scene جدید می‌دیم، نه بعد از set کردنش روی Stage؛
+            // این روش قابل‌اتکاتره و با رفتار داخلی ری‌سایز خودکار جاوافایکس تداخل نداره
+            Scene scene = (previousWidth > 0 && previousHeight > 0)
+                    ? new Scene(root, previousWidth, previousHeight)
+                    : new Scene(root);
+            ThemeManager.applyTheme(scene);
 
             primaryStage.setScene(scene);
             primaryStage.setTitle(title);
 
-            // تغییر سایز رو به بعد از اتمام layout پاسِ اولِ صحنه‌ی جدید موکول می‌کنیم؛
-            // اگه بلافاصله بعد از setScene صدا زده بشه، جاوافایکس گاهی خودش
-            // اندازه‌ی پنجره رو بر اساس محتوای صحنه‌ی جدید override می‌کنه
-            Platform.runLater(() -> {
-                if (wasMaximized) {
-                    primaryStage.setMaximized(true);
-                } else if (previousWidth > 0 && previousHeight > 0) {
-                    primaryStage.setWidth(previousWidth);
-                    primaryStage.setHeight(previousHeight);
-                }
-            });
+            if (wasMaximized) {
+                primaryStage.setMaximized(true);
+            }
 
             return loader;
         } catch (IOException e) {
