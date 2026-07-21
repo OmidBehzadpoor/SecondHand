@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.FavoriteCardController"
-      fx:id="root" spacing="8" prefWidth="260" styleClass="card" style="-fx-padding: 12;">
-
-    <Label fx:id="titleLabel" wrapText="true" styleClass="title-label" style="-fx-font-size: 14px;"/>
-    <Label fx:id="priceLabel" styleClass="price-label"/>
-    <Label fx:id="cityLabel" styleClass="muted-label" style="-fx-font-size: 12px;"/>
-    <Label fx:id="statusBadgeLabel" styleClass="badge"/>
-
-    <HBox spacing="6">
-        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick" styleClass="btn" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
-        <Button fx:id="removeButton" text="حذف از علاقه‌مندی‌ها" onAction="#onRemoveClick" styleClass="btn, btn-danger" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
+      fx:id="root" prefWidth="300" spacing="10" styleClass="compact-card">
+    <HBox>
+        <Label fx:id="statusBadgeLabel" text="" styleClass="status-badge"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="♥" styleClass="heart"/>
     </HBox>
-
+    <Label fx:id="titleLabel" wrapText="true" styleClass="card-title"/>
+    <Label fx:id="priceLabel" styleClass="card-price"/>
+    <Label fx:id="cityLabel" styleClass="muted-label"/>
+    <Separator/>
+    <HBox spacing="8">
+        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick"
+                HBox.hgrow="ALWAYS" styleClass="btn, btn-primary"/>
+        <Button fx:id="removeButton" text="حذف" onAction="#onRemoveClick"
+                styleClass="btn, btn-danger"/>
+    </HBox>
 </VBox>
