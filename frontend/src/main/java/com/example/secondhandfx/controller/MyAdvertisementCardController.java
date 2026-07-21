@@ -55,16 +55,15 @@ public class MyAdvertisementCardController {
         String text;
         String color;
         switch (status) {
-            case "APPROVED" -> { text = "فعال"; color = "#27ae60"; }
-            case "PENDING" -> { text = "در انتظار بررسی"; color = "#f39c12"; }
-            case "REJECTED" -> { text = "رد شده"; color = "#e74c3c"; }
-            case "SOLD" -> { text = "فروخته‌شده"; color = "#7f8c8d"; }
-            case "DELETED" -> { text = "حذف‌شده"; color = "#95a5a6"; }
-            default -> { text = status; color = "#7f8c8d"; }
+            case "APPROVED" -> { text = "فعال"; color = "-color-success"; }
+            case "PENDING" -> { text = "در انتظار بررسی"; color = "-color-warning"; }
+            case "REJECTED" -> { text = "رد شده"; color = "-color-danger"; }
+            case "SOLD" -> { text = "فروخته‌شده"; color = "-color-text-muted"; }
+            case "DELETED" -> { text = "حذف‌شده"; color = "-color-text-muted"; }
+            default -> { text = status; color = "-color-text-muted"; }
         }
         statusBadgeLabel.setText(text);
-        statusBadgeLabel.setStyle("-fx-text-fill: white; -fx-background-color: " + color
-                + "; -fx-padding: 2 10; -fx-background-radius: 10; -fx-font-size: 11px;");
+        statusBadgeLabel.setStyle("-fx-background-color: " + color + ";");
     }
 
     // بر اساس محدودیت‌های واقعی بک‌اند تصمیم می‌گیره کدام دکمه‌ها نشون داده بشن:
