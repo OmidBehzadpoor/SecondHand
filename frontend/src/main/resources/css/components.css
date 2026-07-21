@@ -31,6 +31,11 @@
     -fx-padding: 6 10;
 }
 
+.text-area .content {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+}
+
 .combo-box .list-cell {
     -fx-text-fill: -color-text;
 }
