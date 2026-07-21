@@ -5,18 +5,17 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="480.0" prefWidth="400.0" spacing="10" alignment="TOP_CENTER"
-      xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.secondhandfx.controller.RegisterController"
-      styleClass="root">
-   <padding>
-      <Insets top="20" right="30" bottom="20" left="30"/>
-   </padding>
-   <children>
+<StackPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.secondhandfx.controller.RegisterController"
+           styleClass="root">
+   <VBox maxWidth="380" spacing="10" alignment="TOP_CENTER" styleClass="card">
+      <padding>
+         <Insets top="20" right="30" bottom="30" left="30"/>
+      </padding>
       <Button text="← بازگشت به صفحه اصلی" onAction="#onBackToHomeClick" styleClass="back-link"/>
       <Label text="ثبت‌نام" styleClass="page-title"/>
 
@@ -35,8 +34,8 @@
       <Label text="ایمیل" styleClass="muted-label"/>
       <TextField fx:id="emailField"/>
 
-      <Button text="ثبت‌نام" onAction="#onRegisterButtonClick" styleClass="btn, btn-primary"/>
+      <Button text="ثبت‌نام" onAction="#onRegisterButtonClick" styleClass="btn, btn-primary" maxWidth="Infinity"/>
 
       <Hyperlink fx:id="loginLink" text="قبلاً ثبت‌نام کرده‌اید؟ ورود" onAction="#onLoginLinkClick"/>
-   </children>
-</VBox>
+   </VBox>
+</StackPane>
