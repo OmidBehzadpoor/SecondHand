@@ -353,3 +353,16 @@
     -fx-font-size: 12px;
     -fx-text-fill: -color-text-muted;
 }
+
+.stat-card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 10;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 8, 0, 0, 2);
+}
+
+.stat-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
