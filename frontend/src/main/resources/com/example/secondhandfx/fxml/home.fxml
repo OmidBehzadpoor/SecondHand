@@ -74,6 +74,8 @@
             <Button fx:id="prevPageButton" text="◀ قبلی" onAction="#onPrevPageClick" styleClass="btn"/>
             <Label fx:id="pageIndicatorLabel" text="1 از 1"/>
             <Button fx:id="nextPageButton" text="بعدی ▶" onAction="#onNextPageClick" styleClass="btn"/>
+            <Label text="تعداد در هر صفحه:" styleClass="muted-label"/>
+            <ComboBox fx:id="pageSizeComboBox" prefWidth="80"/>
         </HBox>
     </bottom>
 
