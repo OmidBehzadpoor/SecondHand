@@ -27,7 +27,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
     WHERE a.status = :status
       AND (:keyword IS NULL OR LOWER(a.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
            OR LOWER(a.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
-      AND (:categoryId IS NULL OR a.category.id = :categoryId)
+      AND (:categoryIds IS NULL OR a.category.id IN :categoryIds)
       AND (:cityId IS NULL OR a.city.id = :cityId)
       AND (:minPrice IS NULL OR a.price >= :minPrice)
       AND (:maxPrice IS NULL OR a.price <= :maxPrice)
@@ -40,7 +40,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
     Page<Advertisement> search(
             @Param("status") AdvertisementStatus status,
             @Param("keyword") String keyword,
-            @Param("categoryId") Long categoryId,
+            @Param("categoryIds") List<Long> categoryIds,
             @Param("cityId") Long cityId,
             @Param("minPrice") Long minPrice,
             @Param("maxPrice") Long maxPrice,
