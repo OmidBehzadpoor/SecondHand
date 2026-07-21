@@ -1,6 +1,7 @@
 package com.example.secondhandfx.controller;
 
 import com.example.secondhandfx.exception.ApiException;
+import com.example.secondhandfx.model.AdvertisementImageResponse;
 import com.example.secondhandfx.model.AdvertisementRequest;
 import com.example.secondhandfx.model.AdvertisementResponse;
 import com.example.secondhandfx.model.CategoryResponse;
@@ -15,15 +16,21 @@ import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.ValidationUtil;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
@@ -40,6 +47,10 @@ public class AdvertisementFormController {
     @FXML
     private ComboBox<CityResponse> cityComboBox;
     @FXML
+    private VBox existingImagesSection;
+    @FXML
+    private ListView<AdvertisementImageResponse> existingImagesListView;
+    @FXML
     private ListView<File> selectedImagesListView;
     @FXML
     private Button submitButton;
@@ -52,9 +63,15 @@ public class AdvertisementFormController {
     private final CategoryService categoryService = new CategoryServiceImpl();
     private final CityService cityService = new CityServiceImpl();
 
+    // برای نمایش تورفته‌ی درخت دسته‌بندی، دقیقاً مثل صفحه‌ی اصلی
+    private final Map<Long, Integer> categoryDepthMap = new HashMap<>();
+
     @FXML
     private void initialize() {
-        selectedImagesListView.setItems(javafx.collections.FXCollections.observableArrayList());
+        selectedImagesListView.setItems(FXCollections.observableArrayList());
+
+        existingImagesSection.setVisible(false);
+        existingImagesSection.setManaged(false);
 
         categoryComboBox.setConverter(new javafx.util.StringConverter<>() {
             @Override
@@ -80,6 +97,25 @@ public class AdvertisementFormController {
             }
         });
 
+        // نمایش زیردسته‌ها با تورفتگی واقعی (هماهنگ با صفحه‌ی اصلی)، نه با پیشوند خط‌تیره
+        categoryComboBox.setCellFactory(listView -> new ListCell<>() {
+            @Override
+            protected void updateItem(CategoryResponse category, boolean empty) {
+                super.updateItem(category, empty);
+                getStyleClass().removeAll("category-root-item", "category-sub-item");
+                if (empty || category == null) {
+                    setText(null);
+                } else {
+                    int depth = categoryDepthMap.getOrDefault(category.getId(), 0);
+                    setText(category.getName());
+                    setStyle("-fx-padding: 4 4 4 " + (depth * 18) + "px;");
+                    getStyleClass().add(depth == 0 ? "category-root-item" : "category-sub-item");
+                }
+            }
+        });
+
+        setupExistingImagesListView();
+
         loadCategories();
         loadCities();
     }
@@ -90,17 +126,12 @@ public class AdvertisementFormController {
         }, "خطا در دریافت دسته‌بندی‌ها");
     }
 
-    // درخت دسته‌بندی‌ها را به یک لیست تخت با نمایش تورفته تبدیل می‌کند
+    // درخت دسته‌بندی‌ها را به یک لیست تخت تبدیل می‌کند و عمق هرکدام را برای نمایش تورفته ذخیره می‌کند
     private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
         List<CategoryResponse> result = new ArrayList<>();
         for (CategoryResponse category : categories) {
-            String prefix = "—".repeat(depth) + (depth > 0 ? " " : "");
-            result.add(CategoryResponse.builder()
-                    .id(category.getId())
-                    .name(prefix + category.getName())
-                    .parentId(category.getParentId())
-                    .active(category.isActive())
-                    .build());
+            categoryDepthMap.put(category.getId(), depth);
+            result.add(category);
 
             if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
                 result.addAll(flattenCategories(category.getSubCategories(), depth + 1));
@@ -113,6 +144,63 @@ public class AdvertisementFormController {
         runAsync(cityService::getAllCities, cities -> cityComboBox.getItems().addAll(cities),
                 "خطا در دریافت شهرها");
     }
+
+    // ====== تصاویر فعلی (آپلودشده‌ی قبلی، فقط در حالت ویرایش) ======
+
+    private void setupExistingImagesListView() {
+        existingImagesListView.setCellFactory(listView -> new ListCell<>() {
+            private final Label urlLabel = new Label();
+            private final Button deleteButton = new Button("حذف");
+            private final HBox box = new HBox(10, urlLabel, deleteButton);
+
+            {
+                HBox.setHgrow(urlLabel, Priority.ALWAYS);
+                deleteButton.getStyleClass().addAll("btn", "btn-danger");
+                deleteButton.setOnAction(e -> onDeleteExistingImageClick(getItem()));
+            }
+
+            @Override
+            protected void updateItem(AdvertisementImageResponse image, boolean empty) {
+                super.updateItem(image, empty);
+                if (empty || image == null) {
+                    setGraphic(null);
+                } else {
+                    urlLabel.setText(fileNameOf(image.getImageUrl()));
+                    setGraphic(box);
+                }
+            }
+        });
+    }
+
+    private String fileNameOf(String imageUrl) {
+        if (imageUrl == null) return "";
+        int lastSlash = imageUrl.lastIndexOf('/');
+        return lastSlash >= 0 ? imageUrl.substring(lastSlash + 1) : imageUrl;
+    }
+
+    private void loadExistingImages(Long advertisementId) {
+        runAsync(
+                () -> advertisementService.getImages(advertisementId),
+                images -> existingImagesListView.setItems(FXCollections.observableArrayList(images)),
+                "خطا در دریافت تصاویر آگهی"
+        );
+    }
+
+    private void onDeleteExistingImageClick(AdvertisementImageResponse image) {
+        if (image == null || editingAdvertisementId == null) {
+            return;
+        }
+
+        runAsync(() -> {
+            advertisementService.deleteImage(editingAdvertisementId, image.getId());
+            return image;
+        }, deleted -> {
+            existingImagesListView.getItems().remove(deleted);
+            AlertUtil.showSuccess("تصویر حذف شد.");
+        }, "خطا در حذف تصویر");
+    }
+
+    // ====== تصاویر جدید (برای آپلود) ======
 
     @FXML
     private void onAddImageClick() {
@@ -196,7 +284,7 @@ public class AdvertisementFormController {
         }
     }
 
-    // بعد از ساخته‌شدن آگهی، تصویرها را یکی‌یکی آپلود می‌کند و در پایان کاربر را به صفحه‌ی جزئیات می‌فرستد
+    // بعد از ساخته‌شدن آگهی، تصویرهای جدید را یکی‌یکی آپلود می‌کند و در پایان کاربر را به صفحه‌ی جزئیات می‌فرستد
     private void uploadImagesThenNavigate(AdvertisementResponse createdAd, List<File> images) {
         CompletableFuture.supplyAsync(() -> {
             List<String> failedFileNames = new ArrayList<>();
@@ -272,11 +360,16 @@ public class AdvertisementFormController {
         pageTitleLabel.setText("ویرایش آگهی");
         submitButton.setText("ذخیره‌ی تغییرات");
 
+        existingImagesSection.setVisible(true);
+        existingImagesSection.setManaged(true);
+
         runAsync(
                 () -> advertisementService.getById(id),
                 this::populateFormForEdit,
                 "خطا در دریافت اطلاعات آگهی"
         );
+
+        loadExistingImages(id);
     }
 
     private void populateFormForEdit(AdvertisementResponse ad) {
@@ -284,7 +377,11 @@ public class AdvertisementFormController {
         descriptionArea.setText(ad.getDescription());
         priceField.setText(String.valueOf(ad.getPrice()));
 
-        CategoryResponse matchedCategory = findByPlainName(categoryComboBox.getItems(), ad.getCategoryName());
+        // چون دیگر پیشوند خط‌تیره به نام دسته‌بندی اضافه نمی‌شود، مقایسه‌ی مستقیم کافی است
+        CategoryResponse matchedCategory = categoryComboBox.getItems().stream()
+                .filter(category -> category.getName().equals(ad.getCategoryName()))
+                .findFirst()
+                .orElse(null);
         if (matchedCategory != null) {
             categoryComboBox.getSelectionModel().select(matchedCategory);
         }
@@ -296,25 +393,5 @@ public class AdvertisementFormController {
         if (matchedCity != null) {
             cityComboBox.getSelectionModel().select(matchedCity);
         }
-    }
-
-    // چون اسم دسته‌بندی‌ها در ComboBox با پیشوند خط‌تیره‌ی تورفته نمایش داده می‌شه،
-// قبل از مقایسه با نام خام آگهی، پیشوند باید حذف بشه
-    private CategoryResponse findByPlainName(List<CategoryResponse> categories, String plainName) {
-        return categories.stream()
-                .filter(category -> stripPrefix(category.getName()).equals(plainName))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private String stripPrefix(String displayName) {
-        int i = 0;
-        while (i < displayName.length() && displayName.charAt(i) == '—') {
-            i++;
-        }
-        if (i < displayName.length() && displayName.charAt(i) == ' ') {
-            i++;
-        }
-        return displayName.substring(i);
     }
 }
