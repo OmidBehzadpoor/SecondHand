@@ -97,7 +97,7 @@ public class MyAdvertisementsController {
                 controller.setOnView(() -> openDetails(ad.getId()));
                 controller.setOnEdit(() -> openEditForm(ad.getId()));
                 controller.setOnMarkAsSold(() -> markAsSold(ad.getId()));
-                controller.setOnDelete(() -> confirmAndDelete(ad.getId(), ad.getStatus()));                container.getChildren().add(card);
+                controller.setOnDelete(() -> confirmAndDelete(ad.getId(), ad.getStatus()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
