@@ -138,16 +138,28 @@ public class AdvertisementDetailsController {
     private void setupActionsArea() {
         boolean isOwner = SessionManager.getInstance().isLoggedIn()
                 && SessionManager.getInstance().getUserId().equals(advertisement.getOwnerId());
+        boolean isDeleted = "DELETED".equals(advertisement.getStatus());
 
         ownerActionsBox.setVisible(isOwner);
         ownerActionsBox.setManaged(isOwner);
 
-        buyerActionsBox.setVisible(!isOwner);
-        buyerActionsBox.setManaged(!isOwner);
+        buyerActionsBox.setVisible(!isOwner && !isDeleted);
+        buyerActionsBox.setManaged(!isOwner && !isDeleted);
 
         if (isOwner) {
             boolean alreadySold = "SOLD".equals(advertisement.getStatus());
-            markAsSoldButton.setDisable(alreadySold);
+            markAsSoldButton.setDisable(alreadySold || isDeleted);
+
+            // مخفی کردن دکمه‌های edit و delete برای آگهی حذف‌شده
+            ownerActionsBox.getChildren().forEach(node -> {
+                if (node instanceof Button btn) {
+                    String id = btn.getId();
+                    if ("deleteButton".equals(id) || "editButton".equals(id)) {
+                        btn.setVisible(!isDeleted);
+                        btn.setManaged(!isDeleted);
+                    }
+                }
+            });
         }
     }
 
