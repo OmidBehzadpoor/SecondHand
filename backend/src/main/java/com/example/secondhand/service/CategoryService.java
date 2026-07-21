@@ -3,6 +3,7 @@ package com.example.secondhand.service;
 import com.example.secondhand.dto.CategoryRequest;
 import com.example.secondhand.dto.response.CategoryResponse;
 import com.example.secondhand.exception.*;
+import com.example.secondhand.model.AdvertisementStatus;
 import com.example.secondhand.model.Category;
 import com.example.secondhand.repository.AdvertisementRepository;
 import com.example.secondhand.repository.CategoryRepository;
@@ -87,8 +88,27 @@ public class CategoryService {
         if (!category.isActive()) {
             throw new CategoryStateConflictException("دسته‌بندی از قبل غیرفعال است");
         }
+
+        List<Long> allCategoryIds = collectCategoryAndDescendantIds(category);
+        boolean hasActiveOrPendingAds = advertisementRepository.existsByCategoryIdInAndStatusIn(
+                allCategoryIds,
+                List.of(AdvertisementStatus.APPROVED, AdvertisementStatus.PENDING)
+        );
+        if (hasActiveOrPendingAds) {
+            throw new CategoryInUseException("این دسته‌بندی یا زیرمجموعه‌های آن دارای آگهی فعال یا در انتظار هستند و نمی‌توان غیرفعال کرد.");
+        }
+
         category.setActive(false);
         return mapToResponse(categoryRepository.save(category), false);
+    }
+
+    private List<Long> collectCategoryAndDescendantIds(Category category) {
+        List<Long> ids = new java.util.ArrayList<>();
+        ids.add(category.getId());
+        for (Category child : category.getChildren()) {
+            ids.addAll(collectCategoryAndDescendantIds(child));
+        }
+        return ids;
     }
 
     @Transactional
