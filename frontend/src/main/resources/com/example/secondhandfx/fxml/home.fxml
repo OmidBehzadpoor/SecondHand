@@ -5,113 +5,302 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+<StackPane xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.example.secondhandfx.controller.HomeController"
-           prefWidth="900" prefHeight="650" styleClass="root">
+           styleClass="root">
 
-    <!-- محتوای اصلی صفحه -->
+    <!-- ========================================================= -->
+    <!-- Main Page                                                  -->
+    <!-- ========================================================= -->
+
     <BorderPane styleClass="root">
 
+        <!-- ===================== TOP BAR ====================== -->
+
         <top>
-            <VBox spacing="10" styleClass="top-bar">
-                <padding>
-                    <Insets top="15" right="15" bottom="15" left="15"/>
-                </padding>
-                <HBox spacing="15" alignment="CENTER_LEFT">
-                    <!-- دکمه‌ی باز/بسته کردن ساید‌بار کشویی -->
-                    <Button fx:id="sidebarToggleButton" text="›" onAction="#onToggleSidebarClick"
+            <VBox>
+
+                <HBox spacing="14"
+                      alignment="CENTER_LEFT"
+                      styleClass="top-bar">
+
+                    <Button fx:id="sidebarToggleButton"
+                            text="☰"
+                            onAction="#onToggleSidebarClick"
                             styleClass="btn, btn-icon"/>
 
-                    <Label text="آگهی‌های فعال" styleClass="title-label"/>
-                    <HBox HBox.hgrow="ALWAYS"/>
+                    <Label text="البرز"
+                           styleClass="brand-logo-small"/>
 
-                    <Button fx:id="themeToggleButton" text="🌙" onAction="#onToggleThemeClick"
-                            styleClass="btn, btn-icon"/>
+                    <Region HBox.hgrow="ALWAYS"/>
 
-                    <!-- حالت مهمون: دکمه‌های ورود و ثبت‌نام -->
-                    <HBox fx:id="guestAuthBox" spacing="8" alignment="CENTER_LEFT">
-                        <Button text="ورود" onAction="#onLoginClick" styleClass="btn, btn-success"/>
-                        <Button text="ثبت‌نام" onAction="#onRegisterClick" styleClass="btn"/>
+                    <!-- حالت مهمان -->
+                    <HBox fx:id="guestAuthBox"
+                          spacing="8"
+                          alignment="CENTER_RIGHT">
+
+                        <Button text="ورود"
+                                onAction="#onLoginClick"
+                                styleClass="btn"/>
+
+                        <Button text="ثبت‌نام"
+                                onAction="#onRegisterClick"
+                                styleClass="btn, btn-primary"/>
+
                     </HBox>
 
-                    <!-- حالت لاگین‌شده: نام کاربر -->
-                    <HBox fx:id="userAuthBox" spacing="10" alignment="CENTER_LEFT">
-                        <Label fx:id="welcomeLabel" styleClass="muted-label"/>
+                    <!-- حالت کاربر وارد شده -->
+                    <HBox fx:id="userAuthBox"
+                          spacing="8"
+                          alignment="CENTER_RIGHT"
+                          visible="false"
+                          managed="false">
+
+                        <Label fx:id="welcomeLabel"
+                               text=""
+                               styleClass="muted-label"/>
+
                     </HBox>
+
                 </HBox>
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="searchField" promptText="جست‌وجو در عنوان و توضیحات..." prefWidth="220"/>
-                    <ComboBox fx:id="categoryComboBox" promptText="دسته‌بندی" prefWidth="150"/>
-                    <ComboBox fx:id="cityComboBox" promptText="شهر" prefWidth="130"/>
-                    <TextField fx:id="minPriceField" promptText="حداقل قیمت" prefWidth="100"/>
-                    <TextField fx:id="maxPriceField" promptText="حداکثر قیمت" prefWidth="100"/>
-                    <ComboBox fx:id="sortComboBox" promptText="مرتب‌سازی" prefWidth="120"/>
-                    <Button text="اعمال فیلتر" onAction="#onSearchClick" styleClass="btn, btn-success"/>
+
+                <!-- ===================== HERO ====================== -->
+
+                <VBox spacing="12"
+                      styleClass="hero">
+
+                    <Label text="آگهی مورد نظرت را پیدا کن."
+                           styleClass="hero-title"/>
+
+                    <Label text="در میان آگهی‌های فعال جست‌وجو کن و بهترین گزینه را انتخاب کن."
+                           styleClass="hero-subtitle"/>
+
+                    <HBox spacing="8">
+
+                        <TextField fx:id="searchField"
+                                   promptText="چه چیزی می‌خواهی پیدا کنی؟"
+                                   HBox.hgrow="ALWAYS"
+                                   styleClass="search-input"/>
+
+                        <Button text="جست‌وجو"
+                                onAction="#onSearchClick"
+                                styleClass="btn, btn-primary"/>
+
+                    </HBox>
+
+                </VBox>
+
+
+                <!-- ===================== FILTER BAR ====================== -->
+
+                <HBox spacing="10"
+                      styleClass="filter-bar">
+
+                    <ComboBox fx:id="categoryComboBox"
+                              promptText="دسته‌بندی"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="input"/>
+
+                    <ComboBox fx:id="cityComboBox"
+                              promptText="شهر"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="input"/>
+
+                    <TextField fx:id="minPriceField"
+                               promptText="حداقل قیمت"
+                               HBox.hgrow="ALWAYS"
+                               styleClass="input"/>
+
+                    <TextField fx:id="maxPriceField"
+                               promptText="حداکثر قیمت"
+                               HBox.hgrow="ALWAYS"
+                               styleClass="input"/>
+
+                    <ComboBox fx:id="sortComboBox"
+                              promptText="مرتب‌سازی"
+                              HBox.hgrow="ALWAYS"
+                              styleClass="input"/>
+
                 </HBox>
+
             </VBox>
         </top>
 
+
+        <!-- ===================== CONTENT ====================== -->
+
         <center>
-            <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
-                <FlowPane fx:id="advertisementsContainer" hgap="15" vgap="15">
-                    <padding>
-                        <Insets top="15" right="15" bottom="15" left="15"/>
-                    </padding>
-                </FlowPane>
+
+            <ScrollPane fitToWidth="true"
+                        styleClass="scroll-pane">
+
+                <VBox spacing="16"
+                      styleClass="content">
+
+                    <HBox alignment="CENTER_RIGHT">
+
+                        <Label text="آگهی‌های فعال"
+                               styleClass="section-title"/>
+
+                    </HBox>
+
+                    <FlowPane fx:id="advertisementsContainer"
+                              hgap="18"
+                              vgap="18"
+                              prefWrapLength="1050"/>
+
+                </VBox>
+
             </ScrollPane>
+
         </center>
 
+
+        <!-- ===================== PAGINATION ====================== -->
+
         <bottom>
-            <HBox spacing="15" alignment="CENTER" styleClass="bottom-bar">
-                <padding>
-                    <Insets top="12" right="12" bottom="12" left="12"/>
-                </padding>
-                <Button fx:id="prevPageButton" text="◀ قبلی" onAction="#onPrevPageClick" styleClass="btn"/>
-                <Label fx:id="pageIndicatorLabel" text="1 از 1"/>
-                <Button fx:id="nextPageButton" text="بعدی ▶" onAction="#onNextPageClick" styleClass="btn"/>
-                <Label text="تعداد در هر صفحه:" styleClass="muted-label"/>
-                <ComboBox fx:id="pageSizeComboBox" prefWidth="80"/>
+
+            <HBox spacing="10"
+                  alignment="CENTER"
+                  styleClass="bottom-bar">
+
+                <Button fx:id="prevPageButton"
+                        text="صفحه قبل"
+                        onAction="#onPrevPageClick"
+                        styleClass="btn"/>
+
+                <Label fx:id="pageIndicatorLabel"
+                       text="1 از 1"
+                       styleClass="page-label"/>
+
+                <Button fx:id="nextPageButton"
+                        text="صفحه بعد"
+                        onAction="#onNextPageClick"
+                        styleClass="btn"/>
+
+                <Label text="تعداد در صفحه"
+                       styleClass="muted-label"/>
+
+                <ComboBox fx:id="pageSizeComboBox"
+                          prefWidth="85"
+                          styleClass="input"/>
+
             </HBox>
+
         </bottom>
 
     </BorderPane>
 
-    <!-- لایه‌ی نیمه‌شفاف پشت ساید‌بار برای بستن آن با کلیک بیرون -->
-    <StackPane fx:id="sidebarOverlay" styleClass="sidebar-overlay" visible="false" managed="false"
-               onMouseClicked="#onOverlayClick" StackPane.alignment="CENTER_LEFT">
 
-        <!-- ساید‌بار کشویی -->
-        <VBox fx:id="sidebarPane" spacing="10" styleClass="sidebar" prefWidth="220" maxWidth="220"
-              StackPane.alignment="CENTER_LEFT">
-            <padding>
-                <Insets top="20" right="15" bottom="20" left="15"/>
-            </padding>
+    <!-- ========================================================= -->
+    <!-- Sidebar Overlay                                            -->
+    <!-- ========================================================= -->
 
-            <HBox alignment="CENTER_RIGHT">
-                <HBox HBox.hgrow="ALWAYS"/>
-                <Button text="✕" onAction="#onToggleSidebarClick" styleClass="btn, btn-icon"/>
-            </HBox>
+    <StackPane fx:id="sidebarOverlay"
+               visible="false"
+               managed="false"
+               onMouseClicked="#onOverlayClick"
+               styleClass="sidebar-overlay"/>
 
-            <Label fx:id="sidebarWelcomeLabel" text="" styleClass="sidebar-title"/>
 
-            <Button text="آگهی‌های من" maxWidth="Infinity" onAction="#onMyAdvertisementsClick" styleClass="sidebar-btn"/>
-            <Button text="ثبت آگهی جدید" maxWidth="Infinity" onAction="#onCreateAdvertisementClick" styleClass="sidebar-btn, sidebar-btn-primary"/>
-            <Button text="علاقه‌مندی‌ها" maxWidth="Infinity" onAction="#onFavoritesClick" styleClass="sidebar-btn"/>
-            <Button fx:id="conversationsButton" text="گفتگوها" maxWidth="Infinity" onAction="#onConversationsClick" styleClass="sidebar-btn"/>
-            <Button fx:id="adminPanelButton" text="پنل ادمین" maxWidth="Infinity" onAction="#onAdminPanelClick" styleClass="sidebar-btn, sidebar-btn-primary"/>
+    <!-- ========================================================= -->
+    <!-- Sidebar                                                     -->
+    <!-- ========================================================= -->
 
-            <HBox VBox.vgrow="ALWAYS"/>
+    <VBox fx:id="sidebarPane"
+          prefWidth="300"
+          minWidth="300"
+          maxWidth="300"
+          prefHeight="Infinity"
+          alignment="TOP_RIGHT"
+          spacing="10"
+          visible="true"
+          managed="true"
+          styleClass="sidebar">
 
-            <Button fx:id="sidebarLogoutButton" text="خروج" maxWidth="Infinity" onAction="#onLogoutButtonClick" styleClass="sidebar-btn, sidebar-btn-danger"/>
-        </VBox>
-    </StackPane>
+        <!-- Sidebar Header -->
+
+        <HBox alignment="CENTER_LEFT"
+              spacing="10">
+
+            <Label text="حساب کاربری"
+                   styleClass="sidebar-title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="✕"
+                    onAction="#onToggleSidebarClick"
+                    styleClass="btn, btn-icon"/>
+
+        </HBox>
+
+
+        <!-- User Information -->
+
+        <Label fx:id="sidebarWelcomeLabel"
+               text="خوش آمدید!"
+               styleClass="sidebar-user"/>
+
+
+        <Separator/>
+
+
+        <!-- Sidebar Actions -->
+
+        <Button text="آگهی‌های من"
+                maxWidth="Infinity"
+                onAction="#onMyAdvertisementsClick"
+                styleClass="sidebar-btn"/>
+
+
+        <Button text="ثبت آگهی جدید"
+                maxWidth="Infinity"
+                onAction="#onCreateAdvertisementClick"
+                styleClass="sidebar-btn, sidebar-btn-primary"/>
+
+
+        <Button text="علاقه‌مندی‌ها"
+                maxWidth="Infinity"
+                onAction="#onFavoritesClick"
+                styleClass="sidebar-btn"/>
+
+
+        <Button fx:id="conversationsButton"
+                text="گفتگوها"
+                maxWidth="Infinity"
+                onAction="#onConversationsClick"
+                styleClass="sidebar-btn"/>
+
+
+        <Button fx:id="adminPanelButton"
+                text="پنل ادمین"
+                maxWidth="Infinity"
+                onAction="#onAdminPanelClick"
+                styleClass="sidebar-btn, sidebar-btn-primary"/>
+
+
+        <Region VBox.vgrow="ALWAYS"/>
+
+
+        <!-- Logout -->
+
+        <Button fx:id="sidebarLogoutButton"
+                text="خروج از حساب"
+                maxWidth="Infinity"
+                onAction="#onLogoutButtonClick"
+                styleClass="sidebar-btn, sidebar-btn-danger"/>
+
+    </VBox>
 
 </StackPane>
