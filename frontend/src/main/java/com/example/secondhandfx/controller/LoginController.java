@@ -39,7 +39,6 @@ public class LoginController {
                 .password(password)
                 .build();
 
-        // انجام عملیات لاگین در یک Task (غیرهمزمان)
         Task<LoginResponse> loginTask = new Task<>() {
             @Override
             protected LoginResponse call() throws Exception {
@@ -49,23 +48,21 @@ public class LoginController {
 
         loginTask.setOnSucceeded(event -> {
             LoginResponse response = loginTask.getValue();
-            // ذخیره اطلاعات در SessionManager
             SessionManager.getInstance().setSession(
                     response.getToken(),
                     response.getUserId(),
                     response.getUsername(),
                     response.getRole()
             );
-            // نمایش پیام موفقیت
             AlertUtil.showSuccess(response.getName() + "، به سامانه البرز خوش آمدید!");
-            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/register.fxml", "آگهی‌ها");        });
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+        });
 
         loginTask.setOnFailed(event -> {
             Throwable ex = loginTask.getException();
             String errorMessage = ex.getMessage();
             if (ex instanceof ApiException) {
-                // اگر خطا از سمت سرور باشد، پیام آن را نمایش می‌دهیم
-                // ApiException خودش پیام خطا را دارد
+                // پیام خطا از سرور
             } else {
                 errorMessage = "خطای ناشناخته‌ای رخ داد. لطفاً دوباره تلاش کنید.";
             }
@@ -82,7 +79,6 @@ public class LoginController {
 
     @FXML
     private void onRegisterLinkClick() {
-        // رفتن به صفحه‌ی ثبت‌نام (که در گام بعدی ساخته می‌شود)
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/register.fxml", "ثبت‌نام");
     }
 }
