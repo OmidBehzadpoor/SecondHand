@@ -67,6 +67,8 @@ public class AdvertisementDetailsController {
 
     @Setter
     private String returnPage;
+    @Setter
+    private int returnTabIndex = 1;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final ChatService chatService = new ChatServiceImpl();
@@ -159,10 +161,8 @@ public class AdvertisementDetailsController {
         boolean isDeleted = "DELETED".equals(advertisement.getStatus());
         boolean isSold = "SOLD".equals(advertisement.getStatus());
 
-        // دکمه فروخته‌شده فقط برای آگهی‌های تاییدشده و غیرحذف‌شده
         markAsSoldButton.setDisable(isDeleted || isSold || !"APPROVED".equals(advertisement.getStatus()));
 
-        // دکمه ویرایش و حذف برای آگهی حذف‌شده مخفی شوند
         editButton.setVisible(!isDeleted);
         editButton.setManaged(!isDeleted);
         deleteButton.setVisible(!isDeleted);
@@ -179,7 +179,6 @@ public class AdvertisementDetailsController {
 
     @FXML
     private void onDeleteClick() {
-        // بررسی وضعیت آگهی قبل از ارسال درخواست
         if ("DELETED".equals(advertisement.getStatus())) {
             AlertUtil.showError("آگهی از قبل حذف شده است.");
             return;
@@ -189,7 +188,6 @@ public class AdvertisementDetailsController {
                 () -> advertisementService.delete(advertisement.getId()),
                 () -> {
                     AlertUtil.showSuccess("آگهی با موفقیت حذف شد.");
-                    // پس از حذف، به صفحه اصلی بازگردیم
                     String target = returnPage != null ? returnPage : "/com/example/secondhandfx/fxml/home.fxml";
                     SceneNavigator.navigateTo(target, "آگهی‌ها");
                 },
@@ -236,7 +234,7 @@ public class AdvertisementDetailsController {
 
         Object controller = loader.getController();
         if (controller instanceof AdminPanelController) {
-            ((AdminPanelController) controller).setSelectedTabIndex(1);
+            ((AdminPanelController) controller).setSelectedTabIndex(returnTabIndex);
         }
     }
 
