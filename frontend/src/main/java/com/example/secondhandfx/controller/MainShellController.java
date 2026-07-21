@@ -6,7 +6,6 @@ import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -48,13 +47,23 @@ public class MainShellController {
     }
 
     @FXML
+    private void onHomeClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+    }
+
+    @FXML
     private void onMyAdvertisementsClick() {
-        AlertUtil.showSuccess("صفحه‌ی آگهی‌های من به زودی اضافه می‌شود!");
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/my-advertisements.fxml", "آگهی‌های من");
     }
 
     @FXML
     private void onCreateAdvertisementClick() {
-        AlertUtil.showSuccess("صفحه‌ی ثبت آگهی به زودی اضافه می‌شود!");
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/advertisement-form.fxml", "ثبت آگهی جدید");
+    }
+
+    @FXML
+    private void onFavoritesClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/favorites.fxml", "علاقه‌مندی‌های من");
     }
 
     @FXML
