@@ -86,13 +86,34 @@ public class AdvertisementService {
         }
 
         String sortByName = sortBy != null ? sortBy.name() : null;
+        List<Long> categoryIds = resolveCategoryAndDescendantIds(categoryId);
 
         Page<Advertisement> advertisementsPage = advertisementRepository
-                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName, pageable);
+                .search(AdvertisementStatus.APPROVED, keyword, categoryIds, cityId, minPrice, maxPrice, sortByName, pageable);
 
         Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisementsPage.getContent());
 
         return advertisementsPage.map(advertisement -> mapToResponse(advertisement, ratingSummaries));
+    }
+
+    // وقتی کاربر دسته‌ی والد را انتخاب می‌کند، آگهی‌های زیردسته‌هایش هم باید نمایش داده شوند؛
+    // این متد شناسه‌ی خود دسته و همه‌ی زیردسته‌هایش را در هر عمقی جمع‌آوری می‌کند
+    private List<Long> resolveCategoryAndDescendantIds(Long categoryId) {
+        if (categoryId == null) {
+            return null;
+        }
+        return categoryRepository.findById(categoryId)
+                .map(this::collectCategoryAndDescendantIds)
+                .orElse(List.of(categoryId));
+    }
+
+    private List<Long> collectCategoryAndDescendantIds(Category category) {
+        List<Long> ids = new java.util.ArrayList<>();
+        ids.add(category.getId());
+        for (Category child : category.getChildren()) {
+            ids.addAll(collectCategoryAndDescendantIds(child));
+        }
+        return ids;
     }
 
 
