@@ -120,3 +120,49 @@
     -fx-font-weight: bold;
     -fx-text-fill: -color-text;
 }
+
+.btn-warning {
+    -fx-background-color: -color-warning;
+    -fx-text-fill: white;
+}
+
+.price-label {
+    -fx-text-fill: -color-success;
+    -fx-font-weight: bold;
+}
+
+.rating-label {
+    -fx-text-fill: -color-warning;
+}
+
+.error-text {
+    -fx-text-fill: -color-danger;
+    -fx-font-weight: bold;
+}
+
+.section-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+.list-cell.category-root-item {
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-text;
+}
+
+.list-cell.category-sub-item {
+    -fx-text-fill: -color-text-muted;
+}
+
+.tab-pane .tab-header-area .tab {
+    -fx-background-color: -color-surface-alt;
+}
+.tab-pane .tab-header-area .tab:selected {
+    -fx-background-color: -color-primary;
+}
+.tab-pane .tab-header-area .tab .tab-label {
+    -fx-text-fill: -color-text;
+}
+.tab-pane .tab-content-area {
+    -fx-background-color: -color-bg;
+}
