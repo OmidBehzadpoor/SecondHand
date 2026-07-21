@@ -7,6 +7,7 @@ import com.example.secondhandfx.model.CategoryResponse;
 import com.example.secondhandfx.model.CityResponse;
 import com.example.secondhandfx.service.*;
 import com.example.secondhandfx.util.AlertUtil;
+import com.example.secondhandfx.util.SceneNavigator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -102,6 +103,11 @@ public class AdminPanelController {
         task.setOnSucceeded(e -> pendingAds.setAll(task.getValue()));
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
+    }
+
+    @FXML
+    private void onBackClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
     private void onApproveClick(AdminAdvertisementResponse ad) {
