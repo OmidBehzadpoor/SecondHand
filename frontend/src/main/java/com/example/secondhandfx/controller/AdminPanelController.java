@@ -32,7 +32,12 @@ public class AdminPanelController {
     @FXML private TableColumn<AdminAdvertisementResponse, String> adSellerColumn;
     @FXML private TableColumn<AdminAdvertisementResponse, String> adPriceColumn;
     @FXML private TableColumn<AdminAdvertisementResponse, Void> adActionsColumn;
-
+    @FXML private TableView<AdminAdvertisementResponse> allAdsTable;
+    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdTitleColumn;
+    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdSellerColumn;
+    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdPriceColumn;
+    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdStatusColumn;
+    @FXML private TableColumn<AdminAdvertisementResponse, Void> allAdActionsColumn;
     @FXML private TableView<AdminUserResponse> usersTable;
     @FXML private TableColumn<AdminUserResponse, String> userNameColumn;
     @FXML private TableColumn<AdminUserResponse, String> userRoleColumn;
@@ -63,6 +68,8 @@ public class AdminPanelController {
     @FXML
     public void initialize() {
         setupAdsTable();
+        setupAllAdsTable();
+        loadAllAds();
         setupUsersTable();
         setupCategoriesTable();
         setupCitiesTable();
@@ -523,6 +530,53 @@ public class AdminPanelController {
             }
         };
         task.setOnSucceeded(e -> cities.remove(city));
+        task.setOnFailed(e -> showError(task.getException()));
+        new Thread(task).start();
+    }
+    private void setupAllAdsTable() {
+        allAdTitleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTitle()));
+        allAdSellerColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSellerUsername()));
+        allAdPriceColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPrice() + " تومان"));
+        allAdStatusColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatus()));
+
+        allAdActionsColumn.setCellFactory(column -> new TableCell<>() {
+            private final Button deleteButton = new Button("حذف");
+
+            {
+                deleteButton.setOnAction(e -> {
+                    AdminAdvertisementResponse ad = getTableView().getItems().get(getIndex());
+                    if ("DELETED".equals(ad.getStatus())) {
+                        AlertUtil.showError("این آگهی قبلاً حذف شده است.");
+                        return;
+                    }
+                    onDeleteAdClick(ad);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                    return;
+                }
+                AdminAdvertisementResponse ad = getTableView().getItems().get(getIndex());
+                deleteButton.setDisable("DELETED".equals(ad.getStatus()));
+                setGraphic(deleteButton);
+            }
+        });
+
+        allAdsTable.setItems(FXCollections.observableArrayList());
+    }
+
+    private void loadAllAds() {
+        Task<List<AdminAdvertisementResponse>> task = new Task<>() {
+            @Override
+            protected List<AdminAdvertisementResponse> call() throws Exception {
+                return adminService.getAllAdvertisements();
+            }
+        };
+        task.setOnSucceeded(e -> allAdsTable.getItems().setAll(task.getValue()));
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
     }
