@@ -11,6 +11,7 @@ import com.example.secondhandfx.service.ChatServiceImpl;
 import com.example.secondhandfx.service.RatingService;
 import com.example.secondhandfx.service.RatingServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
+import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -134,6 +135,12 @@ public class ChatViewController {
         });
 
         new Thread(sendTask).start();
+    }
+
+    @FXML
+    private void onBackClick() {
+        // بازگشت به لیست گفتگوها (با حفظ سایدبار/ساختار اصلی)
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/conversation-list.fxml", "گفتگوها");
     }
 
     @FXML
