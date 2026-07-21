@@ -38,6 +38,11 @@ public class ConversationListController implements Initializable {
         loadConversations();
     }
 
+    @FXML
+    private void onBackClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+    }
+
     private void loadConversations() {
         Task<List<ConversationResponse>> loadTask = new Task<>() {
             @Override
