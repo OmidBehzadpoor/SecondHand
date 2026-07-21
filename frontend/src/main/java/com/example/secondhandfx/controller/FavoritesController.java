@@ -64,7 +64,7 @@ public class FavoritesController {
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
         AdvertisementDetailsController controller = loader.getController();
         controller.setAdvertisementId(advertisementId);
-        controller.setReturnPage("/com/example/secondhandfx/fxml/favorites.fxml"); 
+        controller.setReturnPage("/com/example/secondhandfx/fxml/favorites.fxml");
     }
 
     private void removeFavorite(Long advertisementId) {

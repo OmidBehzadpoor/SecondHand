@@ -124,6 +124,16 @@ public class AdvertisementImageService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<AdvertisementImageResponse> getImages(Long advertisementId) {
+        Advertisement advertisement = advertisementRepository.findById(advertisementId)
+                .orElseThrow(() -> new AdvertisementNotFoundException("آگهی مورد نظر یافت نشد"));
+
+        return advertisement.getImages().stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     private AdvertisementImageResponse mapToResponse(AdvertisementImage image) {
         return AdvertisementImageResponse.builder()
                 .id(image.getId())
