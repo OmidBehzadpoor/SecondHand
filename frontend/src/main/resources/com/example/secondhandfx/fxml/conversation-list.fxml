@@ -9,18 +9,18 @@
 
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.ConversationListController"
-      spacing="10" style="-fx-background-color: #f4f4f4; -fx-padding: 0;"
-      prefWidth="600" prefHeight="500">
+      styleClass="root" maxWidth="Infinity" maxHeight="Infinity">
 
     <!-- نوار بالایی با دکمه‌ی بازگشت و عنوان -->
-    <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 10 15;">
-        <Button text="← بازگشت" onAction="#onBackClick"
-                style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand;"/>
-        <Label text="گفتگوهای من"
-               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="top-bar">
+        <padding>
+            <Insets top="10" right="15" bottom="10" left="15"/>
+        </padding>
+        <Button text="← بازگشت" onAction="#onBackClick" styleClass="back-link"/>
+        <Label text="گفتگوهای من" styleClass="title-label"/>
     </HBox>
 
     <!-- لیست گفتگوها -->
-    <ListView fx:id="conversationListView" VBox.vgrow="ALWAYS" style="-fx-padding: 10;"/>
+    <ListView fx:id="conversationListView" VBox.vgrow="ALWAYS"/>
 
 </VBox>
