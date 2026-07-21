@@ -51,13 +51,14 @@ public class HomeController implements Initializable {
     @FXML private HBox guestAuthBox;
     @FXML private HBox userAuthBox;
     @FXML private Label welcomeLabel;
+    @FXML private ComboBox<Integer> pageSizeComboBox;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
     private final CityService cityService = new CityServiceImpl();
 
+    private int pageSize = 12;
     private int currentPage = 0;
-    private static final int PAGE_SIZE = 12;
     private int totalPages = 1;
 
     @Override
@@ -66,6 +67,13 @@ public class HomeController implements Initializable {
 
         sortComboBox.getItems().addAll("جدیدترین", "قدیمی‌ترین", "ارزان‌ترین", "گران‌ترین");
         sortComboBox.getSelectionModel().selectFirst();
+        pageSizeComboBox.getItems().addAll(12, 24, 48);
+        pageSizeComboBox.getSelectionModel().select(Integer.valueOf(pageSize));
+        pageSizeComboBox.setOnAction(event -> {
+            pageSize = pageSizeComboBox.getSelectionModel().getSelectedItem();
+            currentPage = 0;
+            loadAdvertisements();
+        });
 
         loadCategories();
         loadCities();
@@ -241,8 +249,7 @@ public class HomeController implements Initializable {
         int pageToLoad = currentPage;
 
         runAsync(
-                () -> advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy, pageToLoad, PAGE_SIZE),
-                this::renderPage,
+                () -> advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy, pageToLoad, pageSize),                this::renderPage,
                 "خطا در دریافت آگهی‌ها"
         );
     }
