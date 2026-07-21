@@ -42,6 +42,37 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public CategoryResponse updateCategory(Long id, String name, Long parentId) throws ApiException {
+        CategoryRequest request = CategoryRequest.builder()
+                .name(name)
+                .parentId(parentId)
+                .build();
+        return HttpClientHelper.put(
+                "/api/categories/" + id,
+                request,
+                new TypeReference<ApiResponse<CategoryResponse>>() {}
+        ).getData();
+    }
+
+    @Override
+    public CategoryResponse activateCategory(Long id) throws ApiException {
+        return HttpClientHelper.patch(
+                "/api/categories/" + id + "/activate",
+                null,
+                new TypeReference<ApiResponse<CategoryResponse>>() {}
+        ).getData();
+    }
+
+    @Override
+    public CategoryResponse deactivateCategory(Long id) throws ApiException {
+        return HttpClientHelper.patch(
+                "/api/categories/" + id + "/deactivate",
+                null,
+                new TypeReference<ApiResponse<CategoryResponse>>() {}
+        ).getData();
+    }
+
+    @Override
     public void deleteCategory(Long id) throws ApiException {
         HttpClientHelper.delete(
                 "/api/categories/" + id,
