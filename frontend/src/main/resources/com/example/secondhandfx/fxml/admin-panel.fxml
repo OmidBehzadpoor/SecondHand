@@ -54,7 +54,17 @@
                     </columns>
                 </TableView>
             </Tab>
-
+            <Tab text="همه آگهی‌ها">
+                <TableView fx:id="allAdsTable">
+                    <columns>
+                        <TableColumn fx:id="allAdTitleColumn" text="عنوان" prefWidth="180"/>
+                        <TableColumn fx:id="allAdSellerColumn" text="فروشنده" prefWidth="120"/>
+                        <TableColumn fx:id="allAdPriceColumn" text="قیمت" prefWidth="100"/>
+                        <TableColumn fx:id="allAdStatusColumn" text="وضعیت" prefWidth="120"/>
+                        <TableColumn fx:id="allAdActionsColumn" text="عملیات" prefWidth="160"/>
+                    </columns>
+                </TableView>
+            </Tab>
             <Tab text="کاربران">
                 <TableView fx:id="usersTable">
                     <columns>
