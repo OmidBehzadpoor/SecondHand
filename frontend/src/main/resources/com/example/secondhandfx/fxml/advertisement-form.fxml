@@ -10,56 +10,65 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.secondhandfx.controller.AdvertisementFormController"
-            prefWidth="900" prefHeight="650" style="-fx-background-color: #f4f4f4;">
+            prefWidth="900" prefHeight="650" styleClass="root">
 
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-padding: 15;">
-            <Label fx:id="pageTitleLabel" text="ثبت آگهی جدید" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>        </HBox>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="top-bar">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            <Label fx:id="pageTitleLabel" text="ثبت آگهی جدید" styleClass="title-label"/>
+        </HBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+        <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
             <VBox spacing="15" style="-fx-padding: 20;">
 
-                <VBox spacing="8" style="-fx-background-color: white; -fx-padding: 15;">
-                    <Label text="عنوان آگهی"/>
+                <VBox spacing="8" styleClass="card">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                    <Label text="عنوان آگهی" styleClass="muted-label"/>
                     <TextField fx:id="titleField"/>
 
-                    <Label text="توضیحات"/>
+                    <Label text="توضیحات" styleClass="muted-label"/>
                     <TextArea fx:id="descriptionArea" prefRowCount="5" wrapText="true"/>
 
-                    <Label text="قیمت (تومان)"/>
+                    <Label text="قیمت (تومان)" styleClass="muted-label"/>
                     <TextField fx:id="priceField"/>
 
                     <HBox spacing="15">
                         <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="دسته‌بندی"/>
+                            <Label text="دسته‌بندی" styleClass="muted-label"/>
                             <ComboBox fx:id="categoryComboBox" promptText="انتخاب دسته‌بندی" maxWidth="Infinity"/>
                         </VBox>
                         <VBox spacing="8" HBox.hgrow="ALWAYS">
-                            <Label text="شهر"/>
+                            <Label text="شهر" styleClass="muted-label"/>
                             <ComboBox fx:id="cityComboBox" promptText="انتخاب شهر" maxWidth="Infinity"/>
                         </VBox>
                     </HBox>
                 </VBox>
 
-                <VBox spacing="8" style="-fx-background-color: white; -fx-padding: 15;">
-                    <Label text="تصاویر آگهی"/>
+                <VBox spacing="8" styleClass="card">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                    <Label text="تصاویر آگهی" styleClass="muted-label"/>
                     <ListView fx:id="selectedImagesListView" prefHeight="120"/>
                     <HBox spacing="10">
-                        <Button text="افزودن تصویر" onAction="#onAddImageClick"/>
-                        <Button text="حذف تصویر انتخاب‌شده" onAction="#onRemoveImageClick"/>
+                        <Button text="افزودن تصویر" onAction="#onAddImageClick" styleClass="btn"/>
+                        <Button text="حذف تصویر انتخاب‌شده" onAction="#onRemoveImageClick" styleClass="btn"/>
                     </HBox>
                 </VBox>
 
                 <HBox spacing="10">
-                    <Button fx:id="submitButton" text="ثبت آگهی" onAction="#onSubmitClick"
-                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 8 20;"/>
-                    <Button text="انصراف" onAction="#onCancelClick"
-                            style="-fx-background-color: #ecf0f1; -fx-padding: 8 20;"/>
+                    <Button fx:id="submitButton" text="ثبت آگهی" onAction="#onSubmitClick" styleClass="btn, btn-primary"/>
+                    <Button text="انصراف" onAction="#onCancelClick" styleClass="btn"/>
                 </HBox>
 
             </VBox>
