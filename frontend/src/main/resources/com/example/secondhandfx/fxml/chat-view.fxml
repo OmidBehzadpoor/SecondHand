@@ -29,7 +29,7 @@
     </top>
 
     <center>
-        <ListView fx:id="messageListView"/>
+        <ListView fx:id="messageListView" styleClass="chat-list"/>
     </center>
 
     <bottom>
