@@ -27,12 +27,19 @@ public class MyAdvertisementCardController {
     private Runnable onDelete;
 
     public void setData(AdvertisementResponse ad) {
-        titleLabel.setText(ad.getTitle());
-        priceLabel.setText(formatPrice(ad.getPrice()) + " تومان");
+        try {
+            titleLabel.setText(ad.getTitle() != null ? ad.getTitle() : "بدون عنوان");
+            priceLabel.setText((ad.getPrice() != null ? formatPrice(ad.getPrice()) : "۰") + " تومان");
 
-        applyStatusBadge(ad.getStatus());
-        applyActionVisibility(ad.getStatus());
-        applyRejectionReason(ad.getStatus(), ad.getRejectionReason());
+            applyStatusBadge(ad.getStatus());
+            applyActionVisibility(ad.getStatus());
+            applyRejectionReason(ad.getStatus(), ad.getRejectionReason());
+
+            System.out.println("✅ کارت برای آگهی ID: " + ad.getId() + " ساخته شد.");
+        } catch (Exception e) {
+            System.err.println("❌ خطا در setData برای آگهی ID: " + ad.getId());
+            e.printStackTrace();
+        }
     }
 
     public void setOnView(Runnable handler) {
@@ -54,21 +61,41 @@ public class MyAdvertisementCardController {
     private void applyStatusBadge(String status) {
         String text;
         String color;
-        switch (status) {
-            case "APPROVED" -> { text = "فعال";            color = "#28a745"; }
-            case "PENDING"  -> { text = "در انتظار بررسی"; color = "#ffc107"; }
-            case "REJECTED" -> { text = "رد شده";          color = "#dc3545"; }
-            case "SOLD"     -> { text = "فروخته‌شده";      color = "#6c757d"; }
-            case "DELETED"  -> { text = "حذف‌شده";         color = "#6c757d"; }
-            default         -> { text = status;             color = "#6c757d"; }
+        if (status == null) {
+            text = "نامشخص";
+            color = "-color-text-muted";
+        } else {
+            switch (status) {
+                case "APPROVED":
+                    text = "فعال";
+                    color = "-color-success";
+                    break;
+                case "PENDING":
+                    text = "در انتظار بررسی";
+                    color = "-color-warning";
+                    break;
+                case "REJECTED":
+                    text = "رد شده";
+                    color = "-color-danger";
+                    break;
+                case "SOLD":
+                    text = "فروخته‌شده";
+                    color = "-color-text-muted";
+                    break;
+                case "DELETED":
+                    text = "حذف‌شده";
+                    color = "-color-text-muted";
+                    break;
+                default:
+                    text = status;
+                    color = "-color-text-muted";
+                    break;
+            }
         }
         statusBadgeLabel.setText(text);
         statusBadgeLabel.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-padding: 2 8; -fx-background-radius: 4;");
     }
 
-    // بر اساس محدودیت‌های واقعی بک‌اند تصمیم می‌گیره کدام دکمه‌ها نشون داده بشن:
-    // markAsSold فقط برای APPROVED مجازه، ویرایش برای SOLD/DELETED منطقی نیست،
-    // حذف برای هر چیزی به‌جز DELETED مجازه.
     private void applyActionVisibility(String status) {
         boolean isDeleted = "DELETED".equals(status);
         boolean isSold = "SOLD".equals(status);
@@ -105,11 +132,10 @@ public class MyAdvertisementCardController {
     }
 
     private String formatPrice(Long price) {
-        if (price == null) return "-";
+        if (price == null) return "۰";
         return NumberFormat.getNumberInstance(Locale.US).format(price);
     }
 
-    // فقط وقتی آگهی رد شده و دلیلی هم ثبت شده، این لیبل رو نشون می‌ده
     private void applyRejectionReason(String status, String rejectionReason) {
         boolean shouldShow = "REJECTED".equals(status)
                 && rejectionReason != null && !rejectionReason.isBlank();
