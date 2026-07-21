@@ -97,8 +97,7 @@ public class MyAdvertisementsController {
                 controller.setOnView(() -> openDetails(ad.getId()));
                 controller.setOnEdit(() -> openEditForm(ad.getId()));
                 controller.setOnMarkAsSold(() -> markAsSold(ad.getId()));
-                controller.setOnDelete(() -> confirmAndDelete(ad.getId()));
-                container.getChildren().add(card);
+                controller.setOnDelete(() -> confirmAndDelete(ad.getId(), ad.getStatus()));                container.getChildren().add(card);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -128,7 +127,12 @@ public class MyAdvertisementsController {
         );
     }
 
-    private void confirmAndDelete(Long id) {
+    private void confirmAndDelete(Long id, String currentStatus) {
+        if ("DELETED".equals(currentStatus)) {
+            AlertUtil.showError("این آگهی قبلاً حذف شده است.");
+            return;
+        }
+
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
                 "آیا از حذف این آگهی مطمئن هستید؟", ButtonType.YES, ButtonType.NO);
         confirm.setHeaderText("تایید حذف آگهی");
