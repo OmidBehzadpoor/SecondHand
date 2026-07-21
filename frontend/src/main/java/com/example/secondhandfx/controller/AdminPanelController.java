@@ -38,6 +38,7 @@ public class AdminPanelController {
     @FXML private TableColumn<AdminUserResponse, String> userRoleColumn;
     @FXML private TableColumn<AdminUserResponse, String> userStatusColumn;
     @FXML private TableColumn<AdminUserResponse, Void> userActionsColumn;
+    @FXML private TabPane adminTabPane;
 
     @FXML private TextField newCategoryField;
     @FXML private ComboBox<CategoryResponse> parentCategoryComboBox;
@@ -532,5 +533,11 @@ public class AdminPanelController {
         ex.printStackTrace();
         String message = (ex instanceof ApiException) ? ex.getMessage() : "خطای ناشناخته‌ای رخ داد.";
         AlertUtil.showError(message);
+    }
+
+    public void setSelectedTabIndex(int index) {
+        if (adminTabPane != null) {
+            adminTabPane.getSelectionModel().select(index);
+        }
     }
 }
