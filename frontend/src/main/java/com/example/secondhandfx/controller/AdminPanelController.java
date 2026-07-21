@@ -14,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -106,14 +107,13 @@ public class AdminPanelController {
 
     private VBox buildStatCard(String label, String value) {
         Label valueLabel = new Label(value);
-        valueLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        valueLabel.getStyleClass().add("stat-value");
         Label titleLabel = new Label(label);
         titleLabel.getStyleClass().add("muted-label");
 
         VBox card = new VBox(6, valueLabel, titleLabel);
         card.setPrefWidth(150);
-        card.getStyleClass().add("card");
-        card.setStyle("-fx-padding: 15;");
+        card.getStyleClass().add("stat-card");
         return card;
     }
 
@@ -125,12 +125,14 @@ public class AdminPanelController {
         adPriceColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPrice() + " تومان"));
 
         adActionsColumn.setCellFactory(column -> new TableCell<>() {
+            private final Button viewButton = new Button("مشاهده");
             private final Button approveButton = new Button("تایید");
             private final Button rejectButton = new Button("رد");
             private final Button deleteButton = new Button("حذف");
-            private final HBox box = new HBox(5, approveButton, rejectButton, deleteButton);
+            private final HBox box = new HBox(5, viewButton, approveButton, rejectButton, deleteButton);
 
             {
+                viewButton.setOnAction(e -> onViewAdClick(getTableView().getItems().get(getIndex())));
                 approveButton.setOnAction(e -> onApproveClick(getTableView().getItems().get(getIndex())));
                 rejectButton.setOnAction(e -> onRejectClick(getTableView().getItems().get(getIndex())));
                 deleteButton.setOnAction(e -> onDeleteAdClick(getTableView().getItems().get(getIndex())));
@@ -144,6 +146,13 @@ public class AdminPanelController {
         });
 
         pendingAdsTable.setItems(pendingAds);
+    }
+
+    private void onViewAdClick(AdminAdvertisementResponse ad) {
+        FXMLLoader loader = SceneNavigator.navigateTo(
+                "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
+        AdvertisementDetailsController controller = loader.getController();
+        controller.setAdvertisementId(ad.getId());
     }
 
     private void loadPendingAds() {
@@ -279,11 +288,13 @@ public class AdminPanelController {
         categoryNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
 
         categoryActionsColumn.setCellFactory(column -> new TableCell<>() {
+            private final Button editButton = new Button("ویرایش");
             private final Button toggleButton = new Button();
             private final Button deleteButton = new Button("حذف");
-            private final HBox box = new HBox(5, toggleButton, deleteButton);
+            private final HBox box = new HBox(5, editButton, toggleButton, deleteButton);
 
             {
+                editButton.setOnAction(e -> onEditCategoryClick(getTableView().getItems().get(getIndex())));
                 toggleButton.setOnAction(e -> onToggleCategoryActiveClick(getTableView().getItems().get(getIndex())));
                 deleteButton.setOnAction(e -> onDeleteCategoryClick(getTableView().getItems().get(getIndex())));
             }
@@ -296,7 +307,7 @@ public class AdminPanelController {
                     return;
                 }
                 CategoryResponse category = getTableView().getItems().get(getIndex());
-                toggleButton.setText(category.isActive() ? "غیرفعال‌سازی" : "فعال‌سازی");
+                toggleButton.setText(category.isActive() ? "غیرفعال" : "فعال");
                 setGraphic(box);
             }
         });
@@ -316,6 +327,56 @@ public class AdminPanelController {
         });
     }
 
+    private void onEditCategoryClick(CategoryResponse category) {
+        TextField nameField = new TextField(category.getName());
+
+        ComboBox<CategoryResponse> parentBox = new ComboBox<>(FXCollections.observableArrayList(categories));
+        parentBox.setConverter(new javafx.util.StringConverter<>() {
+            @Override
+            public String toString(CategoryResponse c) {
+                return c == null ? "بدون والد (ریشه)" : c.getName();
+            }
+
+            @Override
+            public CategoryResponse fromString(String string) {
+                return null;
+            }
+        });
+        categories.stream()
+                .filter(c -> c.getId().equals(category.getParentId()))
+                .findFirst()
+                .ifPresent(parentBox::setValue);
+
+        VBox content = new VBox(10,
+                new Label("نام دسته‌بندی:"), nameField,
+                new Label("دسته‌ی والد:"), parentBox);
+        content.setStyle("-fx-padding: 15;");
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("ویرایش دسته‌بندی");
+        dialog.getDialogPane().setContent(content);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dialog.showAndWait().filter(result -> result == ButtonType.OK).ifPresent(result -> {
+            String newName = nameField.getText().trim();
+            if (newName.isEmpty()) {
+                AlertUtil.showError("نام دسته‌بندی نمی‌تواند خالی باشد.");
+                return;
+            }
+            CategoryResponse selectedParent = parentBox.getValue();
+            Long newParentId = selectedParent != null ? selectedParent.getId() : null;
+
+            Task<CategoryResponse> task = new Task<>() {
+                @Override
+                protected CategoryResponse call() throws Exception {
+                    return categoryService.updateCategory(category.getId(), newName, newParentId);
+                }
+            };
+            task.setOnSucceeded(e -> loadCategories());
+            task.setOnFailed(e -> showError(task.getException()));
+            new Thread(task).start();
+        });
+    }
     private void loadCategories() {
         Task<List<CategoryResponse>> task = new Task<>() {
             @Override
