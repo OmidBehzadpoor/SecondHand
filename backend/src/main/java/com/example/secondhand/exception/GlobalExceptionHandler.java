@@ -149,9 +149,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = "این عملیات با داده‌ای که از قبل وجود دارد در تناقض است";
+        if (ex.getMessage().contains("UK_")) {
+            message = "مقدار وارد شده تکراری است. لطفاً از مقدار دیگری استفاده کنید.";
+        }
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", "این عملیات با داده‌ای که از قبل وجود دارد در تناقض است"));
+                .body(Map.of("error", message));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -196,5 +200,4 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", message));
     }
-
 }
