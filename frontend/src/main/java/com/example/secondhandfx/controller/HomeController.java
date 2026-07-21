@@ -15,10 +15,13 @@ import com.example.secondhandfx.service.CityServiceImpl;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
+import com.example.secondhandfx.util.ThemeManager;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -26,14 +29,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import java.util.List;
+
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
-import com.example.secondhandfx.util.ThemeManager;
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
 
 public class HomeController implements Initializable {
 
@@ -52,12 +53,13 @@ public class HomeController implements Initializable {
     @FXML private HBox guestAuthBox;
     @FXML private HBox userAuthBox;
     @FXML private Label welcomeLabel;
-<<<<<<< Updated upstream
-    @FXML private ComboBox<Integer> pageSizeComboBox;
-=======
+
+    // ====== دو فیلد از Stashed changes ======
     @FXML private Button conversationsButton;
     @FXML private Button adminPanelButton;
->>>>>>> Stashed changes
+
+    // ====== فیلد از Updated upstream ======
+    @FXML private ComboBox<Integer> pageSizeComboBox;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
@@ -73,6 +75,8 @@ public class HomeController implements Initializable {
 
         sortComboBox.getItems().addAll("جدیدترین", "قدیمی‌ترین", "ارزان‌ترین", "گران‌ترین");
         sortComboBox.getSelectionModel().selectFirst();
+
+        // ====== تنظیمات pageSizeComboBox (از Updated upstream) ======
         pageSizeComboBox.getItems().addAll(12, 24, 48);
         pageSizeComboBox.getSelectionModel().select(Integer.valueOf(pageSize));
         pageSizeComboBox.setOnAction(event -> {
@@ -84,6 +88,7 @@ public class HomeController implements Initializable {
         loadCategories();
         loadCities();
         loadAdvertisements();
+
         categoryComboBox.setConverter(new javafx.util.StringConverter<CategoryResponse>() {
             @Override
             public String toString(CategoryResponse category) {
@@ -92,7 +97,7 @@ public class HomeController implements Initializable {
 
             @Override
             public CategoryResponse fromString(String string) {
-                return null; // فقط برای انتخاب از لیست استفاده می‌شود، نه تایپ آزاد
+                return null;
             }
         });
 
@@ -135,6 +140,7 @@ public class HomeController implements Initializable {
         userAuthBox.setVisible(loggedIn);
         userAuthBox.setManaged(loggedIn);
 
+        // ====== مدیریت دکمه‌های اضافی (از Stashed changes) ======
         conversationsButton.setVisible(loggedIn);
         conversationsButton.setManaged(loggedIn);
 
@@ -157,7 +163,6 @@ public class HomeController implements Initializable {
     }
 
     // درخت دسته‌بندی‌ها را به یک لیست تخت با نمایش تورفته تبدیل می‌کند
-// تا کاربر بتواند هم دسته‌ی والد و هم هر زیردسته را مستقیماً انتخاب کند
     private final java.util.Map<Long, Integer> categoryDepthMap = new java.util.HashMap<>();
 
     private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
@@ -273,7 +278,8 @@ public class HomeController implements Initializable {
         int pageToLoad = currentPage;
 
         runAsync(
-                () -> advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy, pageToLoad, pageSize),                this::renderPage,
+                () -> advertisementService.getAll(keyword, categoryId, cityId, minPrice, maxPrice, sortBy, pageToLoad, pageSize),
+                this::renderPage,
                 "خطا در دریافت آگهی‌ها"
         );
     }
@@ -308,7 +314,6 @@ public class HomeController implements Initializable {
     }
 
     private void openAdvertisementDetails(Long id) {
-        // صفحه‌ی جزئیات آگهی بدون نیاز به لاگین باز می‌شه (طبق داک پروژه)
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
         AdvertisementDetailsController controller = loader.getController();
