@@ -2,6 +2,7 @@ package com.example.secondhandfx.controller;
 
 import com.example.secondhandfx.exception.ApiException;
 import com.example.secondhandfx.model.AdminAdvertisementResponse;
+import com.example.secondhandfx.model.AdminDashboardResponse;
 import com.example.secondhandfx.model.AdminUserResponse;
 import com.example.secondhandfx.model.CategoryResponse;
 import com.example.secondhandfx.model.CityResponse;
@@ -14,11 +15,16 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdminPanelController {
+
+    @FXML private FlowPane statsContainer;
 
     @FXML private TableView<AdminAdvertisementResponse> pendingAdsTable;
     @FXML private TableColumn<AdminAdvertisementResponse, String> adTitleColumn;
@@ -33,6 +39,7 @@ public class AdminPanelController {
     @FXML private TableColumn<AdminUserResponse, Void> userActionsColumn;
 
     @FXML private TextField newCategoryField;
+    @FXML private ComboBox<CategoryResponse> parentCategoryComboBox;
     @FXML private TableView<CategoryResponse> categoriesTable;
     @FXML private TableColumn<CategoryResponse, String> categoryNameColumn;
     @FXML private TableColumn<CategoryResponse, Void> categoryActionsColumn;
@@ -58,10 +65,56 @@ public class AdminPanelController {
         setupCategoriesTable();
         setupCitiesTable();
 
+        loadDashboard();
         loadPendingAds();
         loadUsers();
         loadCategories();
         loadCities();
+    }
+
+    // ---------- آمار ----------
+
+    private void loadDashboard() {
+        Task<AdminDashboardResponse> task = new Task<>() {
+            @Override
+            protected AdminDashboardResponse call() throws Exception {
+                return adminService.getDashboard();
+            }
+        };
+        task.setOnSucceeded(e -> renderDashboard(task.getValue()));
+        task.setOnFailed(e -> showError(task.getException()));
+        new Thread(task).start();
+    }
+
+    private void renderDashboard(AdminDashboardResponse stats) {
+        statsContainer.getChildren().clear();
+        statsContainer.getChildren().addAll(
+                buildStatCard("کاربران", stats.getTotalUsers() + " (" + stats.getBlockedUsers() + " بلاک)"),
+                buildStatCard("آگهی‌ها", String.valueOf(stats.getTotalAdvertisements())),
+                buildStatCard("در انتظار بررسی", String.valueOf(stats.getPendingAdvertisements())),
+                buildStatCard("تایید‌شده", String.valueOf(stats.getApprovedAdvertisements())),
+                buildStatCard("رد‌شده", String.valueOf(stats.getRejectedAdvertisements())),
+                buildStatCard("فروخته‌شده", String.valueOf(stats.getSoldAdvertisements())),
+                buildStatCard("دسته‌بندی‌ها", String.valueOf(stats.getTotalCategories())),
+                buildStatCard("شهرها", String.valueOf(stats.getTotalCities())),
+                buildStatCard("گفتگوها", String.valueOf(stats.getTotalConversations())),
+                buildStatCard("پیام‌ها", String.valueOf(stats.getTotalMessages())),
+                buildStatCard("علاقه‌مندی‌ها", String.valueOf(stats.getTotalFavorites())),
+                buildStatCard("امتیازها", String.valueOf(stats.getTotalRatings()))
+        );
+    }
+
+    private VBox buildStatCard(String label, String value) {
+        Label valueLabel = new Label(value);
+        valueLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        Label titleLabel = new Label(label);
+        titleLabel.getStyleClass().add("muted-label");
+
+        VBox card = new VBox(6, valueLabel, titleLabel);
+        card.setPrefWidth(150);
+        card.getStyleClass().add("card");
+        card.setStyle("-fx-padding: 15;");
+        return card;
     }
 
     // ---------- آگهی‌ها ----------
@@ -226,32 +279,67 @@ public class AdminPanelController {
         categoryNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
 
         categoryActionsColumn.setCellFactory(column -> new TableCell<>() {
+            private final Button toggleButton = new Button();
             private final Button deleteButton = new Button("حذف");
+            private final HBox box = new HBox(5, toggleButton, deleteButton);
 
             {
+                toggleButton.setOnAction(e -> onToggleCategoryActiveClick(getTableView().getItems().get(getIndex())));
                 deleteButton.setOnAction(e -> onDeleteCategoryClick(getTableView().getItems().get(getIndex())));
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : deleteButton);
+                if (empty) {
+                    setGraphic(null);
+                    return;
+                }
+                CategoryResponse category = getTableView().getItems().get(getIndex());
+                toggleButton.setText(category.isActive() ? "غیرفعال‌سازی" : "فعال‌سازی");
+                setGraphic(box);
             }
         });
 
         categoriesTable.setItems(categories);
+
+        parentCategoryComboBox.setConverter(new javafx.util.StringConverter<>() {
+            @Override
+            public String toString(CategoryResponse category) {
+                return category == null ? "" : category.getName();
+            }
+
+            @Override
+            public CategoryResponse fromString(String string) {
+                return null;
+            }
+        });
     }
 
     private void loadCategories() {
         Task<List<CategoryResponse>> task = new Task<>() {
             @Override
             protected List<CategoryResponse> call() throws Exception {
-                return categoryService.getAllCategories();
+                return categoryService.getAllCategoriesForAdmin();
             }
         };
-        task.setOnSucceeded(e -> categories.setAll(task.getValue()));
+        task.setOnSucceeded(e -> {
+            List<CategoryResponse> flattened = new ArrayList<>();
+            flattenCategories(task.getValue(), flattened);
+            categories.setAll(flattened);
+            parentCategoryComboBox.setItems(FXCollections.observableArrayList(flattened));
+        });
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
+    }
+
+    private void flattenCategories(List<CategoryResponse> roots, List<CategoryResponse> out) {
+        for (CategoryResponse category : roots) {
+            out.add(category);
+            if (category.getSubCategories() != null) {
+                flattenCategories(category.getSubCategories(), out);
+            }
+        }
     }
 
     @FXML
@@ -261,16 +349,36 @@ public class AdminPanelController {
             AlertUtil.showError("نام دسته‌بندی نمی‌تواند خالی باشد.");
             return;
         }
+
+        CategoryResponse selectedParent = parentCategoryComboBox.getValue();
+        Long parentId = selectedParent != null ? selectedParent.getId() : null;
+
         Task<CategoryResponse> task = new Task<>() {
             @Override
             protected CategoryResponse call() throws Exception {
-                return categoryService.createCategory(name);
+                return categoryService.createCategory(name, parentId);
             }
         };
         task.setOnSucceeded(e -> {
-            categories.add(task.getValue());
             newCategoryField.clear();
+            parentCategoryComboBox.setValue(null);
+            loadCategories();
         });
+        task.setOnFailed(e -> showError(task.getException()));
+        new Thread(task).start();
+    }
+
+    private void onToggleCategoryActiveClick(CategoryResponse category) {
+        boolean isActive = category.isActive();
+        Task<CategoryResponse> task = new Task<>() {
+            @Override
+            protected CategoryResponse call() throws Exception {
+                return isActive
+                        ? categoryService.deactivateCategory(category.getId())
+                        : categoryService.activateCategory(category.getId());
+            }
+        };
+        task.setOnSucceeded(e -> loadCategories());
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
     }
@@ -283,7 +391,7 @@ public class AdminPanelController {
                 return null;
             }
         };
-        task.setOnSucceeded(e -> categories.remove(category));
+        task.setOnSucceeded(e -> loadCategories());
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
     }
