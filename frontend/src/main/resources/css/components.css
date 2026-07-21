@@ -1,5 +1,5 @@
 .root {
-    -fx-font-family: "Segoe UI", "Vazirmatn", "Tahoma", sans-serif;
+    -fx-font-family: "Segoe UI", "Vazirmatn", "Noto Sans", "DejaVu Sans", "Tahoma", sans-serif;
     -fx-background-color: -color-bg;
     -fx-font-size: 13px;
 }
