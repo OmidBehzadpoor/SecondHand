@@ -20,8 +20,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryResponse createCategory(String name) throws ApiException {
-        CategoryRequest request = CategoryRequest.builder().name(name).build();
+    public List<CategoryResponse> getAllCategoriesForAdmin() throws ApiException {
+        // این مسیر، برخلاف /api/categories، دسته‌بندی‌های غیرفعال را هم برمی‌گرداند
+        return HttpClientHelper.get(
+                "/api/categories/admin",
+                new TypeReference<ApiResponse<List<CategoryResponse>>>() {}
+        ).getData();
+    }
+
+    @Override
+    public CategoryResponse createCategory(String name, Long parentId) throws ApiException {
+        CategoryRequest request = CategoryRequest.builder()
+                .name(name)
+                .parentId(parentId)
+                .build();
         return HttpClientHelper.post(
                 "/api/categories",
                 request,
