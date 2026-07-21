@@ -19,7 +19,6 @@
             fx:controller="com.example.secondhandfx.controller.AdminPanelController"
             prefWidth="900" prefHeight="600" styleClass="root">
 
-    <!-- ====== نوار بالایی، هماهنگ با استایل بقیه‌ی برنامه ====== -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="top-bar">
             <padding>
@@ -33,7 +32,6 @@
     <center>
         <TabPane fx:id="adminTabPane" tabClosingPolicy="UNAVAILABLE">
 
-            <!-- ====== تب جدید: آمار ====== -->
             <Tab text="آمار">
                 <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
                     <FlowPane fx:id="statsContainer" hgap="15" vgap="15">
@@ -54,6 +52,7 @@
                     </columns>
                 </TableView>
             </Tab>
+
             <Tab text="همه آگهی‌ها">
                 <TableView fx:id="allAdsTable">
                     <columns>
@@ -61,10 +60,11 @@
                         <TableColumn fx:id="allAdSellerColumn" text="فروشنده" prefWidth="120"/>
                         <TableColumn fx:id="allAdPriceColumn" text="قیمت" prefWidth="100"/>
                         <TableColumn fx:id="allAdStatusColumn" text="وضعیت" prefWidth="120"/>
-                        <TableColumn fx:id="allAdActionsColumn" text="عملیات" prefWidth="160"/>
+                        <TableColumn fx:id="allAdActionsColumn" text="عملیات" prefWidth="180"/>
                     </columns>
                 </TableView>
             </Tab>
+
             <Tab text="کاربران">
                 <TableView fx:id="usersTable">
                     <columns>
