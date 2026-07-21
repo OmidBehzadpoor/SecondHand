@@ -9,76 +9,109 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.secondhandfx.controller.HomeController"
-            prefWidth="900" prefHeight="650" styleClass="root">
+<StackPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.secondhandfx.controller.HomeController"
+           prefWidth="900" prefHeight="650" styleClass="root">
 
-    <top>
-        <VBox spacing="10" styleClass="top-bar">
-            <padding>
-                <Insets top="15" right="15" bottom="15" left="15"/>
-            </padding>
-            <HBox spacing="15" alignment="CENTER_LEFT">
-                <Label text="آگهی‌های فعال" styleClass="title-label"/>
-                <HBox HBox.hgrow="ALWAYS"/>
+    <!-- محتوای اصلی صفحه -->
+    <BorderPane styleClass="root">
 
-                <Button fx:id="themeToggleButton" text="🌙" onAction="#onToggleThemeClick"
-                        styleClass="btn, btn-icon"/>
-
-                <Button text="آگهی‌های من" onAction="#onMyAdvertisementsClick" styleClass="btn"/>
-                <Button text="علاقه‌مندی‌ها" onAction="#onFavoritesClick" styleClass="btn"/>
-                <Button text="ثبت آگهی جدید" onAction="#onCreateAdvertisementClick" styleClass="btn, btn-primary"/>
-                <Button fx:id="conversationsButton" text="گفتگوها" onAction="#onConversationsClick" styleClass="btn"/>
-
-                <!-- حالت مهمون: دکمه‌های ورود و ثبت‌نام -->
-                <HBox fx:id="guestAuthBox" spacing="8" alignment="CENTER_LEFT">
-                    <Button text="ورود" onAction="#onLoginClick" styleClass="btn, btn-success"/>
-                    <Button text="ثبت‌نام" onAction="#onRegisterClick" styleClass="btn"/>
-                </HBox>
-
-                <!-- حالت لاگین‌شده: نام کاربر و دکمه‌ی خروج -->
-                <HBox fx:id="userAuthBox" spacing="10" alignment="CENTER_LEFT">
-                    <Label fx:id="welcomeLabel" styleClass="muted-label"/>
-                    <Button fx:id="adminPanelButton" text="پنل ادمین" onAction="#onAdminPanelClick" styleClass="btn"/>
-                    <Button text="خروج" onAction="#onLogoutButtonClick" styleClass="btn, btn-danger"/>
-                </HBox>
-            </HBox>
-
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="searchField" promptText="جست‌وجو در عنوان و توضیحات..." prefWidth="220"/>
-                <ComboBox fx:id="categoryComboBox" promptText="دسته‌بندی" prefWidth="150"/>
-                <ComboBox fx:id="cityComboBox" promptText="شهر" prefWidth="130"/>
-                <TextField fx:id="minPriceField" promptText="حداقل قیمت" prefWidth="100"/>
-                <TextField fx:id="maxPriceField" promptText="حداکثر قیمت" prefWidth="100"/>
-                <ComboBox fx:id="sortComboBox" promptText="مرتب‌سازی" prefWidth="120"/>
-                <Button text="اعمال فیلتر" onAction="#onSearchClick" styleClass="btn, btn-success"/>
-            </HBox>
-        </VBox>
-    </top>
-
-    <center>
-        <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
-            <FlowPane fx:id="advertisementsContainer" hgap="15" vgap="15">
+        <top>
+            <VBox spacing="10" styleClass="top-bar">
                 <padding>
                     <Insets top="15" right="15" bottom="15" left="15"/>
                 </padding>
-            </FlowPane>
-        </ScrollPane>
-    </center>
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <!-- دکمه‌ی باز/بسته کردن ساید‌بار کشویی -->
+                    <Button fx:id="sidebarToggleButton" text="›" onAction="#onToggleSidebarClick"
+                            styleClass="btn, btn-icon"/>
 
-    <bottom>
-        <HBox spacing="15" alignment="CENTER" styleClass="bottom-bar">
+                    <Label text="آگهی‌های فعال" styleClass="title-label"/>
+                    <HBox HBox.hgrow="ALWAYS"/>
+
+                    <Button fx:id="themeToggleButton" text="🌙" onAction="#onToggleThemeClick"
+                            styleClass="btn, btn-icon"/>
+
+                    <!-- حالت مهمون: دکمه‌های ورود و ثبت‌نام -->
+                    <HBox fx:id="guestAuthBox" spacing="8" alignment="CENTER_LEFT">
+                        <Button text="ورود" onAction="#onLoginClick" styleClass="btn, btn-success"/>
+                        <Button text="ثبت‌نام" onAction="#onRegisterClick" styleClass="btn"/>
+                    </HBox>
+
+                    <!-- حالت لاگین‌شده: نام کاربر -->
+                    <HBox fx:id="userAuthBox" spacing="10" alignment="CENTER_LEFT">
+                        <Label fx:id="welcomeLabel" styleClass="muted-label"/>
+                    </HBox>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField" promptText="جست‌وجو در عنوان و توضیحات..." prefWidth="220"/>
+                    <ComboBox fx:id="categoryComboBox" promptText="دسته‌بندی" prefWidth="150"/>
+                    <ComboBox fx:id="cityComboBox" promptText="شهر" prefWidth="130"/>
+                    <TextField fx:id="minPriceField" promptText="حداقل قیمت" prefWidth="100"/>
+                    <TextField fx:id="maxPriceField" promptText="حداکثر قیمت" prefWidth="100"/>
+                    <ComboBox fx:id="sortComboBox" promptText="مرتب‌سازی" prefWidth="120"/>
+                    <Button text="اعمال فیلتر" onAction="#onSearchClick" styleClass="btn, btn-success"/>
+                </HBox>
+            </VBox>
+        </top>
+
+        <center>
+            <ScrollPane fitToWidth="true" styleClass="transparent-scroll">
+                <FlowPane fx:id="advertisementsContainer" hgap="15" vgap="15">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                </FlowPane>
+            </ScrollPane>
+        </center>
+
+        <bottom>
+            <HBox spacing="15" alignment="CENTER" styleClass="bottom-bar">
+                <padding>
+                    <Insets top="12" right="12" bottom="12" left="12"/>
+                </padding>
+                <Button fx:id="prevPageButton" text="◀ قبلی" onAction="#onPrevPageClick" styleClass="btn"/>
+                <Label fx:id="pageIndicatorLabel" text="1 از 1"/>
+                <Button fx:id="nextPageButton" text="بعدی ▶" onAction="#onNextPageClick" styleClass="btn"/>
+                <Label text="تعداد در هر صفحه:" styleClass="muted-label"/>
+                <ComboBox fx:id="pageSizeComboBox" prefWidth="80"/>
+            </HBox>
+        </bottom>
+
+    </BorderPane>
+
+    <!-- لایه‌ی نیمه‌شفاف پشت ساید‌بار برای بستن آن با کلیک بیرون -->
+    <StackPane fx:id="sidebarOverlay" styleClass="sidebar-overlay" visible="false" managed="false"
+               onMouseClicked="#onOverlayClick" StackPane.alignment="CENTER_LEFT">
+
+        <!-- ساید‌بار کشویی -->
+        <VBox fx:id="sidebarPane" spacing="10" styleClass="sidebar" prefWidth="220" maxWidth="220"
+              StackPane.alignment="CENTER_LEFT">
             <padding>
-                <Insets top="12" right="12" bottom="12" left="12"/>
+                <Insets top="20" right="15" bottom="20" left="15"/>
             </padding>
-            <Button fx:id="prevPageButton" text="◀ قبلی" onAction="#onPrevPageClick" styleClass="btn"/>
-            <Label fx:id="pageIndicatorLabel" text="1 از 1"/>
-            <Button fx:id="nextPageButton" text="بعدی ▶" onAction="#onNextPageClick" styleClass="btn"/>
-            <Label text="تعداد در هر صفحه:" styleClass="muted-label"/>
-            <ComboBox fx:id="pageSizeComboBox" prefWidth="80"/>
-        </HBox>
-    </bottom>
 
-</BorderPane>
+            <HBox alignment="CENTER_RIGHT">
+                <HBox HBox.hgrow="ALWAYS"/>
+                <Button text="✕" onAction="#onToggleSidebarClick" styleClass="btn, btn-icon"/>
+            </HBox>
+
+            <Label fx:id="sidebarWelcomeLabel" text="" styleClass="sidebar-title"/>
+
+            <Button text="آگهی‌های من" maxWidth="Infinity" onAction="#onMyAdvertisementsClick" styleClass="sidebar-btn"/>
+            <Button text="ثبت آگهی جدید" maxWidth="Infinity" onAction="#onCreateAdvertisementClick" styleClass="sidebar-btn, sidebar-btn-primary"/>
+            <Button text="علاقه‌مندی‌ها" maxWidth="Infinity" onAction="#onFavoritesClick" styleClass="sidebar-btn"/>
+            <Button fx:id="conversationsButton" text="گفتگوها" maxWidth="Infinity" onAction="#onConversationsClick" styleClass="sidebar-btn"/>
+            <Button fx:id="adminPanelButton" text="پنل ادمین" maxWidth="Infinity" onAction="#onAdminPanelClick" styleClass="sidebar-btn, sidebar-btn-primary"/>
+
+            <HBox VBox.vgrow="ALWAYS"/>
+
+            <Button fx:id="sidebarLogoutButton" text="خروج" maxWidth="Infinity" onAction="#onLogoutButtonClick" styleClass="sidebar-btn, sidebar-btn-danger"/>
+        </VBox>
+    </StackPane>
+
+</StackPane>
