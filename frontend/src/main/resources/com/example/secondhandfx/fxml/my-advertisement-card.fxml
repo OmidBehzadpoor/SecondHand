@@ -7,25 +7,18 @@
 
 <VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.MyAdvertisementCardController"
-      fx:id="root" spacing="8" prefWidth="260"
-      style="-fx-background-color: white; -fx-padding: 12; -fx-background-radius: 8;
-             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 2);">
+      fx:id="root" spacing="8" prefWidth="260" styleClass="card" style="-fx-padding: 12;">
 
-    <Label fx:id="titleLabel" wrapText="true" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-    <Label fx:id="priceLabel" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
-    <Label fx:id="statusBadgeLabel"/>
-    <Label fx:id="rejectionReasonLabel" wrapText="true"
-           style="-fx-text-fill: #c0392b; -fx-font-size: 11px;"/>
+    <Label fx:id="titleLabel" wrapText="true" styleClass="title-label" style="-fx-font-size: 14px;"/>
+    <Label fx:id="priceLabel" styleClass="price-label"/>
+    <Label fx:id="statusBadgeLabel" styleClass="badge"/>
+    <Label fx:id="rejectionReasonLabel" wrapText="true" styleClass="error-text" style="-fx-font-size: 11px;"/>
 
     <HBox spacing="6">
-        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick"
-                style="-fx-background-color: #ecf0f1; -fx-padding: 4 10; -fx-font-size: 11px;"/>
-        <Button fx:id="editButton" text="ویرایش" onAction="#onEditClick"
-                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 4 10; -fx-font-size: 11px;"/>
-        <Button fx:id="markAsSoldButton" text="فروخته‌شد" onAction="#onMarkAsSoldClick"
-                style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-padding: 4 10; -fx-font-size: 11px;"/>
-        <Button fx:id="deleteButton" text="حذف" onAction="#onDeleteClick"
-                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 4 10; -fx-font-size: 11px;"/>
+        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick" styleClass="btn" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
+        <Button fx:id="editButton" text="ویرایش" onAction="#onEditClick" styleClass="btn, btn-primary" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
+        <Button fx:id="markAsSoldButton" text="فروخته‌شد" onAction="#onMarkAsSoldClick" styleClass="btn, btn-warning" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
+        <Button fx:id="deleteButton" text="حذف" onAction="#onDeleteClick" styleClass="btn, btn-danger" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
     </HBox>
 
 </VBox>
