@@ -384,6 +384,7 @@ public class HomeController implements Initializable {
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
         AdvertisementDetailsController controller = loader.getController();
         controller.setAdvertisementId(id);
+        controller.setReturnPage("/com/example/secondhandfx/fxml/home.fxml");
     }
 
     private String mapSortOption(String label) {
