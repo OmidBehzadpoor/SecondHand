@@ -12,13 +12,13 @@ import java.util.List;
 public interface AdvertisementService {
 
     PageResponse<AdvertisementResponse> getAll(String keyword,
-                                                Long categoryId,
-                                                Long cityId,
-                                                Long minPrice,
-                                                Long maxPrice,
-                                                String sortBy,
-                                                int page,
-                                                int size) throws ApiException;
+                                               Long categoryId,
+                                               Long cityId,
+                                               Long minPrice,
+                                               Long maxPrice,
+                                               String sortBy,
+                                               int page,
+                                               int size) throws ApiException;
 
     AdvertisementResponse getById(Long id) throws ApiException;
 
@@ -29,6 +29,10 @@ public interface AdvertisementService {
     AdvertisementResponse create(AdvertisementRequest request) throws ApiException;
 
     AdvertisementImageResponse uploadImage(Long advertisementId, File file) throws ApiException;
+
+    List<AdvertisementImageResponse> getImages(Long advertisementId) throws ApiException;
+
+    void deleteImage(Long advertisementId, Long imageId) throws ApiException;
 
     List<AdvertisementResponse> getMyAdvertisements() throws ApiException;
 
