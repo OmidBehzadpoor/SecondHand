@@ -1,22 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.secondhandfx.controller.MainShellController"
-            prefWidth="900" prefHeight="600" styleClass="root">
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.secondhandfx.controller.MainShellController"
+           styleClass="root">
 
-    <left>
-        <VBox spacing="10" styleClass="sidebar" prefWidth="200">
+    <!-- محتوای اصلی: همیشه کل عرض صفحه رو می‌گیره؛ ساید‌بار روی آن به‌صورت کشویی باز/بسته می‌شود -->
+    <BorderPane styleClass="root">
+        <top>
+            <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="top-bar">
+                <padding>
+                    <Insets top="12" right="15" bottom="12" left="15"/>
+                </padding>
+                <Button fx:id="sidebarToggleButton" text="☰ منو" onAction="#onToggleSidebarClick" styleClass="btn"/>
+            </HBox>
+        </top>
+
+        <center>
+            <StackPane fx:id="contentArea" styleClass="root"/>
+        </center>
+    </BorderPane>
+
+    <!-- لایه‌ی کشویی ساید‌بار: روی محتوا می‌شینه و فضایی از Layout اشغال نمی‌کند -->
+    <StackPane fx:id="sidebarOverlay" alignment="CENTER_LEFT" maxWidth="Infinity" maxHeight="Infinity" pickOnBounds="false">
+        <VBox fx:id="sidebarBox" spacing="10" styleClass="sidebar" maxWidth="220" prefWidth="220" maxHeight="Infinity">
             <padding>
                 <Insets top="20" right="15" bottom="20" left="15"/>
             </padding>
-            <Label fx:id="welcomeLabel" text="" styleClass="sidebar-title"/>
+            <HBox alignment="CENTER_LEFT">
+                <Label fx:id="welcomeLabel" text="" styleClass="sidebar-title"/>
+            </HBox>
 
             <Button text="← بازگشت به صفحه اصلی" maxWidth="Infinity" onAction="#onHomeClick" styleClass="sidebar-btn"/>
             <Button text="آگهی‌های من" maxWidth="Infinity" onAction="#onMyAdvertisementsClick" styleClass="sidebar-btn"/>
@@ -28,10 +48,6 @@
 
             <Button text="خروج" maxWidth="Infinity" onAction="#onLogoutButtonClick" styleClass="sidebar-btn, sidebar-btn-danger"/>
         </VBox>
-    </left>
+    </StackPane>
 
-    <center>
-        <StackPane fx:id="contentArea" styleClass="root"/>
-    </center>
-
-</BorderPane>
+</StackPane>
