@@ -7,20 +7,16 @@
 
 <VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.FavoriteCardController"
-      fx:id="root" spacing="8" prefWidth="260"
-      style="-fx-background-color: white; -fx-padding: 12; -fx-background-radius: 8;
-             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 2);">
+      fx:id="root" spacing="8" prefWidth="260" styleClass="card" style="-fx-padding: 12;">
 
-    <Label fx:id="titleLabel" wrapText="true" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
-    <Label fx:id="priceLabel" style="-fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
-    <Label fx:id="cityLabel" style="-fx-text-fill: #7f8c8d; -fx-font-size: 12px;"/>
-    <Label fx:id="statusBadgeLabel"/>
+    <Label fx:id="titleLabel" wrapText="true" styleClass="title-label" style="-fx-font-size: 14px;"/>
+    <Label fx:id="priceLabel" styleClass="price-label"/>
+    <Label fx:id="cityLabel" styleClass="muted-label" style="-fx-font-size: 12px;"/>
+    <Label fx:id="statusBadgeLabel" styleClass="badge"/>
 
     <HBox spacing="6">
-        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick"
-                style="-fx-background-color: #ecf0f1; -fx-padding: 4 10; -fx-font-size: 11px;"/>
-        <Button fx:id="removeButton" text="حذف از علاقه‌مندی‌ها" onAction="#onRemoveClick"
-                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-padding: 4 10; -fx-font-size: 11px;"/>
+        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick" styleClass="btn" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
+        <Button fx:id="removeButton" text="حذف از علاقه‌مندی‌ها" onAction="#onRemoveClick" styleClass="btn, btn-danger" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
     </HBox>
 
 </VBox>
