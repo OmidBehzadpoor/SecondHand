@@ -218,31 +218,44 @@
     -fx-background-color: -color-primary-hover;
 }
 .sidebar {
-    -fx-background-color: #1f2733;
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 1 0 0;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 12, 0, 2, 0);
 }
 
 .sidebar-title {
-    -fx-text-fill: white;
+    -fx-text-fill: -color-text;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
 .sidebar-btn {
-    -fx-background-color: #34495e;
-    -fx-text-fill: white;
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
     -fx-alignment: baseline-right;
     -fx-background-radius: 6;
+    -fx-border-radius: 6;
     -fx-cursor: hand;
     -fx-padding: 8 12;
 }
 .sidebar-btn:hover {
-    -fx-opacity: 0.85;
+    -fx-background-color: -color-border;
+    -fx-opacity: 1;
 }
 
 .sidebar-btn-primary {
     -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+}
+.sidebar-btn-primary:hover {
+    -fx-background-color: -color-primary-hover;
 }
 
 .sidebar-btn-danger {
     -fx-background-color: -color-danger;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
 }
