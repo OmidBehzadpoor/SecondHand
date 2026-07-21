@@ -366,3 +366,39 @@
     -fx-font-weight: bold;
     -fx-text-fill: -color-text;
 }
+
+.chat-list, .chat-list .list-cell {
+    -fx-background-color: transparent;
+}
+
+.chat-list .list-cell:filled:selected,
+.chat-list .list-cell:filled:selected:focused,
+.chat-list .list-cell:filled:hover {
+    -fx-background-color: transparent;
+}
+
+.chat-bubble {
+    -fx-background-radius: 16;
+    -fx-padding: 8 14;
+}
+
+.chat-bubble-mine {
+    -fx-background-color: -color-primary;
+}
+
+.chat-bubble-theirs {
+    -fx-background-color: -color-surface-alt;
+}
+
+.chat-text-mine {
+    -fx-text-fill: white;
+}
+
+.chat-text-theirs {
+    -fx-text-fill: -color-text;
+}
+
+.chat-timestamp {
+    -fx-font-size: 10px;
+    -fx-text-fill: -color-text-muted;
+}
