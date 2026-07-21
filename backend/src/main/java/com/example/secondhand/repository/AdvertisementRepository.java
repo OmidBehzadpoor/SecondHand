@@ -48,4 +48,5 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             Pageable pageable
     );
     boolean existsByCategoryIdInAndStatusIn(List<Long> categoryIds, List<AdvertisementStatus> statuses);
+    boolean existsByCategoryIdAndStatusIn(Long categoryId, List<AdvertisementStatus> statuses);
 }
