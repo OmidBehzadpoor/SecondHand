@@ -16,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import lombok.Setter;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -53,13 +54,15 @@ public class AdvertisementDetailsController {
     @FXML
     private Label rejectionReasonLabel;
 
-    // ناحیه‌ی دکمه‌ها بسته به اینکه بیننده صاحب آگهیه یا نه، عوض می‌شه
     @FXML
     private HBox buyerActionsBox;
     @FXML
     private HBox ownerActionsBox;
     @FXML
     private Button markAsSoldButton;
+
+    @Setter
+    private String returnPage;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final ChatService chatService = new ChatServiceImpl();
@@ -114,7 +117,6 @@ public class AdvertisementDetailsController {
 
         String relativeUrl = imageUrls.get(currentImageIndex);
         String fullUrl = Config.getApiBaseUrl() + relativeUrl;
-        // پارامتر آخر یعنی بارگذاری در پس‌زمینه انجام بشه، نه روی FX Thread
         mainImageView.setImage(new Image(fullUrl, true));
         imageIndicatorLabel.setText((currentImageIndex + 1) + " از " + imageUrls.size());
     }
@@ -133,7 +135,6 @@ public class AdvertisementDetailsController {
         renderCurrentImage();
     }
 
-    // بر اساس اینکه بیننده صاحب آگهیه یا یک خریدار، دکمه‌های مناسب رو نشون می‌ده
     private void setupActionsArea() {
         boolean isOwner = SessionManager.getInstance().isLoggedIn()
                 && SessionManager.getInstance().getUserId().equals(advertisement.getOwnerId());
@@ -200,7 +201,8 @@ public class AdvertisementDetailsController {
 
     @FXML
     private void onBackClick() {
-        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+        String target = returnPage != null ? returnPage : "/com/example/secondhandfx/fxml/home.fxml";
+        SceneNavigator.navigateTo(target, "آگهی‌ها");
     }
 
     private void requireLoginThen(Runnable action) {
