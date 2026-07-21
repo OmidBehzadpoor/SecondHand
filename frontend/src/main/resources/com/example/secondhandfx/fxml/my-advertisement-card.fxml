@@ -7,18 +7,18 @@
 
 <VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.MyAdvertisementCardController"
-      fx:id="root" spacing="8" prefWidth="260" styleClass="card" style="-fx-padding: 12;">
+      fx:id="root" spacing="8" prefWidth="280" styleClass="card" style="-fx-padding: 12;">
 
     <Label fx:id="titleLabel" wrapText="true" styleClass="title-label" style="-fx-font-size: 14px;"/>
     <Label fx:id="priceLabel" styleClass="price-label"/>
     <Label fx:id="statusBadgeLabel" styleClass="badge"/>
     <Label fx:id="rejectionReasonLabel" wrapText="true" styleClass="error-text" style="-fx-font-size: 11px;"/>
 
-    <HBox spacing="6">
-        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick" styleClass="btn" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
-        <Button fx:id="editButton" text="ویرایش" onAction="#onEditClick" styleClass="btn, btn-primary" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
-        <Button fx:id="markAsSoldButton" text="فروخته‌شد" onAction="#onMarkAsSoldClick" styleClass="btn, btn-warning" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
-        <Button fx:id="deleteButton" text="حذف" onAction="#onDeleteClick" styleClass="btn, btn-danger" style="-fx-font-size: 11px; -fx-padding: 4 10;"/>
+    <HBox spacing="4">
+        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick" styleClass="btn" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
+        <Button fx:id="editButton" text="ویرایش" onAction="#onEditClick" styleClass="btn, btn-primary" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
+        <Button fx:id="markAsSoldButton" text="فروخته‌شد" onAction="#onMarkAsSoldClick" styleClass="btn, btn-warning" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
+        <Button fx:id="deleteButton" text="حذف" onAction="#onDeleteClick" styleClass="btn, btn-danger" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
     </HBox>
 
 </VBox>
