@@ -47,4 +47,5 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             @Param("sortBy") String sortBy,
             Pageable pageable
     );
+    boolean existsByCategoryIdInAndStatusIn(List<Long> categoryIds, List<AdvertisementStatus> statuses);
 }
