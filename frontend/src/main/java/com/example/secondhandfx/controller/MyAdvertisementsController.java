@@ -81,7 +81,8 @@ public class MyAdvertisementsController {
 
         if (ads.isEmpty()) {
             javafx.scene.control.Label empty = new javafx.scene.control.Label("آگهی‌ای در این وضعیت نیست.");
-            empty.setStyle("-fx-text-fill: #7f8c8d; -fx-padding: 20;");
+            empty.getStyleClass().add("muted-label");
+            empty.setStyle("-fx-padding: 20;");
             container.getChildren().add(empty);
             return;
         }
