@@ -37,7 +37,8 @@ public class FavoritesController {
 
         if (favorites.isEmpty()) {
             Label empty = new Label("هنوز آگهی‌ای به علاقه‌مندی‌ها اضافه نکرده‌اید.");
-            empty.setStyle("-fx-text-fill: #7f8c8d; -fx-padding: 20;");
+            empty.getStyleClass().add("muted-label");
+            empty.setStyle("-fx-padding: 20;");
             favoritesContainer.getChildren().add(empty);
             return;
         }
