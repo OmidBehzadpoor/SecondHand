@@ -54,11 +54,20 @@
                     </HBox>
                 </VBox>
 
+                <!-- فقط در حالت ویرایش نمایش داده می‌شود -->
+                <VBox fx:id="existingImagesSection" spacing="8" styleClass="card" visible="false" managed="false">
+                    <padding>
+                        <Insets top="15" right="15" bottom="15" left="15"/>
+                    </padding>
+                    <Label text="تصاویر فعلی آگهی" styleClass="muted-label"/>
+                    <ListView fx:id="existingImagesListView" prefHeight="120"/>
+                </VBox>
+
                 <VBox spacing="8" styleClass="card">
                     <padding>
                         <Insets top="15" right="15" bottom="15" left="15"/>
                     </padding>
-                    <Label text="تصاویر آگهی" styleClass="muted-label"/>
+                    <Label text="افزودن تصویر جدید" styleClass="muted-label"/>
                     <ListView fx:id="selectedImagesListView" prefHeight="120"/>
                     <HBox spacing="10">
                         <Button text="افزودن تصویر" onAction="#onAddImageClick" styleClass="btn"/>
