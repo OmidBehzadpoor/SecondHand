@@ -153,6 +153,7 @@ public class AdminPanelController {
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
         AdvertisementDetailsController controller = loader.getController();
         controller.setAdvertisementId(ad.getId());
+        controller.setReturnPage("/com/example/secondhandfx/fxml/admin-panel.fxml");
     }
 
     private void loadPendingAds() {
