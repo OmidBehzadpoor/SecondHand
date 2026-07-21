@@ -329,3 +329,27 @@
     -fx-text-fill: -color-text;
     -fx-border-color: transparent;
 }
+
+.sidebar-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+}
+
+.stat-card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, -color-shadow, 8, 0, 0, 2);
+    -fx-padding: 16;
+    -fx-min-width: 150;
+    -fx-alignment: center;
+}
+
+.stat-card-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-primary;
+}
+
+.stat-card-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-text-muted;
+}
