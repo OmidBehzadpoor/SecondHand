@@ -164,6 +164,10 @@ public class AdvertisementService {
             throw new UnauthorizedActionException("شما اجازه‌ی حذف این آگهی را ندارید");
         }
 
+        if (advertisement.getStatus() == AdvertisementStatus.DELETED) {
+            throw new InvalidAdvertisementStateException("این آگهی قبلاً حذف شده است");
+        }
+
         advertisement.setStatus(AdvertisementStatus.DELETED);
         advertisementRepository.save(advertisement);
     }
