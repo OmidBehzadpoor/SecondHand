@@ -60,6 +60,10 @@ public class AdvertisementDetailsController {
     private HBox ownerActionsBox;
     @FXML
     private Button markAsSoldButton;
+    @FXML
+    private Button editButton;
+    @FXML
+    private Button deleteButton;
 
     @Setter
     private String returnPage;
@@ -138,28 +142,31 @@ public class AdvertisementDetailsController {
     private void setupActionsArea() {
         boolean isOwner = SessionManager.getInstance().isLoggedIn()
                 && SessionManager.getInstance().getUserId().equals(advertisement.getOwnerId());
+
+        if (!isOwner) {
+            ownerActionsBox.setVisible(false);
+            ownerActionsBox.setManaged(false);
+            buyerActionsBox.setVisible(true);
+            buyerActionsBox.setManaged(true);
+            return;
+        }
+
+        ownerActionsBox.setVisible(true);
+        ownerActionsBox.setManaged(true);
+        buyerActionsBox.setVisible(false);
+        buyerActionsBox.setManaged(false);
+
         boolean isDeleted = "DELETED".equals(advertisement.getStatus());
         boolean isSold = "SOLD".equals(advertisement.getStatus());
 
-        ownerActionsBox.setVisible(isOwner);
-        ownerActionsBox.setManaged(isOwner);
+        // دکمه فروخته‌شده فقط برای آگهی‌های تاییدشده و غیرحذف‌شده
+        markAsSoldButton.setDisable(isDeleted || isSold || !"APPROVED".equals(advertisement.getStatus()));
 
-        buyerActionsBox.setVisible(!isOwner && !isDeleted);
-        buyerActionsBox.setManaged(!isOwner && !isDeleted);
-
-        if (isOwner) {
-            markAsSoldButton.setDisable(isSold || isDeleted);
-
-            ownerActionsBox.getChildren().forEach(node -> {
-                if (node instanceof Button btn) {
-                    String btnId = btn.getId();
-                    if ("deleteButton".equals(btnId) || "editButton".equals(btnId)) {
-                        btn.setVisible(!isDeleted);
-                        btn.setManaged(!isDeleted);
-                    }
-                }
-            });
-        }
+        // دکمه ویرایش و حذف برای آگهی حذف‌شده مخفی شوند
+        editButton.setVisible(!isDeleted);
+        editButton.setManaged(!isDeleted);
+        deleteButton.setVisible(!isDeleted);
+        deleteButton.setManaged(!isDeleted);
     }
 
     @FXML
@@ -172,11 +179,19 @@ public class AdvertisementDetailsController {
 
     @FXML
     private void onDeleteClick() {
+        // بررسی وضعیت آگهی قبل از ارسال درخواست
+        if ("DELETED".equals(advertisement.getStatus())) {
+            AlertUtil.showError("آگهی از قبل حذف شده است.");
+            return;
+        }
+
         runAsyncVoid(
                 () -> advertisementService.delete(advertisement.getId()),
                 () -> {
                     AlertUtil.showSuccess("آگهی با موفقیت حذف شد.");
-                    SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+                    // پس از حذف، به صفحه اصلی بازگردیم
+                    String target = returnPage != null ? returnPage : "/com/example/secondhandfx/fxml/home.fxml";
+                    SceneNavigator.navigateTo(target, "آگهی‌ها");
                 },
                 "خطا در حذف آگهی"
         );
