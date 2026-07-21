@@ -166,3 +166,54 @@
 .tab-pane .tab-content-area {
     -fx-background-color: -color-bg;
 }
+.app-dialog {
+    -fx-background-color: -color-surface;
+}
+
+.app-dialog .header-panel {
+    -fx-background-color: -color-surface-alt;
+    -fx-padding: 14 20;
+}
+
+.app-dialog .header-panel .label {
+    -fx-text-fill: -color-text;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.app-dialog.error-dialog .header-panel {
+    -fx-background-color: -color-danger;
+}
+.app-dialog.error-dialog .header-panel .label {
+    -fx-text-fill: white;
+}
+
+.app-dialog.success-dialog .header-panel {
+    -fx-background-color: -color-success;
+}
+.app-dialog.success-dialog .header-panel .label {
+    -fx-text-fill: white;
+}
+
+.app-dialog .content.label {
+    -fx-text-fill: -color-text;
+    -fx-font-size: 13px;
+    -fx-padding: 10 20;
+}
+
+.app-dialog .button-bar .container {
+    -fx-background-color: -color-surface;
+    -fx-padding: 10 20;
+}
+
+.app-dialog .button-bar .button {
+    -fx-background-color: -color-primary;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 6 16;
+}
+
+.app-dialog .button-bar .button:hover {
+    -fx-background-color: -color-primary-hover;
+}
