@@ -1,5 +1,6 @@
 package com.example.secondhandfx.util;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -26,8 +27,6 @@ public class SceneNavigator {
             ThemeManager.applyTheme(scene);
 
             // قبل از عوض‌کردن صحنه، سایز فعلی پنجره رو نگه می‌داریم
-            // تا صفحه‌ی جدید (که ممکنه prefWidth/prefHeight کوچیک‌تری داشته باشه)
-            // پنجره رو کوچیک نکنه
             boolean wasMaximized = primaryStage.isMaximized();
             double previousWidth = primaryStage.getWidth();
             double previousHeight = primaryStage.getHeight();
@@ -35,12 +34,17 @@ public class SceneNavigator {
             primaryStage.setScene(scene);
             primaryStage.setTitle(title);
 
-            if (wasMaximized) {
-                primaryStage.setMaximized(true);
-            } else if (previousWidth > 0 && previousHeight > 0) {
-                primaryStage.setWidth(previousWidth);
-                primaryStage.setHeight(previousHeight);
-            }
+            // تغییر سایز رو به بعد از اتمام layout پاسِ اولِ صحنه‌ی جدید موکول می‌کنیم؛
+            // اگه بلافاصله بعد از setScene صدا زده بشه، جاوافایکس گاهی خودش
+            // اندازه‌ی پنجره رو بر اساس محتوای صحنه‌ی جدید override می‌کنه
+            Platform.runLater(() -> {
+                if (wasMaximized) {
+                    primaryStage.setMaximized(true);
+                } else if (previousWidth > 0 && previousHeight > 0) {
+                    primaryStage.setWidth(previousWidth);
+                    primaryStage.setHeight(previousHeight);
+                }
+            });
 
             return loader;
         } catch (IOException e) {
