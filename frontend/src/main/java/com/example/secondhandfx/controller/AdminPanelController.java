@@ -69,19 +69,17 @@ public class AdminPanelController {
     public void initialize() {
         setupAdsTable();
         setupAllAdsTable();
-        loadAllAds();
         setupUsersTable();
         setupCategoriesTable();
         setupCitiesTable();
 
         loadDashboard();
         loadPendingAds();
+        loadAllAds();
         loadUsers();
         loadCategories();
         loadCities();
     }
-
-    // ---------- آمار ----------
 
     private void loadDashboard() {
         Task<AdminDashboardResponse> task = new Task<>() {
@@ -125,8 +123,6 @@ public class AdminPanelController {
         return card;
     }
 
-    // ---------- آگهی‌ها ----------
-
     private void setupAdsTable() {
         adTitleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTitle()));
         adSellerColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSellerUsername()));
@@ -162,6 +158,7 @@ public class AdminPanelController {
         AdvertisementDetailsController controller = loader.getController();
         controller.setAdvertisementId(ad.getId());
         controller.setReturnPage("/com/example/secondhandfx/fxml/admin-panel.fxml");
+        controller.setReturnTabIndex(1);
     }
 
     private void loadPendingAds() {
@@ -235,8 +232,6 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
-    // ---------- کاربران ----------
-
     private void setupUsersTable() {
         userNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUsername()));
         userRoleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getRole().name()));
@@ -290,8 +285,6 @@ public class AdminPanelController {
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
     }
-
-    // ---------- دسته‌بندی‌ها ----------
 
     private void setupCategoriesTable() {
         categoryNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
@@ -386,6 +379,7 @@ public class AdminPanelController {
             new Thread(task).start();
         });
     }
+
     private void loadCategories() {
         Task<List<CategoryResponse>> task = new Task<>() {
             @Override
@@ -466,8 +460,6 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
-    // ---------- شهرها ----------
-
     private void setupCitiesTable() {
         cityNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
 
@@ -533,6 +525,7 @@ public class AdminPanelController {
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
     }
+
     private void setupAllAdsTable() {
         allAdTitleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTitle()));
         allAdSellerColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSellerUsername()));
@@ -540,9 +533,15 @@ public class AdminPanelController {
         allAdStatusColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatus()));
 
         allAdActionsColumn.setCellFactory(column -> new TableCell<>() {
+            private final Button viewButton = new Button("مشاهده");
             private final Button deleteButton = new Button("حذف");
+            private final HBox box = new HBox(5, viewButton, deleteButton);
 
             {
+                viewButton.setOnAction(e -> {
+                    AdminAdvertisementResponse ad = getTableView().getItems().get(getIndex());
+                    onViewAllAdClick(ad);
+                });
                 deleteButton.setOnAction(e -> {
                     AdminAdvertisementResponse ad = getTableView().getItems().get(getIndex());
                     if ("DELETED".equals(ad.getStatus())) {
@@ -562,7 +561,7 @@ public class AdminPanelController {
                 }
                 AdminAdvertisementResponse ad = getTableView().getItems().get(getIndex());
                 deleteButton.setDisable("DELETED".equals(ad.getStatus()));
-                setGraphic(deleteButton);
+                setGraphic(box);
             }
         });
 
@@ -581,7 +580,14 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
-    // ---------- مشترک ----------
+    private void onViewAllAdClick(AdminAdvertisementResponse ad) {
+        FXMLLoader loader = SceneNavigator.navigateTo(
+                "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
+        AdvertisementDetailsController controller = loader.getController();
+        controller.setAdvertisementId(ad.getId());
+        controller.setReturnPage("/com/example/secondhandfx/fxml/admin-panel.fxml");
+        controller.setReturnTabIndex(2);
+    }
 
     private void showError(Throwable ex) {
         ex.printStackTrace();
