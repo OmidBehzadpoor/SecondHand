@@ -24,4 +24,6 @@ public interface AdminService {
     AdminUserResponse blockUser(Long userId) throws ApiException;
 
     AdminUserResponse unblockUser(Long userId) throws ApiException;
+
+    List<AdminAdvertisementResponse> getAllAdvertisements() throws ApiException;
 }
