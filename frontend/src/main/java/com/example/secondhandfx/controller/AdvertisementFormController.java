@@ -20,6 +20,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -64,7 +66,6 @@ public class AdvertisementFormController {
     private final CityService cityService = new CityServiceImpl();
     private static final int MAX_IMAGES_PER_ADVERTISEMENT = 6;
 
-    // برای نمایش تورفته‌ی درخت دسته‌بندی، دقیقاً مثل صفحه‌ی اصلی
     private final Map<Long, Integer> categoryDepthMap = new HashMap<>();
 
     @FXML
@@ -98,7 +99,6 @@ public class AdvertisementFormController {
             }
         });
 
-        // نمایش زیردسته‌ها با تورفتگی واقعی (هماهنگ با صفحه‌ی اصلی)، نه با پیشوند خط‌تیره
         categoryComboBox.setCellFactory(listView -> new ListCell<>() {
             @Override
             protected void updateItem(CategoryResponse category, boolean empty) {
@@ -127,7 +127,6 @@ public class AdvertisementFormController {
         }, "خطا در دریافت دسته‌بندی‌ها");
     }
 
-    // درخت دسته‌بندی‌ها را به یک لیست تخت تبدیل می‌کند و عمق هرکدام را برای نمایش تورفته ذخیره می‌کند
     private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
         List<CategoryResponse> result = new ArrayList<>();
         for (CategoryResponse category : categories) {
@@ -146,16 +145,18 @@ public class AdvertisementFormController {
                 "خطا در دریافت شهرها");
     }
 
-    // ====== تصاویر فعلی (آپلودشده‌ی قبلی، فقط در حالت ویرایش) ======
-
     private void setupExistingImagesListView() {
         existingImagesListView.setCellFactory(listView -> new ListCell<>() {
-            private final Label urlLabel = new Label();
+            private final ImageView thumb = new ImageView();
+            private final Label nameLabel = new Label();
             private final Button deleteButton = new Button("حذف");
-            private final HBox box = new HBox(10, urlLabel, deleteButton);
+            private final HBox box = new HBox(10, thumb, nameLabel, deleteButton);
 
             {
-                HBox.setHgrow(urlLabel, Priority.ALWAYS);
+                thumb.setFitWidth(50);
+                thumb.setFitHeight(50);
+                thumb.setPreserveRatio(true);
+                HBox.setHgrow(nameLabel, Priority.ALWAYS);
                 deleteButton.getStyleClass().addAll("btn", "btn-danger");
                 deleteButton.setOnAction(e -> onDeleteExistingImageClick(getItem()));
             }
@@ -166,7 +167,9 @@ public class AdvertisementFormController {
                 if (empty || image == null) {
                     setGraphic(null);
                 } else {
-                    urlLabel.setText(fileNameOf(image.getImageUrl()));
+                    String fullUrl = Config.getApiBaseUrl() + image.getImageUrl();
+                    thumb.setImage(new Image(fullUrl, true));
+                    nameLabel.setText(fileNameOf(image.getImageUrl()));
                     setGraphic(box);
                 }
             }
@@ -302,7 +305,6 @@ public class AdvertisementFormController {
         }
     }
 
-    // بعد از ساخته‌شدن آگهی، تصویرهای جدید را یکی‌یکی آپلود می‌کند و در پایان کاربر را به صفحه‌ی جزئیات می‌فرستد
     private void uploadImagesThenNavigate(AdvertisementResponse createdAd, List<File> images) {
         CompletableFuture.supplyAsync(() -> {
             List<String> failedFileNames = new ArrayList<>();
@@ -395,7 +397,6 @@ public class AdvertisementFormController {
         descriptionArea.setText(ad.getDescription());
         priceField.setText(String.valueOf(ad.getPrice()));
 
-        // چون دیگر پیشوند خط‌تیره به نام دسته‌بندی اضافه نمی‌شود، مقایسه‌ی مستقیم کافی است
         CategoryResponse matchedCategory = categoryComboBox.getItems().stream()
                 .filter(category -> category.getName().equals(ad.getCategoryName()))
                 .findFirst()
