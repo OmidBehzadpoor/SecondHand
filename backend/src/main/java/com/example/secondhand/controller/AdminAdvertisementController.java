@@ -49,4 +49,12 @@ public class AdminAdvertisementController {
         advertisementService.adminDelete(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_DELETED_BY_ADMIN", null));
     }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<AdminAdvertisementResponse>>> getAll() {
+        List<AdminAdvertisementResponse> responses = advertisementService.getAllForAdmin();
+        return ResponseEntity.ok(new ApiResponse<>(true, "ALL_ADVERTISEMENTS_RETRIEVED", responses));
+    }
+
 }
