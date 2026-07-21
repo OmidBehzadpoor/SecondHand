@@ -98,14 +98,14 @@ public class HomeController implements Initializable {
             @Override
             protected void updateItem(CategoryResponse category, boolean empty) {
                 super.updateItem(category, empty);
+                getStyleClass().removeAll("category-root-item", "category-sub-item");
                 if (empty || category == null) {
                     setText(null);
-                    setStyle("");
                 } else {
                     int depth = categoryDepthMap.getOrDefault(category.getId(), 0);
                     setText(category.getName());
-                    setStyle("-fx-padding: 4 4 4 " + (depth * 18) + "px;"
-                            + (depth == 0 ? " -fx-font-weight: bold;" : " -fx-text-fill: #555;"));
+                    setStyle("-fx-padding: 4 4 4 " + (depth * 18) + "px;");
+                    getStyleClass().add(depth == 0 ? "category-root-item" : "category-sub-item");
                 }
             }
         });
