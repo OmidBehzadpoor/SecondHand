@@ -2,6 +2,7 @@ package com.example.secondhandfx.service;
 
 import com.example.secondhandfx.exception.ApiException;
 import com.example.secondhandfx.model.AdminAdvertisementResponse;
+import com.example.secondhandfx.model.AdminDashboardResponse;
 import com.example.secondhandfx.model.AdminRejectRequest;
 import com.example.secondhandfx.model.AdminUserResponse;
 import com.example.secondhandfx.model.ApiResponse;
@@ -11,6 +12,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
 
 public class AdminServiceImpl implements AdminService {
+
+    @Override
+    public AdminDashboardResponse getDashboard() throws ApiException {
+        return HttpClientHelper.get(
+                "/api/admin/dashboard",
+                new TypeReference<ApiResponse<AdminDashboardResponse>>() {}
+        ).getData();
+    }
 
     @Override
     public List<AdminAdvertisementResponse> getPendingAdvertisements() throws ApiException {
