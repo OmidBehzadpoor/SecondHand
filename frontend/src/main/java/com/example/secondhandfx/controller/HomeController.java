@@ -16,6 +16,7 @@ import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
 import com.example.secondhandfx.util.SessionManager;
 import com.example.secondhandfx.util.ThemeManager;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,6 +30,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.List;
@@ -49,17 +53,23 @@ public class HomeController implements Initializable {
     @FXML private Button prevPageButton;
     @FXML private Button nextPageButton;
 
-    // ناحیه‌ی سمت راست بالای صفحه که بین حالت مهمون و حالت لاگین‌شده جابه‌جا می‌شود
     @FXML private HBox guestAuthBox;
     @FXML private HBox userAuthBox;
     @FXML private Label welcomeLabel;
 
-    // ====== دو فیلد از Stashed changes ======
     @FXML private Button conversationsButton;
     @FXML private Button adminPanelButton;
+    @FXML private Button sidebarLogoutButton;
 
-    // ====== فیلد از Updated upstream ======
     @FXML private ComboBox<Integer> pageSizeComboBox;
+
+    // ====== ساید‌بار کشویی ======
+    @FXML private Button sidebarToggleButton;
+    @FXML private StackPane sidebarOverlay;
+    @FXML private VBox sidebarPane;
+    @FXML private Label sidebarWelcomeLabel;
+
+    private boolean sidebarOpen = false;
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
@@ -76,7 +86,6 @@ public class HomeController implements Initializable {
         sortComboBox.getItems().addAll("جدیدترین", "قدیمی‌ترین", "ارزان‌ترین", "گران‌ترین");
         sortComboBox.getSelectionModel().selectFirst();
 
-        // ====== تنظیمات pageSizeComboBox (از Updated upstream) ======
         pageSizeComboBox.getItems().addAll(12, 24, 48);
         pageSizeComboBox.getSelectionModel().select(Integer.valueOf(pageSize));
         pageSizeComboBox.setOnAction(event -> {
@@ -88,6 +97,11 @@ public class HomeController implements Initializable {
         loadCategories();
         loadCities();
         loadAdvertisements();
+
+        // ساید‌بار به‌صورت پیش‌فرض بسته است، اما آماده و در دسترس روی صفحه‌ی اصلی
+        sidebarPane.setTranslateX(-sidebarPane.getPrefWidth());
+        sidebarOverlay.setVisible(false);
+        sidebarOverlay.setManaged(false);
 
         categoryComboBox.setConverter(new javafx.util.StringConverter<CategoryResponse>() {
             @Override
@@ -130,7 +144,7 @@ public class HomeController implements Initializable {
         });
     }
 
-    // بر اساس اینکه کاربر لاگین کرده یا نه، یکی از دو باکس بالای صفحه رو نشون می‌ده
+    // بر اساس اینکه کاربر لاگین کرده یا نه، وضعیت نوار بالا و ساید‌بار را تنظیم می‌کند
     private void setupAuthArea() {
         boolean loggedIn = SessionManager.getInstance().isLoggedIn();
 
@@ -140,16 +154,62 @@ public class HomeController implements Initializable {
         userAuthBox.setVisible(loggedIn);
         userAuthBox.setManaged(loggedIn);
 
-        // ====== مدیریت دکمه‌های اضافی (از Stashed changes) ======
         conversationsButton.setVisible(loggedIn);
         conversationsButton.setManaged(loggedIn);
 
+        sidebarLogoutButton.setVisible(loggedIn);
+        sidebarLogoutButton.setManaged(loggedIn);
+
         if (loggedIn) {
-            welcomeLabel.setText("سلام، " + SessionManager.getInstance().getUsername());
+            String username = SessionManager.getInstance().getUsername();
+            welcomeLabel.setText("سلام، " + username);
+            sidebarWelcomeLabel.setText("خوش آمدید، " + username);
 
             boolean isAdmin = SessionManager.getInstance().getRole() == Role.ADMIN;
             adminPanelButton.setVisible(isAdmin);
             adminPanelButton.setManaged(isAdmin);
+        } else {
+            sidebarWelcomeLabel.setText("خوش آمدید!");
+            adminPanelButton.setVisible(false);
+            adminPanelButton.setManaged(false);
+        }
+    }
+
+    // باز/بسته کردن ساید‌بار کشویی با انیمیشن اسلاید
+    @FXML
+    private void onToggleSidebarClick() {
+        sidebarOpen = !sidebarOpen;
+
+        if (sidebarOpen) {
+            sidebarOverlay.setVisible(true);
+            sidebarOverlay.setManaged(true);
+        }
+
+        TranslateTransition transition = new TranslateTransition(Duration.millis(220), sidebarPane);
+        transition.setToX(sidebarOpen ? 0 : -sidebarPane.getPrefWidth());
+
+        if (!sidebarOpen) {
+            transition.setOnFinished(e -> {
+                sidebarOverlay.setVisible(false);
+                sidebarOverlay.setManaged(false);
+            });
+        }
+
+        transition.play();
+        sidebarToggleButton.setText(sidebarOpen ? "‹" : "›");
+    }
+
+    // کلیک روی ناحیه‌ی تیره‌ی پشت ساید‌بار، آن را می‌بندد
+    @FXML
+    private void onOverlayClick(javafx.scene.input.MouseEvent event) {
+        if (event.getTarget() == sidebarOverlay) {
+            onToggleSidebarClick();
+        }
+    }
+
+    private void closeSidebarIfOpen() {
+        if (sidebarOpen) {
+            onToggleSidebarClick();
         }
     }
 
@@ -221,36 +281,42 @@ public class HomeController implements Initializable {
 
     @FXML
     private void onLogoutButtonClick() {
+        closeSidebarIfOpen();
         SessionManager.getInstance().clearSession();
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
     @FXML
     private void onCreateAdvertisementClick() {
+        closeSidebarIfOpen();
         requireLoginThen(() ->
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/advertisement-form.fxml", "ثبت آگهی جدید"));
     }
 
     @FXML
     private void onMyAdvertisementsClick() {
+        closeSidebarIfOpen();
         requireLoginThen(() ->
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/my-advertisements.fxml", "آگهی‌های من"));
     }
 
     @FXML
     private void onFavoritesClick() {
+        closeSidebarIfOpen();
         requireLoginThen(() ->
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/favorites.fxml", "علاقه‌مندی‌های من"));
     }
 
     @FXML
     private void onConversationsClick() {
+        closeSidebarIfOpen();
         requireLoginThen(() ->
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/conversation-list.fxml", "گفتگوها"));
     }
 
     @FXML
     private void onAdminPanelClick() {
+        closeSidebarIfOpen();
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/admin-panel.fxml", "پنل ادمین");
     }
 
