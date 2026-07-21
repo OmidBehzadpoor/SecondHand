@@ -62,6 +62,7 @@ public class AdvertisementFormController {
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
     private final CityService cityService = new CityServiceImpl();
+    private static final int MAX_IMAGES_PER_ADVERTISEMENT = 6;
 
     // برای نمایش تورفته‌ی درخت دسته‌بندی، دقیقاً مثل صفحه‌ی اصلی
     private final Map<Long, Integer> categoryDepthMap = new HashMap<>();
@@ -200,8 +201,6 @@ public class AdvertisementFormController {
         }, "خطا در حذف تصویر");
     }
 
-    // ====== تصاویر جدید (برای آپلود) ======
-
     @FXML
     private void onAddImageClick() {
         FileChooser fileChooser = new FileChooser();
@@ -211,9 +210,28 @@ public class AdvertisementFormController {
 
         Window window = submitButton.getScene().getWindow();
         List<File> files = fileChooser.showOpenMultipleDialog(window);
-        if (files != null) {
-            selectedImagesListView.getItems().addAll(files);
+        if (files == null || files.isEmpty()) {
+            return;
         }
+
+        int existingCount = existingImagesListView.getItems() != null ? existingImagesListView.getItems().size() : 0;
+        int selectedCount = selectedImagesListView.getItems().size();
+        int currentTotal = existingCount + selectedCount;
+
+        if (currentTotal + files.size() > MAX_IMAGES_PER_ADVERTISEMENT) {
+            int remainingSlots = MAX_IMAGES_PER_ADVERTISEMENT - currentTotal;
+            if (remainingSlots <= 0) {
+                AlertUtil.showError("هر آگهی حداکثر می‌تواند " + MAX_IMAGES_PER_ADVERTISEMENT
+                        + " تصویر داشته باشد؛ ظرفیت تصویر این آگهی پر شده است.");
+            } else {
+                AlertUtil.showError("هر آگهی حداکثر می‌تواند " + MAX_IMAGES_PER_ADVERTISEMENT
+                        + " تصویر داشته باشد. شما در حال حاضر " + currentTotal
+                        + " تصویر دارید و فقط می‌توانید " + remainingSlots + " تصویر دیگر اضافه کنید.");
+            }
+            return;
+        }
+
+        selectedImagesListView.getItems().addAll(files);
     }
 
     @FXML
