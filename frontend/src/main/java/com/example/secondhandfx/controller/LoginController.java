@@ -58,8 +58,8 @@ public class LoginController {
             );
             // نمایش پیام موفقیت
             AlertUtil.showSuccess("خوش آمدید " + response.getUsername());
-            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/main-shell.fxml", "آگهی‌ها");        });
-
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+        });
         loginTask.setOnFailed(event -> {
             Throwable ex = loginTask.getException();
             String errorMessage = ex.getMessage();
