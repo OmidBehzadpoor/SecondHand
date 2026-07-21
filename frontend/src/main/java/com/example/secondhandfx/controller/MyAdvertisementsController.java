@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.FlowPane;
 
@@ -98,8 +99,14 @@ public class MyAdvertisementsController {
                 controller.setOnEdit(() -> openEditForm(ad.getId()));
                 controller.setOnMarkAsSold(() -> markAsSold(ad.getId()));
                 controller.setOnDelete(() -> confirmAndDelete(ad.getId(), ad.getStatus()));
+                container.getChildren().add(card);
             } catch (Exception e) {
+                System.err.println("❌ خطا در ساخت کارت برای آگهی ID: " + ad.getId());
                 e.printStackTrace();
+                // در صورت خطا، یک پیام خطا نمایش بده
+                Label errorLabel = new Label("خطا در بارگذاری آگهی: " + ad.getTitle());
+                errorLabel.setStyle("-fx-text-fill: red; -fx-padding: 5;");
+                container.getChildren().add(errorLabel);
             }
         }
     }
