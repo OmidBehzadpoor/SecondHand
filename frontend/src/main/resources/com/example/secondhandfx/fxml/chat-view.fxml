@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -9,20 +10,21 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.secondhandfx.controller.ChatViewController"
-            prefWidth="600" prefHeight="500">
+            styleClass="root">
 
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 10 15;">
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="top-bar">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
             <!-- دکمه‌ی بازگشت به لیست گفتگوها -->
-            <Button text="← بازگشت" onAction="#onBackClick"
-                    style="-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand;"/>
+            <Button text="← بازگشت" onAction="#onBackClick" styleClass="back-link"/>
 
-            <Label fx:id="headerLabel" text=""
-                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"
+            <Label fx:id="headerLabel" text="" styleClass="title-label"
                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
 
             <Button fx:id="rateSellerButton" text="امتیازدهی به فروشنده" onAction="#onRateSellerClick"
-                    style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                    styleClass="btn, btn-warning"/>
         </HBox>
     </top>
 
@@ -31,9 +33,12 @@
     </center>
 
     <bottom>
-        <HBox spacing="10" style="-fx-padding: 10;">
+        <HBox spacing="10" alignment="CENTER" styleClass="bottom-bar">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
             <TextField fx:id="messageInputField" promptText="پیام خود را بنویسید..." HBox.hgrow="ALWAYS"/>
-            <Button text="ارسال" onAction="#onSendButtonClick"/>
+            <Button text="ارسال" onAction="#onSendButtonClick" styleClass="btn, btn-primary"/>
         </HBox>
     </bottom>
 
