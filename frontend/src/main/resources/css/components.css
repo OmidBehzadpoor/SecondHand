@@ -137,7 +137,7 @@
 .tabs .tab {
     -fx-background-color: transparent;
     -fx-padding: 10 15;
-    -fx-text-fill: -color-text-muted; /* رنگ متن در حالت عادی */
+    -fx-text-fill: -color-text-muted;
 }
 .tabs .tab:selected {
     -fx-background-color: -color-accent-soft;
@@ -145,13 +145,36 @@
 }
 .tabs .tab-label {
     -fx-font-weight: 700;
-    -fx-text-fill: -color-text-muted; /* رنگ متن عادی */
+    -fx-text-fill: -color-text-muted;
 }
 .tabs .tab:selected .tab-label {
-    -fx-text-fill: -color-accent; /* رنگ متن تب انتخاب‌شده */
+    -fx-text-fill: -color-accent;
 }
 .tabs .tab:hover .tab-label {
-    -fx-text-fill: -color-text; /* رنگ متن هنگام هاور */
+    -fx-text-fill: -color-text;
+}
+
+/* ====== استایل‌های کامبوباکس (برای خوانایی بهتر در تم دارک) ====== */
+.combo-box .list-cell {
+    -fx-text-fill: -color-text; /* ← رنگ سفید در تم دارک */
+    -fx-background-color: -color-surface;
+}
+.combo-box .text-field {
+    -fx-text-fill: -color-text; /* ← رنگ سفید در تم دارک */
+}
+.combo-box .arrow-button {
+    -fx-background-color: -color-surface;
+}
+.combo-box-popup .list-view .list-cell {
+    -fx-text-fill: -color-text; /* ← رنگ سفید در تم دارک */
+    -fx-background-color: -color-surface;
+}
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: -color-surface-alt;
+}
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: -color-accent-soft;
+    -fx-text-fill: -color-accent;
 }
 
 .chat-header { -fx-padding: 15 24; -fx-background-color: -color-surface; -fx-border-color: transparent transparent -color-border transparent; }
