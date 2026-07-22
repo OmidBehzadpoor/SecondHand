@@ -160,9 +160,9 @@ public class HomeController implements Initializable {
         sidebarLogoutButton.setManaged(loggedIn);
 
         if (loggedIn) {
-            String username = SessionManager.getInstance().getUsername();
-            welcomeLabel.setText("سلام، " + username);
-            sidebarWelcomeLabel.setText("خوش آمدید، " + username);
+            String name = SessionManager.getInstance().getName();
+            welcomeLabel.setText("سلام، " + name);
+            sidebarWelcomeLabel.setText("خوش آمدید، " + name);
 
             boolean isAdmin = SessionManager.getInstance().getRole() == Role.ADMIN;
             adminPanelButton.setVisible(isAdmin);

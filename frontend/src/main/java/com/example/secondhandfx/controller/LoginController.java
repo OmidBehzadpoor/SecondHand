@@ -52,7 +52,8 @@ public class LoginController {
                     response.getToken(),
                     response.getUserId(),
                     response.getUsername(),
-                    response.getRole()
+                    response.getRole(),
+                    response.getName()
             );
             AlertUtil.showSuccess(response.getName() + "، به سامانه البرز خوش آمدید!");
             SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");        });
