@@ -24,6 +24,8 @@
     -fx-border-radius: 9;
     -fx-background-radius: 9;
     -fx-padding: 10 12;
+    -fx-text-fill: -color-text;                /* ← اضافه شد */
+    -fx-prompt-text-fill: -color-text-muted;   /* ← اضافه شد */
 }
 .search-input { -fx-font-size: 15px; }
 .input:focused, .search-input:focused { -fx-border-color: -color-accent; }
