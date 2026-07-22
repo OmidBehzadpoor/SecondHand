@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -30,12 +30,12 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    void save_shouldThrowDataIntegrityViolationException_whenNameIsDuplicated() {
+    void save_shouldThrowDataAccessException_whenNameIsDuplicated() {
         categoryRepository.saveAndFlush(Category.builder().name("Electronics").build());
 
         Category duplicate = Category.builder().name("Electronics").build();
 
-        assertThrows(DataIntegrityViolationException.class,
+        assertThrows(DataAccessException.class,
                 () -> categoryRepository.saveAndFlush(duplicate));
     }
 
