@@ -98,8 +98,13 @@ public class HomeController implements Initializable {
         loadCities();
         loadAdvertisements();
 
-        // ساید‌بار به‌صورت پیش‌فرض بسته است، اما آماده و در دسترس روی صفحه‌ی اصلی
+        // ====== مقداردهی اولیه سایدبار ======
+        // سایدبار را به سمت چپ صفحه منتقل می‌کنیم تا از لبه‌ی چپ باز شود
+        StackPane.setAlignment(sidebarPane, javafx.geometry.Pos.TOP_LEFT);
+
+        // سایدبار را کاملاً مخفی و خارج از دید قرار می‌دهیم
         sidebarPane.setTranslateX(-sidebarPane.getPrefWidth());
+        sidebarPane.setVisible(false);
         sidebarOverlay.setVisible(false);
         sidebarOverlay.setManaged(false);
 
@@ -181,22 +186,26 @@ public class HomeController implements Initializable {
         sidebarOpen = !sidebarOpen;
 
         if (sidebarOpen) {
+            // باز کردن سایدبار: نمایش و انتقال به موقعیت صفر
+            sidebarPane.setVisible(true);
             sidebarOverlay.setVisible(true);
             sidebarOverlay.setManaged(true);
-        }
-
-        TranslateTransition transition = new TranslateTransition(Duration.millis(220), sidebarPane);
-        transition.setToX(sidebarOpen ? 0 : -sidebarPane.getPrefWidth());
-
-        if (!sidebarOpen) {
+            TranslateTransition transition = new TranslateTransition(Duration.millis(220), sidebarPane);
+            transition.setToX(0);
+            transition.play();
+            sidebarToggleButton.setText("‹");
+        } else {
+            // بستن سایدبار: انتقال به بیرون و سپس مخفی کردن کامل
+            TranslateTransition transition = new TranslateTransition(Duration.millis(220), sidebarPane);
+            transition.setToX(-sidebarPane.getPrefWidth());
             transition.setOnFinished(e -> {
+                sidebarPane.setVisible(false);
                 sidebarOverlay.setVisible(false);
                 sidebarOverlay.setManaged(false);
             });
+            transition.play();
+            sidebarToggleButton.setText("☰");
         }
-
-        transition.play();
-        sidebarToggleButton.setText(sidebarOpen ? "‹" : "›");
     }
 
     // کلیک روی ناحیه‌ی تیره‌ی پشت ساید‌بار، آن را می‌بندد
