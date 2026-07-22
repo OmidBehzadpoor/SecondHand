@@ -292,14 +292,20 @@
 
         <Region VBox.vgrow="ALWAYS"/>
 
+        <!-- Logout & Theme Toggle -->
 
-        <!-- Logout -->
-
-        <Button fx:id="sidebarLogoutButton"
-                text="خروج از حساب"
-                maxWidth="Infinity"
-                onAction="#onLogoutButtonClick"
-                styleClass="sidebar-btn, sidebar-btn-danger"/>
+        <HBox spacing="8" alignment="CENTER">
+            <Button fx:id="sidebarLogoutButton"
+                    text="خروج از حساب"
+                    maxWidth="Infinity"
+                    onAction="#onLogoutButtonClick"
+                    styleClass="sidebar-btn, sidebar-btn-danger"
+                    HBox.hgrow="ALWAYS"/>
+            <Button text="🌓"
+                    onAction="#onToggleThemeClick"
+                    styleClass="btn, btn-icon"
+                    prefWidth="40"/>
+        </HBox>
 
     </VBox>
 
