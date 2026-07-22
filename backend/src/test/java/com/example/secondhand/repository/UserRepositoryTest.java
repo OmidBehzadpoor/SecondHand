@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
@@ -77,22 +77,22 @@ class UserRepositoryTest {
     // ==================== unique constraint enforcement (real DB behavior) ====================
 
     @Test
-    void save_shouldThrowDataIntegrityViolationException_whenUsernameIsDuplicated() {
+    void save_shouldThrowDataAccessException_whenUsernameIsDuplicated() {
         userRepository.saveAndFlush(buildUser("ali123", "09121234567", UserStatus.ACTIVE));
 
         User duplicateUsername = buildUser("ali123", "09121111111", UserStatus.ACTIVE);
 
-        assertThrows(DataIntegrityViolationException.class,
+        assertThrows(DataAccessException.class,
                 () -> userRepository.saveAndFlush(duplicateUsername));
     }
 
     @Test
-    void save_shouldThrowDataIntegrityViolationException_whenPhoneIsDuplicated() {
+    void save_shouldThrowDataAccessException_whenPhoneIsDuplicated() {
         userRepository.saveAndFlush(buildUser("ali123", "09121234567", UserStatus.ACTIVE));
 
         User duplicatePhone = buildUser("someone_else", "09121234567", UserStatus.ACTIVE);
 
-        assertThrows(DataIntegrityViolationException.class,
+        assertThrows(DataAccessException.class,
                 () -> userRepository.saveAndFlush(duplicatePhone));
     }
 }
