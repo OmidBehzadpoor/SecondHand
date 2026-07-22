@@ -153,7 +153,7 @@
     -fx-text-fill: -color-accent;
 }
 .tabs .tab:hover .tab-label {
-    -fx-text-fill: -color-text;
+    -fx-text-fill: black;  /* ← سیاه هنگام هاور */
 }
 
 /* ====== استایل‌های کامبوباکس (برای خوانایی بهتر در تم دارک) ====== */
