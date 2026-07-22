@@ -55,8 +55,7 @@ public class LoginController {
                     response.getRole()
             );
             AlertUtil.showSuccess(response.getName() + "، به سامانه البرز خوش آمدید!");
-            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
-        });
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");        });
 
         loginTask.setOnFailed(event -> {
             Throwable ex = loginTask.getException();

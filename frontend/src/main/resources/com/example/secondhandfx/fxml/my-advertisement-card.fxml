@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.secondhandfx.controller.MyAdvertisementCardController"
-      fx:id="root" spacing="8" prefWidth="280" styleClass="card" style="-fx-padding: 12;">
-
-    <Label fx:id="titleLabel" wrapText="true" styleClass="title-label" style="-fx-font-size: 14px;"/>
-    <Label fx:id="priceLabel" styleClass="price-label"/>
-    <Label fx:id="statusBadgeLabel" styleClass="badge"/>
-    <Label fx:id="rejectionReasonLabel" wrapText="true" styleClass="error-text" style="-fx-font-size: 11px;"/>
-
-    <HBox spacing="4">
-        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick" styleClass="btn" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
-        <Button fx:id="editButton" text="ویرایش" onAction="#onEditClick" styleClass="btn, btn-primary" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
-        <Button fx:id="markAsSoldButton" text="فروخته‌شد" onAction="#onMarkAsSoldClick" styleClass="btn, btn-warning" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
-        <Button fx:id="deleteButton" text="حذف" onAction="#onDeleteClick" styleClass="btn, btn-danger" maxWidth="Infinity" HBox.hgrow="ALWAYS" style="-fx-font-size: 11px; -fx-padding: 4 6;"/>
+      fx:id="root" prefWidth="400" spacing="10" styleClass="compact-card">
+    <HBox>
+        <Label fx:id="statusBadgeLabel" text="" styleClass="status-badge"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="آگهی من" styleClass="eyebrow"/>
     </HBox>
-
+    <Label fx:id="titleLabel" wrapText="true" styleClass="card-title"/>
+    <Label fx:id="priceLabel" styleClass="card-price"/>
+    <Label fx:id="rejectionReasonLabel" text="" wrapText="true" styleClass="danger-note"/>
+    <Separator/>
+    <HBox spacing="6">
+        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick" styleClass="btn" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button fx:id="editButton" text="ویرایش" onAction="#onEditClick" styleClass="btn, btn-primary" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button fx:id="markAsSoldButton" text="فروخته شد" onAction="#onMarkAsSoldClick" styleClass="btn, btn-warning" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Button fx:id="deleteButton" text="حذف" onAction="#onDeleteClick" styleClass="btn, btn-danger" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+    </HBox>
 </VBox>

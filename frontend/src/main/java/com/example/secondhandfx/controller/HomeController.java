@@ -63,7 +63,6 @@ public class HomeController implements Initializable {
 
     @FXML private ComboBox<Integer> pageSizeComboBox;
 
-    // ====== ساید‌بار کشویی ======
     @FXML private Button sidebarToggleButton;
     @FXML private StackPane sidebarOverlay;
     @FXML private VBox sidebarPane;
@@ -98,8 +97,9 @@ public class HomeController implements Initializable {
         loadCities();
         loadAdvertisements();
 
-        // ساید‌بار به‌صورت پیش‌فرض بسته است، اما آماده و در دسترس روی صفحه‌ی اصلی
+        StackPane.setAlignment(sidebarPane, javafx.geometry.Pos.TOP_LEFT);
         sidebarPane.setTranslateX(-sidebarPane.getPrefWidth());
+        sidebarPane.setVisible(false);
         sidebarOverlay.setVisible(false);
         sidebarOverlay.setManaged(false);
 
@@ -144,7 +144,6 @@ public class HomeController implements Initializable {
         });
     }
 
-    // بر اساس اینکه کاربر لاگین کرده یا نه، وضعیت نوار بالا و ساید‌بار را تنظیم می‌کند
     private void setupAuthArea() {
         boolean loggedIn = SessionManager.getInstance().isLoggedIn();
 
@@ -175,31 +174,31 @@ public class HomeController implements Initializable {
         }
     }
 
-    // باز/بسته کردن ساید‌بار کشویی با انیمیشن اسلاید
     @FXML
     private void onToggleSidebarClick() {
         sidebarOpen = !sidebarOpen;
 
         if (sidebarOpen) {
+            sidebarPane.setVisible(true);
             sidebarOverlay.setVisible(true);
             sidebarOverlay.setManaged(true);
-        }
-
-        TranslateTransition transition = new TranslateTransition(Duration.millis(220), sidebarPane);
-        transition.setToX(sidebarOpen ? 0 : -sidebarPane.getPrefWidth());
-
-        if (!sidebarOpen) {
+            TranslateTransition transition = new TranslateTransition(Duration.millis(220), sidebarPane);
+            transition.setToX(0);
+            transition.play();
+            sidebarToggleButton.setText("‹");
+        } else {
+            TranslateTransition transition = new TranslateTransition(Duration.millis(220), sidebarPane);
+            transition.setToX(-sidebarPane.getPrefWidth());
             transition.setOnFinished(e -> {
+                sidebarPane.setVisible(false);
                 sidebarOverlay.setVisible(false);
                 sidebarOverlay.setManaged(false);
             });
+            transition.play();
+            sidebarToggleButton.setText("☰");
         }
-
-        transition.play();
-        sidebarToggleButton.setText(sidebarOpen ? "‹" : "›");
     }
 
-    // کلیک روی ناحیه‌ی تیره‌ی پشت ساید‌بار، آن را می‌بندد
     @FXML
     private void onOverlayClick(javafx.scene.input.MouseEvent event) {
         if (event.getTarget() == sidebarOverlay) {
@@ -222,7 +221,6 @@ public class HomeController implements Initializable {
         }, "خطا در دریافت دسته‌بندی‌ها");
     }
 
-    // درخت دسته‌بندی‌ها را به یک لیست تخت با نمایش تورفته تبدیل می‌کند
     private final java.util.Map<Long, Integer> categoryDepthMap = new java.util.HashMap<>();
 
     private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
@@ -286,12 +284,24 @@ public class HomeController implements Initializable {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
+    // ====== متد اصلاح‌شده با استفاده از AlertUtil ======
     @FXML
     private void onCreateAdvertisementClick() {
-        closeSidebarIfOpen();
-        requireLoginThen(() ->
-                SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/advertisement-form.fxml", "ثبت آگهی جدید"));
+        System.out.println("onCreateAdvertisementClick called");
+        try {
+            closeSidebarIfOpen();
+            if (!SessionManager.getInstance().isLoggedIn()) {
+                AlertUtil.showError("لطفاً ابتدا وارد شوید.");
+                SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/login.fxml", "ورود");
+                return;
+            }
+            SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/advertisement-form.fxml", "ثبت آگهی جدید");
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertUtil.showError("خطا در بارگذاری صفحه: " + e.getMessage());
+        }
     }
+    // ========================================================
 
     @FXML
     private void onMyAdvertisementsClick() {
@@ -320,7 +330,6 @@ public class HomeController implements Initializable {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/admin-panel.fxml", "پنل ادمین");
     }
 
-    // اگه کاربر لاگین نکرده، به‌جای اجرای عملیات، می‌فرسته‌ش صفحه‌ی لاگین
     private void requireLoginThen(Runnable action) {
         if (!SessionManager.getInstance().isLoggedIn()) {
             AlertUtil.showError("برای این کار ابتدا باید وارد حساب کاربری خود شوید.");
