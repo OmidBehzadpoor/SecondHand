@@ -291,3 +291,74 @@
     -fx-padding: 0;
     -fx-alignment: CENTER;
 }
+
+/* ====== استایل‌های Toast Notification ====== */
+.toast-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -color-text;
+}
+.error-toast {
+    -fx-text-fill: -color-danger;
+}
+.success-toast {
+    -fx-text-fill: -color-accent;
+}
+.toast-container {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+/* ====== استایل‌های Toast Notification ====== */
+.toast-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -color-text;
+}
+.error-toast {
+    -fx-text-fill: -color-danger; /* قرمز */
+}
+.success-toast {
+    -fx-text-fill: -color-accent; /* آبی (همان رنگ اصلی برنامه) */
+}
+.info-toast {
+    -fx-text-fill: #00BCD4; /* آب‌ی روشن */
+}
+.toast-container {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+/* ====== استایل‌های Toast Notification ====== */
+.toast {
+    -fx-padding: 12 16;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0.1, 0, 4);
+    -fx-background-color: -color-surface; /* رنگ پیش‌فرض (در صورت عدم تطابق) */
+    -fx-border-color: -color-border;
+}
+
+.toast-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #FFFFFF; /* رنگ سفید برای همه */
+}
+
+/* پس‌زمینه‌ی سبز برای موفقیت */
+.toast-success {
+    -fx-background-color: #22C55E;
+    -fx-border-color: #16A34A;
+}
+
+/* پس‌زمینه‌ی قرمز برای خطا */
+.toast-error {
+    -fx-background-color: #EF4444;
+    -fx-border-color: #DC2626;
+}
+
+/* پس‌زمینه‌ی آبی برای اطلاع‌رسانی */
+.toast-info {
+    -fx-background-color: #3B82F6;
+    -fx-border-color: #2563EB;
+}

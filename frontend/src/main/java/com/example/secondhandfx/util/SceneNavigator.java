@@ -3,6 +3,8 @@ package com.example.secondhandfx.util;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.io.IOException;
 public class SceneNavigator {
 
     private static Stage primaryStage;
+    private static BorderPane mainContainer;
+    private static VBox toastContainer;
 
     private SceneNavigator() {
     }
@@ -18,30 +22,33 @@ public class SceneNavigator {
         primaryStage = stage;
     }
 
+    public static void setMainContainer(BorderPane container) {
+        mainContainer = container;
+    }
+
+    public static void setToastContainer(VBox container) {
+        toastContainer = container;
+    }
+
+    public static VBox getToastContainer() {
+        return toastContainer;
+    }
+
     public static FXMLLoader navigateTo(String fxmlPath, String title) {
-        System.out.println("the page now is: " + fxmlPath);
         try {
             FXMLLoader loader = new FXMLLoader(SceneNavigator.class.getResource(fxmlPath));
             Parent root = loader.load();
 
-            // سایز واقعیِ صحنه‌ی قبلی (نه سایز پنجره که حاشیه/تایتل‌بار هم داره) رو نگه می‌داریم
-            boolean wasMaximized = primaryStage.isMaximized();
-            Scene previousScene = primaryStage.getScene();
-            double previousWidth = previousScene != null ? previousScene.getWidth() : 0;
-            double previousHeight = previousScene != null ? previousScene.getHeight() : 0;
+            // Set content in main container
+            mainContainer.setCenter(root);
 
-            // سایز رو مستقیم موقع ساخت Scene جدید می‌دیم، نه بعد از set کردنش روی Stage؛
-            // این روش قابل‌اتکاتره و با رفتار داخلی ری‌سایز خودکار جاوافایکس تداخل نداره
-            Scene scene = (previousWidth > 0 && previousHeight > 0)
-                    ? new Scene(root, previousWidth, previousHeight)
-                    : new Scene(root);
-            ThemeManager.applyTheme(scene);
-
-            primaryStage.setScene(scene);
-            primaryStage.setTitle(title);
-
-            if (wasMaximized) {
-                primaryStage.setMaximized(true);
+            // Apply theme to the scene (if exists)
+            if (primaryStage != null) {
+                Scene scene = primaryStage.getScene();
+                if (scene != null) {
+                    ThemeManager.applyTheme(scene);
+                }
+                primaryStage.setTitle(title);
             }
 
             return loader;
