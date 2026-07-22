@@ -385,6 +385,13 @@ public class AdvertisementFormController {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
+    // ====== متد جدید برای دکمه‌ی بازگشت ======
+    @FXML
+    private void onBackClick() {
+        SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
+    }
+    // ========================================
+
     private <T> void runAsync(ThrowingSupplier<T> supplier, java.util.function.Consumer<T> onSuccess, String errorMessage) {
         CompletableFuture.supplyAsync(() -> {
             try {
