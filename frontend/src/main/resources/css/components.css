@@ -156,17 +156,17 @@
 
 /* ====== استایل‌های کامبوباکس (برای خوانایی بهتر در تم دارک) ====== */
 .combo-box .list-cell {
-    -fx-text-fill: -color-text; /* ← رنگ سفید در تم دارک */
+    -fx-text-fill: -color-text;
     -fx-background-color: -color-surface;
 }
 .combo-box .text-field {
-    -fx-text-fill: -color-text; /* ← رنگ سفید در تم دارک */
+    -fx-text-fill: -color-text;
 }
 .combo-box .arrow-button {
     -fx-background-color: -color-surface;
 }
 .combo-box-popup .list-view .list-cell {
-    -fx-text-fill: -color-text; /* ← رنگ سفید در تم دارک */
+    -fx-text-fill: -color-text;
     -fx-background-color: -color-surface;
 }
 .combo-box-popup .list-view .list-cell:hover {
@@ -177,11 +177,37 @@
     -fx-text-fill: -color-accent;
 }
 
+/* ====== استایل‌های صفحه‌ی گفتگوها (Conversation List) ====== */
+.conversation-list {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: transparent;
+}
+.conversation-list .list-cell {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.conversation-list .list-cell:selected {
+    -fx-background-color: -color-accent-soft;
+}
+.conversation-list .list-cell:hover {
+    -fx-background-color: -color-surface;
+}
+
+.list-cell-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-text;
+}
+.list-cell-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-muted;
+}
+
 .chat-header { -fx-padding: 15 24; -fx-background-color: -color-surface; -fx-border-color: transparent transparent -color-border transparent; }
 .chat-title { -fx-font-size: 17px; -fx-font-weight: 800; }
 .chat-list { -fx-background-color: transparent; -fx-border-color: transparent; }
 .chat-list .list-cell { -fx-background-color: transparent; }
-.conversation-list { -fx-background-color: transparent; -fx-border-color: transparent; }
 
 .table-view { -fx-background-color: -color-surface; -fx-border-color: -color-border; -fx-background-radius: 12; -fx-border-radius: 12; }
 .table-view .column-header-background { -fx-background-color: -color-surface-alt; }
@@ -203,13 +229,9 @@
     -fx-alignment: top-right;
 }
 
-/* تاریک شدن صفحه پشت Sidebar */
-
 .sidebar-overlay {
     -fx-background-color: rgba(0, 0, 0, 0.45);
 }
-
-/* عنوان Sidebar */
 
 .sidebar-title {
     -fx-font-size: 18px;
@@ -217,16 +239,12 @@
     -fx-text-fill: -color-text;
 }
 
-/* نام کاربر */
-
 .sidebar-user {
     -fx-font-size: 14px;
     -fx-font-weight: 600;
     -fx-text-fill: -color-text-muted;
     -fx-padding: 8 0 8 0;
 }
-
-/* دکمه‌های Sidebar */
 
 .sidebar-btn {
     -fx-background-color: transparent;
@@ -248,8 +266,6 @@
     -fx-background-color: -color-accent-soft;
 }
 
-/* دکمه اصلی Sidebar */
-
 .sidebar-btn-primary {
     -fx-background-color: -color-accent-soft;
     -fx-text-fill: -color-accent;
@@ -259,8 +275,6 @@
     -fx-background-color: -color-accent-soft;
 }
 
-/* دکمه خروج */
-
 .sidebar-btn-danger {
     -fx-text-fill: -color-danger;
 }
@@ -268,8 +282,6 @@
 .sidebar-btn-danger:hover {
     -fx-background-color: -color-danger-soft;
 }
-
-/* دکمه آیکون */
 
 .btn-icon {
     -fx-min-width: 40px;
