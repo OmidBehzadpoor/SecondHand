@@ -86,13 +86,34 @@ public class AdvertisementService {
         }
 
         String sortByName = sortBy != null ? sortBy.name() : null;
+        List<Long> categoryIds = resolveCategoryAndDescendantIds(categoryId);
 
         Page<Advertisement> advertisementsPage = advertisementRepository
-                .search(AdvertisementStatus.APPROVED, keyword, categoryId, cityId, minPrice, maxPrice, sortByName, pageable);
+                .search(AdvertisementStatus.APPROVED, keyword, categoryIds, cityId, minPrice, maxPrice, sortByName, pageable);
 
         Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisementsPage.getContent());
 
         return advertisementsPage.map(advertisement -> mapToResponse(advertisement, ratingSummaries));
+    }
+
+    // وقتی کاربر دسته‌ی والد را انتخاب می‌کند، آگهی‌های زیردسته‌هایش هم باید نمایش داده شوند؛
+    // این متد شناسه‌ی خود دسته و همه‌ی زیردسته‌هایش را در هر عمقی جمع‌آوری می‌کند
+    private List<Long> resolveCategoryAndDescendantIds(Long categoryId) {
+        if (categoryId == null) {
+            return null;
+        }
+        return categoryRepository.findById(categoryId)
+                .map(this::collectCategoryAndDescendantIds)
+                .orElse(List.of(categoryId));
+    }
+
+    private List<Long> collectCategoryAndDescendantIds(Category category) {
+        List<Long> ids = new java.util.ArrayList<>();
+        ids.add(category.getId());
+        for (Category child : category.getChildren()) {
+            ids.addAll(collectCategoryAndDescendantIds(child));
+        }
+        return ids;
     }
 
 
@@ -141,6 +162,10 @@ public class AdvertisementService {
 
         if (!advertisement.getSeller().getId().equals(currentUser.getId())) {
             throw new UnauthorizedActionException("شما اجازه‌ی حذف این آگهی را ندارید");
+        }
+
+        if (advertisement.getStatus() == AdvertisementStatus.DELETED) {
+            throw new InvalidAdvertisementStateException("این آگهی قبلاً حذف شده است");
         }
 
         advertisement.setStatus(AdvertisementStatus.DELETED);
@@ -211,6 +236,7 @@ public class AdvertisementService {
                 .cityName(advertisement.getCity().getName())
                 .categoryName(advertisement.getCategory().getName())
                 .status(advertisement.getStatus())
+                .rejectionReason(advertisement.getRejectionReason())
                 .ownerId(advertisement.getSeller().getId())
                 .ownerUsername(advertisement.getSeller().getUsername())
                 .sellerAverageRating(ratingSummary.getAverageRating())
@@ -272,6 +298,15 @@ public class AdvertisementService {
 
         advertisement.setStatus(AdvertisementStatus.DELETED);
         advertisementRepository.save(advertisement);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AdminAdvertisementResponse> getAllForAdmin() {
+        List<Advertisement> advertisements = advertisementRepository.findAll();
+        Map<Long, SellerRatingSummary> ratingSummaries = ratingSummariesFor(advertisements);
+        return advertisements.stream()
+                .map(ad -> mapToAdminResponse(ad, ratingSummaries))
+                .toList();
     }
 
     private AdminAdvertisementResponse mapToAdminResponse(Advertisement advertisement, Map<Long, SellerRatingSummary> ratingSummaries) {

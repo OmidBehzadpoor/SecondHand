@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.secondhandfx.controller.FavoriteCardController"
+      fx:id="root" prefWidth="300" spacing="10" styleClass="compact-card">
+    <HBox>
+        <Label fx:id="statusBadgeLabel" text="" styleClass="status-badge"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label text="♥" styleClass="heart"/>
+    </HBox>
+    <Label fx:id="titleLabel" wrapText="true" styleClass="card-title"/>
+    <Label fx:id="priceLabel" styleClass="card-price"/>
+    <Label fx:id="cityLabel" styleClass="muted-label"/>
+    <Separator/>
+    <HBox spacing="8">
+        <Button fx:id="viewButton" text="مشاهده" onAction="#onViewClick"
+                HBox.hgrow="ALWAYS" styleClass="btn, btn-primary"/>
+        <Button fx:id="removeButton" text="حذف" onAction="#onRemoveClick"
+                styleClass="btn, btn-danger"/>
+    </HBox>
+</VBox>

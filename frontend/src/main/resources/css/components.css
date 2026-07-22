@@ -1,0 +1,383 @@
+.root {
+    -fx-font-family: "Vazirmatn", "Noto Sans", "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: -color-bg;
+}
+.label { -fx-text-fill: -color-text; }
+.top-bar {
+    -fx-padding: 16 28 16 28;
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.brand-logo { -fx-font-size: 42px; -fx-font-weight: 900; -fx-text-fill: -color-accent; }
+.brand-logo-small { -fx-font-size: 22px; -fx-font-weight: 900; -fx-text-fill: -color-accent; }
+.hero {
+    -fx-padding: 32 48 28 48;
+    -fx-background-color: -color-hero;
+}
+.hero-title { -fx-font-size: 28px; -fx-font-weight: 900; }
+.hero-subtitle, .muted-label { -fx-text-fill: -color-text-muted; }
+.search-input, .input {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 10 12;
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
+}
+.search-input { -fx-font-size: 15px; }
+.input:focused, .search-input:focused { -fx-border-color: -color-accent; }
+.filter-bar { -fx-padding: 12 48 16 48; -fx-background-color: -color-bg; }
+.btn {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 9 15;
+    -fx-cursor: hand;
+}
+.btn:hover { -fx-background-color: -color-surface-alt; }
+.btn-primary { -fx-background-color: -color-accent; -fx-text-fill: white; -fx-border-color: -color-accent; -fx-font-weight: 800; }
+.btn-danger { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; -fx-border-color: transparent; }
+.btn-warning { -fx-background-color: -color-warning-soft; -fx-text-fill: -color-warning; -fx-border-color: transparent; }
+.btn-icon { -fx-padding: 7 11; -fx-font-size: 16px; }
+.back-link, .link {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -color-accent;
+    -fx-cursor: hand;
+}
+.page-title, .section-title { -fx-font-size: 24px; -fx-font-weight: 900; }
+.section-title-small { -fx-font-size: 16px; -fx-font-weight: 800; }
+.eyebrow { -fx-font-size: 11px; -fx-font-weight: 800; -fx-text-fill: -color-accent; }
+.field-label { -fx-font-weight: 700; }
+.content { -fx-padding: 28 48 35 48; }
+.bottom-bar, .composer { -fx-padding: 12 24; -fx-background-color: -color-surface; -fx-border-color: -color-border transparent transparent transparent; }
+.page-label { -fx-font-weight: 800; }
+
+.ad-card, .compact-card, .details-card, .details-gallery, .form-card, .admin-card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 16;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 18, 0.12, 0, 5);
+}
+.ad-card { -fx-cursor: hand; -fx-overflow: hidden; }
+.ad-card:hover { -fx-translate-y: -3; }
+.ad-image, .main-image { -fx-background-color: -color-surface-alt; -fx-background-radius: 16 16 0 0; }
+.ad-body { -fx-padding: 14; }
+.card-title { -fx-font-size: 15px; -fx-font-weight: 800; }
+.card-price, .details-price { -fx-font-weight: 900; -fx-text-fill: -color-accent; }
+.card-price { -fx-font-size: 17px; }
+.details-price { -fx-font-size: 23px; }
+.chip, .status-badge {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text-muted;
+    -fx-padding: 5 9;
+    -fx-background-radius: 7;
+    -fx-font-size: 11px;
+}
+.status-badge { -fx-text-fill: -color-accent; -fx-font-weight: 800; }
+.rating { -fx-text-fill: -color-warning; -fx-font-weight: 700; }
+.heart { -fx-font-size: 20px; -fx-text-fill: -color-danger; }
+
+.auth-shell {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 24;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 24;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 30, 0.18, 0, 10);
+}
+.auth-brand { -fx-padding: 48; -fx-background-color: -color-hero; -fx-background-radius: 24 0 0 24; }
+.auth-form { -fx-padding: 48; }
+.auth-brand-title { -fx-font-size: 30px; -fx-font-weight: 900; }
+.auth-brand-text { -fx-text-fill: -color-text-muted; -fx-font-size: 15px; }
+.auth-form .page-title { -fx-font-size: 27px; }
+
+.details-content { -fx-padding: 32 48; }
+.details-gallery, .details-card { -fx-padding: 20; }
+.details-title { -fx-font-size: 27px; -fx-font-weight: 900; }
+.details-description { -fx-text-fill: -color-text-muted; -fx-line-spacing: 3; }
+.seller-box { -fx-padding: 14; -fx-background-color: -color-surface-alt; -fx-background-radius: 10; }
+.seller-name { -fx-font-size: 17px; -fx-font-weight: 800; }
+.image-controls { -fx-translate-y: 185; }
+.image-counter { -fx-background-color: rgba(0,0,0,0.6); -fx-text-fill: white; -fx-padding: 6 11; -fx-background-radius: 18; }
+.gallery-btn { -fx-background-color: rgba(0,0,0,0.6); -fx-text-fill: white; -fx-background-radius: 20; -fx-border-color: transparent; }
+
+.form-content { -fx-padding: 30 80 40 80; }
+.form-card { -fx-padding: 22; -fx-effect: none; }
+.danger-note { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; -fx-padding: 9; -fx-background-radius: 8; }
+
+.sidebar-overlay { -fx-background-color: rgba(0,0,0,0.35); }
+.sidebar {
+    -fx-padding: 24;
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 1 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 25, 0.2, 5, 0);
+}
+.sidebar-title { -fx-font-size: 19px; -fx-font-weight: 900; }
+.sidebar-user { -fx-text-fill: -color-text-muted; -fx-font-weight: 700; }
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text;
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 12 14;
+    -fx-background-radius: 9;
+}
+.sidebar-btn:hover { -fx-background-color: -color-surface-alt; }
+.sidebar-btn-primary { -fx-background-color: -color-accent-soft; -fx-text-fill: -color-accent; }
+.sidebar-btn-danger { -fx-text-fill: -color-danger; }
+
+/* ====== استایل‌های تب‌ها (TabPane, Tab) ====== */
+.tabs .tab-header-area {
+    -fx-padding: 8 20 0 20;
+}
+.tabs .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 10 15;
+    -fx-text-fill: -color-text-muted;
+}
+.tabs .tab:selected {
+    -fx-background-color: -color-accent-soft;
+    -fx-background-radius: 8 8 0 0;
+}
+.tabs .tab-label {
+    -fx-font-weight: 700;
+    -fx-text-fill: -color-text-muted;
+}
+.tabs .tab:selected .tab-label {
+    -fx-text-fill: -color-accent;
+}
+.tabs .tab:hover .tab-label {
+    -fx-text-fill: black;  /* ← سیاه هنگام هاور */
+}
+
+/* ====== استایل‌های کامبوباکس (برای خوانایی بهتر در تم دارک) ====== */
+.combo-box .list-cell {
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-surface;
+}
+.combo-box .text-field {
+    -fx-text-fill: -color-text;
+}
+.combo-box .arrow-button {
+    -fx-background-color: -color-surface;
+}
+.combo-box-popup .list-view .list-cell {
+    -fx-text-fill: -color-text;
+    -fx-background-color: -color-surface;
+}
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: -color-surface-alt;
+}
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: -color-accent-soft;
+    -fx-text-fill: -color-accent;
+}
+
+/* ====== استایل‌های صفحه‌ی گفتگوها (Conversation List) ====== */
+.conversation-list {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: transparent;
+}
+.conversation-list .list-cell {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.conversation-list .list-cell:selected {
+    -fx-background-color: -color-accent-soft;
+}
+.conversation-list .list-cell:hover {
+    -fx-background-color: -color-surface;
+}
+
+.list-cell-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-text;
+}
+.list-cell-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-text-muted;
+}
+
+.chat-header { -fx-padding: 15 24; -fx-background-color: -color-surface; -fx-border-color: transparent transparent -color-border transparent; }
+.chat-title { -fx-font-size: 17px; -fx-font-weight: 800; }
+.chat-list { -fx-background-color: transparent; -fx-border-color: transparent; }
+.chat-list .list-cell { -fx-background-color: transparent; }
+
+/* ====== استایل‌های جدول (Table View) ====== */
+.table-view {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+.table-view .column-header-background {
+    -fx-background-color: -color-surface-alt;
+}
+.table-view .column-header .label {
+    -fx-text-fill: -color-text-muted;  /* هدرها به رنگ طوسی */
+}
+.table-view .table-cell {
+    -fx-text-fill: -color-text;        /* سلول‌ها به رنگ سفید (در تم دارک) */
+}
+.table-row-cell {
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+}
+
+.scroll-pane { -fx-background-color: transparent; -fx-background: transparent; }
+.scroll-pane > .viewport { -fx-background-color: transparent; }
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    -fx-background-color: -color-surface;
+    -fx-padding: 24;
+    -fx-border-color: -color-border;
+    -fx-border-width: 0 1 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 18, 0.15, 0, 0);
+    -fx-alignment: top-right;
+}
+
+.sidebar-overlay {
+    -fx-background-color: rgba(0, 0, 0, 0.45);
+}
+
+.sidebar-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: 800;
+    -fx-text-fill: -color-text;
+}
+
+.sidebar-user {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -color-text-muted;
+    -fx-padding: 8 0 8 0;
+}
+
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-text;
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 12 14;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: -color-surface-alt;
+}
+
+.sidebar-btn:pressed {
+    -fx-background-color: -color-accent-soft;
+}
+
+.sidebar-btn-primary {
+    -fx-background-color: -color-accent-soft;
+    -fx-text-fill: -color-accent;
+}
+
+.sidebar-btn-primary:hover {
+    -fx-background-color: -color-accent-soft;
+}
+
+.sidebar-btn-danger {
+    -fx-text-fill: -color-danger;
+}
+
+.sidebar-btn-danger:hover {
+    -fx-background-color: -color-danger-soft;
+}
+
+.btn-icon {
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-pref-width: 40px;
+    -fx-pref-height: 40px;
+    -fx-padding: 0;
+    -fx-alignment: CENTER;
+}
+
+/* ====== استایل‌های Toast Notification ====== */
+.toast-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -color-text;
+}
+.error-toast {
+    -fx-text-fill: -color-danger;
+}
+.success-toast {
+    -fx-text-fill: -color-accent;
+}
+.toast-container {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+/* ====== استایل‌های Toast Notification ====== */
+.toast-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -color-text;
+}
+.error-toast {
+    -fx-text-fill: -color-danger; /* قرمز */
+}
+.success-toast {
+    -fx-text-fill: -color-accent; /* آبی (همان رنگ اصلی برنامه) */
+}
+.info-toast {
+    -fx-text-fill: #00BCD4; /* آب‌ی روشن */
+}
+.toast-container {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+/* ====== استایل‌های Toast Notification ====== */
+.toast {
+    -fx-padding: 12 16;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0.1, 0, 4);
+    -fx-background-color: -color-surface; /* رنگ پیش‌فرض (در صورت عدم تطابق) */
+    -fx-border-color: -color-border;
+}
+
+.toast-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #FFFFFF; /* رنگ سفید برای همه */
+}
+
+/* پس‌زمینه‌ی سبز برای موفقیت */
+.toast-success {
+    -fx-background-color: #22C55E;
+    -fx-border-color: #16A34A;
+}
+
+/* پس‌زمینه‌ی قرمز برای خطا */
+.toast-error {
+    -fx-background-color: #EF4444;
+    -fx-border-color: #DC2626;
+}
+
+/* پس‌زمینه‌ی آبی برای اطلاع‌رسانی */
+.toast-info {
+    -fx-background-color: #3B82F6;
+    -fx-border-color: #2563EB;
+}

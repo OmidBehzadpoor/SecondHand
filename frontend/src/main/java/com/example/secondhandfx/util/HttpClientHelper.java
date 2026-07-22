@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URI;
@@ -15,6 +17,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Duration;
 
 public class HttpClientHelper {
@@ -49,6 +52,43 @@ public class HttpClientHelper {
         return send(HttpMethod.DELETE, path, null, responseType);
     }
 
+    // آپلود یک فایل به‌صورت multipart/form-data — فرمتی که AdvertisementImageController
+    // (با @RequestParam("file") MultipartFile) در بک‌اند انتظارش را دارد.
+    public static <T> T uploadFile(String path, File file, TypeReference<T> responseType) throws ApiException {
+        try {
+            String boundary = "----SecondHandBoundary" + System.currentTimeMillis();
+            byte[] multipartBody = buildMultipartBody(file, boundary);
+
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
+                    .uri(URI.create(BASE_URL + path))
+                    .timeout(Duration.ofSeconds(30))
+                    .header("Content-Type", "multipart/form-data; boundary=" + boundary);
+
+            attachAuthHeader(builder);
+            builder.POST(HttpRequest.BodyPublishers.ofByteArray(multipartBody));
+
+            return executeAndParse(builder, responseType);
+        } catch (IOException e) {
+            throw new ApiException("خواندن فایل تصویر با خطا مواجه شد.", 0);
+        }
+    }
+
+    private static byte[] buildMultipartBody(File file, String boundary) throws IOException {
+        String mimeType = Files.probeContentType(file.toPath());
+        if (mimeType == null) {
+            mimeType = "application/octet-stream";
+        }
+
+        ByteArrayOutputStream body = new ByteArrayOutputStream();
+        body.write(("--" + boundary + "\r\n").getBytes(StandardCharsets.UTF_8));
+        body.write(("Content-Disposition: form-data; name=\"file\"; filename=\"" + file.getName() + "\"\r\n")
+                .getBytes(StandardCharsets.UTF_8));
+        body.write(("Content-Type: " + mimeType + "\r\n\r\n").getBytes(StandardCharsets.UTF_8));
+        body.write(Files.readAllBytes(file.toPath()));
+        body.write(("\r\n--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
+        return body.toByteArray();
+    }
+
     private static <T> T send(HttpMethod method, String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
@@ -56,10 +96,7 @@ public class HttpClientHelper {
                     .timeout(Duration.ofSeconds(10))
                     .header("Content-Type", "application/json; charset=UTF-8");
 
-            String token = SessionManager.getInstance().getToken();
-            if (token != null) {
-                builder.header("Authorization", "Bearer " + token);
-            }
+            attachAuthHeader(builder);
 
             HttpRequest.BodyPublisher bodyPublisher = (body != null)
                     ? HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body), StandardCharsets.UTF_8)
@@ -67,10 +104,24 @@ public class HttpClientHelper {
 
             builder.method(method.name(), bodyPublisher);
 
+            return executeAndParse(builder, responseType);
+        } catch (IOException e) {
+            throw new ApiException("مشکلی در آماده‌سازی درخواست پیش آمد.", 0);
+        }
+    }
+
+    private static void attachAuthHeader(HttpRequest.Builder builder) {
+        String token = SessionManager.getInstance().getToken();
+        if (token != null) {
+            builder.header("Authorization", "Bearer " + token);
+        }
+    }
+
+    // بخش مشترک بین send() و uploadFile(): فرستادن request آماده‌شده و مدیریت خطاهای شبکه
+    private static <T> T executeAndParse(HttpRequest.Builder builder, TypeReference<T> responseType) throws ApiException {
+        try {
             HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-
             return parseResponse(response, responseType);
-
         } catch (ConnectException e) {
             throw new ApiException("امکان برقراری ارتباط با سرور وجود ندارد. لطفاً مطمئن شوید سرور در حال اجراست.", 0);
         } catch (HttpTimeoutException e) {
@@ -80,14 +131,18 @@ public class HttpClientHelper {
         }
     }
 
-    private static <T> T parseResponse(HttpResponse<String> response, TypeReference<T> responseType) throws ApiException, IOException {
-        JsonNode root = objectMapper.readTree(response.body());
+    private static <T> T parseResponse(HttpResponse<String> response, TypeReference<T> responseType) throws ApiException {
+        try {
+            JsonNode root = objectMapper.readTree(response.body());
 
-        if (response.statusCode() >= 200 && response.statusCode() < 300) {
-            return objectMapper.convertValue(root, objectMapper.getTypeFactory().constructType(responseType));
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                return objectMapper.convertValue(root, objectMapper.getTypeFactory().constructType(responseType));
+            }
+
+            String errorMessage = root.has("error") ? root.get("error").asText() : "خطای نامشخصی رخ داد";
+            throw new ApiException(errorMessage, response.statusCode());
+        } catch (IOException e) {
+            throw new ApiException("خطا در پردازش پاسخ سرور رخ داد.", response.statusCode());
         }
-
-        String errorMessage = root.has("error") ? root.get("error").asText() : "خطای نامشخصی رخ داد";
-        throw new ApiException(errorMessage, response.statusCode());
     }
 }

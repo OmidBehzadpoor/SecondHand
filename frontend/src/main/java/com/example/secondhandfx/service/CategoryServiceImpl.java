@@ -1,0 +1,82 @@
+package com.example.secondhandfx.service;
+
+import com.example.secondhandfx.exception.ApiException;
+import com.example.secondhandfx.model.ApiResponse;
+import com.example.secondhandfx.model.CategoryRequest;
+import com.example.secondhandfx.model.CategoryResponse;
+import com.example.secondhandfx.util.HttpClientHelper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
+import java.util.List;
+
+public class CategoryServiceImpl implements CategoryService {
+
+    @Override
+    public List<CategoryResponse> getAllCategories() throws ApiException {
+        return HttpClientHelper.get(
+                "/api/categories",
+                new TypeReference<ApiResponse<List<CategoryResponse>>>() {}
+        ).getData();
+    }
+
+    @Override
+    public List<CategoryResponse> getAllCategoriesForAdmin() throws ApiException {
+        // این مسیر، برخلاف /api/categories، دسته‌بندی‌های غیرفعال را هم برمی‌گرداند
+        return HttpClientHelper.get(
+                "/api/categories/admin",
+                new TypeReference<ApiResponse<List<CategoryResponse>>>() {}
+        ).getData();
+    }
+
+    @Override
+    public CategoryResponse createCategory(String name, Long parentId) throws ApiException {
+        CategoryRequest request = CategoryRequest.builder()
+                .name(name)
+                .parentId(parentId)
+                .build();
+        return HttpClientHelper.post(
+                "/api/categories",
+                request,
+                new TypeReference<ApiResponse<CategoryResponse>>() {}
+        ).getData();
+    }
+
+    @Override
+    public CategoryResponse updateCategory(Long id, String name, Long parentId) throws ApiException {
+        CategoryRequest request = CategoryRequest.builder()
+                .name(name)
+                .parentId(parentId)
+                .build();
+        return HttpClientHelper.put(
+                "/api/categories/" + id,
+                request,
+                new TypeReference<ApiResponse<CategoryResponse>>() {}
+        ).getData();
+    }
+
+    @Override
+    public CategoryResponse activateCategory(Long id) throws ApiException {
+        return HttpClientHelper.patch(
+                "/api/categories/" + id + "/activate",
+                null,
+                new TypeReference<ApiResponse<CategoryResponse>>() {}
+        ).getData();
+    }
+
+    @Override
+    public CategoryResponse deactivateCategory(Long id) throws ApiException {
+        return HttpClientHelper.patch(
+                "/api/categories/" + id + "/deactivate",
+                null,
+                new TypeReference<ApiResponse<CategoryResponse>>() {}
+        ).getData();
+    }
+
+    @Override
+    public void deleteCategory(Long id) throws ApiException {
+        HttpClientHelper.delete(
+                "/api/categories/" + id,
+                new TypeReference<ApiResponse<Void>>() {}
+        );
+    }
+}

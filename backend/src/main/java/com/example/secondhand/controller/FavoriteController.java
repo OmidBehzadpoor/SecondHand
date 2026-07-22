@@ -4,6 +4,7 @@ import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.dto.response.FavoriteResponse;
 import com.example.secondhand.model.User;
 import com.example.secondhand.service.FavoriteService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/favorites")
+@Tag(name = "Favorites", description = "علاقه‌مندی‌های کاربر")
 public class FavoriteController {
 
     private final FavoriteService favoriteService;

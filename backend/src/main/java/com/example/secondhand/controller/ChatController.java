@@ -6,6 +6,7 @@ import com.example.secondhand.dto.response.ConversationResponse;
 import com.example.secondhand.dto.response.MessageResponse;
 import com.example.secondhand.model.User;
 import com.example.secondhand.service.ChatService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor
+@Tag(name = "Chat", description = "مکالمه و پیام بین خریدار و فروشنده")
 public class ChatController {
 
     private final ChatService chatService;

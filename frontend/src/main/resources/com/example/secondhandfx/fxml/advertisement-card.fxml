@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.secondhandfx.controller.AdvertisementCardController"
+      fx:id="root" prefWidth="285" onMouseClicked="#onCardClick" styleClass="ad-card">
+    <StackPane styleClass="ad-image">
+        <ImageView fx:id="imageView" fitWidth="285" fitHeight="175" preserveRatio="false"/>
+    </StackPane>
+    <VBox spacing="8" styleClass="ad-body">
+        <Label fx:id="titleLabel" wrapText="true" styleClass="card-title"/>
+        <Label fx:id="priceLabel" styleClass="card-price"/>
+        <HBox spacing="7">
+            <Label fx:id="categoryLabel" styleClass="chip"/>
+            <Label fx:id="cityLabel" styleClass="chip"/>
+        </HBox>
+        <Label fx:id="ratingLabel" styleClass="rating"/>
+    </VBox>
+</VBox>

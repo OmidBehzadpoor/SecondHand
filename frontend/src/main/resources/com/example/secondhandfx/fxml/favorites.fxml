@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.secondhandfx.controller.FavoritesController"
+            styleClass="root">
+    <top>
+        <VBox spacing="5" styleClass="page-header">
+            <Button text="← بازگشت به آگهی‌ها" onAction="#onBackClick" styleClass="back-link"/>
+            <Label text="علاقه‌مندی‌های من" styleClass="page-title"/>
+            <Label text="آگهی‌هایی که ذخیره کرده‌اید." styleClass="muted-label"/>
+        </VBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <FlowPane fx:id="favoritesContainer" hgap="18" vgap="18" styleClass="content"/>
+        </ScrollPane>
+    </center>
+</BorderPane>

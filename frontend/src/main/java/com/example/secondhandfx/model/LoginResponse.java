@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class LoginResponse {
+    private String name; // to be printed in the messages shown to the user
     private String token;
     private Long userId;
     private String username;

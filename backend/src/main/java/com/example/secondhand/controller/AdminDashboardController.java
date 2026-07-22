@@ -3,6 +3,7 @@ package com.example.secondhand.controller;
 import com.example.secondhand.dto.response.AdminDashboardResponse;
 import com.example.secondhand.dto.response.ApiResponse;
 import com.example.secondhand.service.AdminDashboardService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/admin/dashboard")
 @RequiredArgsConstructor
+@Tag(name = "Admin - Dashboard", description = "آمار کلی سامانه - نیاز به توکن مدیر")
 public class AdminDashboardController {
 
     private final AdminDashboardService adminDashboardService;

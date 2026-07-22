@@ -68,7 +68,7 @@ public class UserService {
 
         String token = jwtService.generateToken(user);
 
-        return new LoginResponse(token, user.getId(), user.getUsername(), user.getRole());
+        return new LoginResponse(user.getName(), token, user.getId(), user.getUsername(), user.getRole());
     }
 
     @Transactional(readOnly = true)

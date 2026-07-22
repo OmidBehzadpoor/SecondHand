@@ -149,9 +149,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String message = "این عملیات با داده‌ای که از قبل وجود دارد در تناقض است";
+        if (ex.getMessage().contains("UK_")) {
+            message = "مقدار وارد شده تکراری است. لطفاً از مقدار دیگری استفاده کنید.";
+        }
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", "این عملیات با داده‌ای که از قبل وجود دارد در تناقض است"));
+                .body(Map.of("error", message));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -182,5 +186,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "حجم فایل نباید بیشتر از ۵ مگابایت باشد"));
+    }
+
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationErrors(
+            org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldErrors().stream()
+                .map(org.springframework.validation.FieldError::getDefaultMessage)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.joining(", "));
+        if (message.isBlank()) {
+            message = "اطلاعات ارسالی معتبر نیست";
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", message));
     }
 }

@@ -1,0 +1,16 @@
+
+.root {
+    -color-bg: #F5F7FA;
+    -color-surface: #FFFFFF;
+    -color-surface-alt: #EEF2F6;
+    -color-hero: #EAF2FF;
+    -color-border: #DCE3EA;
+    -color-text: #17212B;
+    -color-text-muted: #687583;
+    -color-accent: #2563EB;
+    -color-accent-soft: #E7EFFF;
+    -color-danger: #D64545;
+    -color-danger-soft: #FDECEC;
+    -color-warning: #B7791F;
+    -color-warning-soft: #FFF4D8;
+}

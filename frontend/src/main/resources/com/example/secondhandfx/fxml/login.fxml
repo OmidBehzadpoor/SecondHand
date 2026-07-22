@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/26"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.secondhandfx.controller.LoginController"
+           styleClass="root">
+
+    <ScrollPane fitToWidth="true"
+                fitToHeight="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="transparent-scroll">
+
+        <StackPane alignment="CENTER"
+                   style="-fx-padding: 30;">
+
+            <VBox maxWidth="380"
+                  spacing="10"
+                  alignment="TOP_CENTER"
+                  styleClass="card">
+
+                <padding>
+                    <Insets top="30"
+                            right="30"
+                            bottom="30"
+                            left="30"/>
+                </padding>
+
+                <Button text="← بازگشت به صفحه اصلی"
+                        onAction="#onBackToHomeClick"
+                        styleClass="back-link"/>
+
+                <Label text="ورود به اکانت"
+                       styleClass="page-title"/>
+
+                <Label text="نام کاربری"
+                       styleClass="muted-label"/>
+
+                <TextField fx:id="usernameField"/>
+
+                <Label text="رمز عبور"
+                       styleClass="muted-label"/>
+
+                <PasswordField fx:id="passwordField"/>
+
+                <Button text="ورود"
+                        onAction="#onLoginButtonClick"
+                        styleClass="btn, btn-primary"
+                        maxWidth="Infinity"/>
+
+                <Hyperlink text="حساب کاربری ندارید؟ ثبت‌نام"
+                           onAction="#onRegisterLinkClick"/>
+
+            </VBox>
+
+        </StackPane>
+
+    </ScrollPane>
+
+</StackPane>
