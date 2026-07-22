@@ -64,6 +64,7 @@
     -fx-border-color: -color-border;
     -fx-border-radius: 16;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 18, 0.12, 0, 5);
+    -fx-padding: 12 12 18 12;
 }
 .ad-card { -fx-cursor: hand; -fx-overflow: hidden; }
 .ad-card:hover { -fx-translate-y: -3; }
