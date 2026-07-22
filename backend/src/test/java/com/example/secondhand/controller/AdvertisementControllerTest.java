@@ -16,6 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.validation.beanvalidation.MethodValidationInterceptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -51,7 +54,15 @@ class AdvertisementControllerTest {
     @BeforeEach
     void setUp() {
         AdvertisementController controller = new AdvertisementController(advertisementService);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+
+        LocalValidatorFactoryBean validatorFactory = new LocalValidatorFactoryBean();
+        validatorFactory.afterPropertiesSet();
+
+        ProxyFactory proxyFactory = new ProxyFactory(controller);
+        proxyFactory.addAdvice(new MethodValidationInterceptor(validatorFactory.getValidator()));
+        AdvertisementController validatedController = (AdvertisementController) proxyFactory.getProxy();
+
+        mockMvc = MockMvcBuilders.standaloneSetup(validatedController)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setCustomArgumentResolvers(
                         new AuthenticationPrincipalArgumentResolver(),
