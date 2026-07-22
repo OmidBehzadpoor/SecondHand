@@ -6,6 +6,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.secondhandfx.controller.AdvertisementDetailsController"
             styleClass="root">
+
     <top>
         <HBox alignment="CENTER_RIGHT" styleClass="top-bar">
             <Button text="← بازگشت" onAction="#onBackClick" styleClass="back-link"/>
@@ -13,13 +14,15 @@
             <Label text="جزئیات آگهی" styleClass="section-title"/>
         </HBox>
     </top>
+
     <center>
         <ScrollPane fitToWidth="true" styleClass="scroll-pane">
             <HBox spacing="25" styleClass="details-content">
+                <!-- گالری تصاویر (سمت چپ) -->
                 <VBox prefWidth="560" spacing="10" styleClass="details-gallery">
                     <StackPane styleClass="main-image">
                         <ImageView fx:id="mainImageView" fitWidth="520" fitHeight="420" preserveRatio="true"/>
-                        <HBox alignment="CENTER" spacing="10" styleClass="image-controls">
+                        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="image-controls">
                             <Button fx:id="prevImageButton" text="‹"
                                     onAction="#onPrevImageClick" styleClass="gallery-btn"/>
                             <Label fx:id="imageIndicatorLabel" text="0 / 0" styleClass="image-counter"/>
@@ -29,30 +32,48 @@
                     </StackPane>
                 </VBox>
 
-                <VBox prefWidth="470" spacing="14" styleClass="details-card">
-                    <HBox spacing="8">
+                <!-- کارت اطلاعات آگهی (سمت راست) -->
+                <VBox prefWidth="470" spacing="14" styleClass="details-card" alignment="TOP_RIGHT">
+
+                    <!-- برچسب‌های وضعیت، دسته‌بندی و شهر -->
+                    <HBox spacing="8" alignment="CENTER_RIGHT">
                         <Label fx:id="statusLabel" text="" styleClass="status-badge"/>
                         <Label fx:id="categoryLabel" text="" styleClass="chip"/>
                         <Label fx:id="cityLabel" text="" styleClass="chip"/>
                     </HBox>
-                    <Label fx:id="titleLabel" text="" wrapText="true" styleClass="details-title"/>
-                    <Label fx:id="priceLabel" text="" styleClass="details-price"/>
+
+                    <!-- عنوان -->
+                    <Label fx:id="titleLabel" text="" wrapText="true" styleClass="details-title" alignment="CENTER_RIGHT"/>
+
+                    <!-- قیمت -->
+                    <Label fx:id="priceLabel" text="" styleClass="details-price" alignment="CENTER_RIGHT"/>
+
                     <Separator/>
-                    <Label text="توضیحات" styleClass="section-title-small"/>
-                    <Label fx:id="descriptionLabel" text="" wrapText="true" styleClass="details-description"/>
-                    <Label fx:id="rejectionReasonLabel" text="" wrapText="true" styleClass="danger-note"/>
-                    <VBox spacing="5" styleClass="seller-box">
+
+                    <!-- توضیحات -->
+                    <Label text="توضیحات" styleClass="section-title-small" alignment="CENTER_RIGHT"/>
+                    <Label fx:id="descriptionLabel" text="" wrapText="true" styleClass="details-description" alignment="CENTER_RIGHT"/>
+
+                    <!-- دلیل رد (در صورت وجود) -->
+                    <Label fx:id="rejectionReasonLabel" text="" wrapText="true" styleClass="danger-note" alignment="CENTER_RIGHT"/>
+
+                    <!-- بخش فروشنده -->
+                    <VBox spacing="5" styleClass="seller-box" alignment="CENTER_RIGHT">
                         <Label text="فروشنده" styleClass="eyebrow"/>
-                        <Label fx:id="sellerLabel" text="" styleClass="seller-name"/>
-                        <Label fx:id="ratingLabel" text="" styleClass="rating"/>
+                        <Label fx:id="sellerLabel" text="" styleClass="seller-name" alignment="CENTER_RIGHT"/>
+                        <Label fx:id="ratingLabel" text="" styleClass="rating" alignment="CENTER_RIGHT"/>
                     </VBox>
-                    <HBox fx:id="buyerActionsBox" spacing="8">
+
+                    <!-- دکمه‌های خریدار -->
+                    <HBox fx:id="buyerActionsBox" spacing="8" alignment="CENTER_RIGHT">
                         <Button text="پیام به فروشنده" onAction="#onMessageSellerClick"
                                 HBox.hgrow="ALWAYS" styleClass="btn, btn-primary"/>
                         <Button text="افزودن به علاقه‌مندی‌ها" onAction="#onAddFavoriteClick"
                                 HBox.hgrow="ALWAYS" styleClass="btn"/>
                     </HBox>
-                    <HBox fx:id="ownerActionsBox" spacing="8">
+
+                    <!-- دکمه‌های مالک آگهی -->
+                    <HBox fx:id="ownerActionsBox" spacing="8" alignment="CENTER_RIGHT">
                         <Button text="ویرایش" onAction="#onEditClick"
                                 HBox.hgrow="ALWAYS" styleClass="btn"/>
                         <Button fx:id="markAsSoldButton" text="فروخته شد"
@@ -61,8 +82,10 @@
                         <Button text="حذف" onAction="#onDeleteClick"
                                 styleClass="btn, btn-danger"/>
                     </HBox>
+
                 </VBox>
             </HBox>
         </ScrollPane>
     </center>
+
 </BorderPane>
