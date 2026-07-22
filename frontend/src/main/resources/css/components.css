@@ -24,8 +24,8 @@
     -fx-border-radius: 9;
     -fx-background-radius: 9;
     -fx-padding: 10 12;
-    -fx-text-fill: -color-text;                /* ← اضافه شد */
-    -fx-prompt-text-fill: -color-text-muted;   /* ← اضافه شد */
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
 }
 .search-input { -fx-font-size: 15px; }
 .input:focused, .search-input:focused { -fx-border-color: -color-accent; }
@@ -211,9 +211,26 @@
 .chat-list { -fx-background-color: transparent; -fx-border-color: transparent; }
 .chat-list .list-cell { -fx-background-color: transparent; }
 
-.table-view { -fx-background-color: -color-surface; -fx-border-color: -color-border; -fx-background-radius: 12; -fx-border-radius: 12; }
-.table-view .column-header-background { -fx-background-color: -color-surface-alt; }
-.table-row-cell { -fx-background-color: -color-surface; -fx-border-color: transparent transparent -color-border transparent; }
+/* ====== استایل‌های جدول (Table View) ====== */
+.table-view {
+    -fx-background-color: -color-surface;
+    -fx-border-color: -color-border;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+}
+.table-view .column-header-background {
+    -fx-background-color: -color-surface-alt;
+}
+.table-view .column-header .label {
+    -fx-text-fill: -color-text-muted;  /* هدرها به رنگ طوسی */
+}
+.table-view .table-cell {
+    -fx-text-fill: -color-text;        /* سلول‌ها به رنگ سفید (در تم دارک) */
+}
+.table-row-cell {
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+}
 
 .scroll-pane { -fx-background-color: transparent; -fx-background: transparent; }
 .scroll-pane > .viewport { -fx-background-color: transparent; }
