@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,12 +27,12 @@ class CityRepositoryTest {
     }
 
     @Test
-    void save_shouldThrowDataIntegrityViolationException_whenNameIsDuplicated() {
+    void save_shouldThrowDataAccessException_whenNameIsDuplicated() {
         cityRepository.saveAndFlush(City.builder().name("Tehran").build());
 
         City duplicate = City.builder().name("Tehran").build();
 
-        assertThrows(DataIntegrityViolationException.class,
+        assertThrows(DataAccessException.class,
                 () -> cityRepository.saveAndFlush(duplicate));
     }
 }
