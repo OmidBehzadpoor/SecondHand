@@ -11,8 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdvertisementResponse
-{
+public class AdvertisementResponse {
     private Long id;
     private String title;
     private String description;
@@ -23,6 +22,7 @@ public class AdvertisementResponse
     private String rejectionReason;
     private Long ownerId;
     private String ownerUsername;
+    private String ownerName;
     private Double sellerAverageRating;
     private Long sellerRatingCount;
     private List<String> imageUrls;
