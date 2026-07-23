@@ -10,6 +10,13 @@
     -fx-border-color: transparent transparent -color-border transparent;
     -fx-border-width: 0 0 1 0;
 }
+.page-header {
+    -fx-padding: 18 28 18 28;
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-spacing: 6;
+}
 .brand-logo { -fx-font-size: 42px; -fx-font-weight: 900; -fx-text-fill: -color-accent; }
 .brand-logo-small { -fx-font-size: 22px; -fx-font-weight: 900; -fx-text-fill: -color-accent; }
 .hero {
