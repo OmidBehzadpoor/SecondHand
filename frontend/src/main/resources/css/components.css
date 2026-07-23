@@ -64,6 +64,7 @@
     -fx-border-color: -color-border;
     -fx-border-radius: 16;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 18, 0.12, 0, 5);
+    -fx-padding: 12 12 18 12;
 }
 .ad-card { -fx-cursor: hand; -fx-overflow: hidden; }
 .ad-card:hover { -fx-translate-y: -3; }
@@ -380,4 +381,73 @@
 .toast-info {
     -fx-background-color: #3B82F6;
     -fx-border-color: #2563EB;
+}
+
+/* =========================================================
+   استایل‌های جدید برای صفحه‌ی ویرایش آگهی
+   ========================================================= */
+
+/* تیره‌کردن پس‌زمینه‌ی TextArea (توضیحات) */
+.text-area {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+}
+
+/* تیره‌کردن پس‌زمینه‌ی ListView (تصاویر فعلی و جدید) */
+.list-view {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+}
+
+.list-view .list-cell {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: -color-accent-soft;
+    -fx-text-fill: -color-text;
+}
+
+/* =========================================================
+   استایل‌های جدید برای صفحه‌ی ویرایش آگهی (اصلاح‌شده)
+   ========================================================= */
+
+/* تیره‌کردن پس‌زمینه‌ی TextArea (با اولویت بالاتر از .input) */
+.text-area.input {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+}
+
+/* ✅ ناحیه‌ی داخلی نوشتار (مهم‌ترین بخش برای تغییر پس‌زمینه) */
+.text-area .content {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
+}
+
+/* تیره‌کردن پس‌زمینه‌ی ListView (تصاویر فعلی و جدید) */
+.list-view {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+}
+
+.list-view .list-cell {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: -color-accent-soft;
+    -fx-text-fill: -color-text;
 }

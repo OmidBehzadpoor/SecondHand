@@ -97,7 +97,7 @@ public class AdvertisementDetailsController {
         cityLabel.setText("شهر: " + ad.getCityName());
         categoryLabel.setText("دسته‌بندی: " + ad.getCategoryName());
         descriptionLabel.setText(ad.getDescription());
-        sellerLabel.setText("فروشنده: " + ad.getOwnerUsername());
+        sellerLabel.setText(ad.getOwnerName() + ": فروشنده" );
 
         if (ad.getSellerAverageRating() != null && ad.getSellerRatingCount() != null && ad.getSellerRatingCount() > 0) {
             ratingLabel.setText(String.format("⭐ %.1f از ۵ (%d امتیاز)", ad.getSellerAverageRating(), ad.getSellerRatingCount()));

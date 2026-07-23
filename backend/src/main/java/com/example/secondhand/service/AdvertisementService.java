@@ -239,6 +239,7 @@ public class AdvertisementService {
                 .rejectionReason(advertisement.getRejectionReason())
                 .ownerId(advertisement.getSeller().getId())
                 .ownerUsername(advertisement.getSeller().getUsername())
+                .ownerName(advertisement.getSeller().getName())   // ← این خط را اضافه کن
                 .sellerAverageRating(ratingSummary.getAverageRating())
                 .sellerRatingCount(ratingSummary.getRatingCount())
                 .imageUrls(advertisement.getImages().stream().map(AdvertisementImage::getImageUrl).toList())

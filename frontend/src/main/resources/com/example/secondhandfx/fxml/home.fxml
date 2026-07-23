@@ -78,25 +78,24 @@
                 <!-- ===================== HERO ====================== -->
 
                 <VBox spacing="12"
-                      styleClass="hero">
+                      styleClass="hero"
+                      alignment="TOP_RIGHT">
 
-                    <Label text="آگهی مورد نظرت را پیدا کن."
+                    <Label text="آگهی مورد نظرت را پیدا کن"
                            styleClass="hero-title"/>
 
-                    <Label text="در میان آگهی‌های فعال جست‌وجو کن و بهترین گزینه را انتخاب کن."
+                    <Label text="در میان آگهی‌های فعال جست‌وجو کن و بهترین گزینه را انتخاب کن"
                            styleClass="hero-subtitle"/>
 
                     <HBox spacing="8">
-
-                        <TextField fx:id="searchField"
-                                   promptText="چه چیزی می‌خواهی پیدا کنی؟"
-                                   HBox.hgrow="ALWAYS"
-                                   styleClass="search-input"/>
-
                         <Button text="جست‌وجو"
                                 onAction="#onSearchClick"
                                 styleClass="btn, btn-primary"/>
-
+                        <TextField fx:id="searchField"
+                                   promptText="چه چیزی می‌خواهی پیدا کنی؟"
+                                   HBox.hgrow="ALWAYS"
+                                   styleClass="search-input"
+                                   alignment="CENTER_RIGHT"/>  
                     </HBox>
 
                 </VBox>

@@ -21,6 +21,7 @@ public class AdvertisementResponse {
     private String rejectionReason;
     private Long ownerId;
     private String ownerUsername;
+    private String ownerName;
     private Double sellerAverageRating;
     private Long sellerRatingCount;
     private List<String> imageUrls;

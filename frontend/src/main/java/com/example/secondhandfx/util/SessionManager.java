@@ -19,6 +19,8 @@ public class SessionManager {
     private Long userId;
     private String username;
     private Role role;
+    private String name;
+
 
     private SessionManager() {
     }
@@ -27,11 +29,12 @@ public class SessionManager {
         return instance;
     }
 
-    public void setSession(String token, Long userId, String username, Role role) {
+    public void setSession(String token, Long userId, String username, Role role, String name) {
         this.token = token;
         this.userId = userId;
         this.username = username;
         this.role = role;
+        this.name = name;
     }
 
     public void clearSession() {
@@ -39,6 +42,7 @@ public class SessionManager {
         this.userId = null;
         this.username = null;
         this.role = null;
+        this.name = null;
     }
 
     public boolean isLoggedIn() {
@@ -64,4 +68,9 @@ public class SessionManager {
     public Role getRole() {
         return role;
     }
+
+    public String getName() {
+        return name;
+    }
+
 }
