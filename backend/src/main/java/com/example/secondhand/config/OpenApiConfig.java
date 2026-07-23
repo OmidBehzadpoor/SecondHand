@@ -34,6 +34,19 @@ public class OpenApiConfig {
 
     private static final String SECURITY_SCHEME_NAME = "bearerAuth";
 
+    /**
+     * ساخت و پیکربندی Bean اصلی مستندات {@link OpenAPI} برنامه.
+     * <p>
+     * این متد اطلاعات کلی API (عنوان، نسخه، توضیحات، اطلاعات تماس و لایسنس)،
+     * طرح امنیتی Bearer JWT با نام {@value #SECURITY_SCHEME_NAME}، و پاسخ‌های
+     * خطای رایج ({@code 400}, {@code 401}, {@code 403}, {@code 404}, {@code 409})
+     * را به‌همراه نمونه پاسخ فارسی برای هرکدام تعریف می‌کند تا در Swagger UI و
+     * Scalar به‌صورت یکپارچه نمایش داده شوند.
+     * </p>
+     *
+     * @return شیء {@link OpenAPI} پیکربندی‌شده که توسط springdoc-openapi برای
+     *         تولید مستندات API استفاده می‌شود
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
