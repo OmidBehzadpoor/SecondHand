@@ -37,6 +37,13 @@
 .search-input { -fx-font-size: 15px; }
 .input:focused, .search-input:focused { -fx-border-color: -color-accent; }
 .filter-bar { -fx-padding: 12 48 16 48; -fx-background-color: -color-bg; }
+/* کمبوباکس تعداد آیتم در صفحه — پدینگ سبک‌تر از .input معمولی تا عدد کامل دیده بشه */
+.page-size-select {
+    -fx-padding: 4 8 4 8;
+}
+.page-size-select .list-cell {
+    -fx-padding: 2 4;
+}
 .btn {
     -fx-background-color: -color-surface;
     -fx-text-fill: -color-text;

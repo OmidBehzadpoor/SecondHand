@@ -192,8 +192,8 @@
                        styleClass="muted-label"/>
 
                 <ComboBox fx:id="pageSizeComboBox"
-                          prefWidth="85"
-                          styleClass="input"/>
+                          prefWidth="105"
+                          styleClass="input, page-size-select"/>
 
             </HBox>
 
