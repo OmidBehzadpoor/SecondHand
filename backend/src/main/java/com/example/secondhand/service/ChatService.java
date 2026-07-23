@@ -19,6 +19,28 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <h2>ChatService</h2>
+ * <p>
+ * سرویس مسئول مدیریت <b>گفت‌وگوها (Conversations)</b> و <b>پیام‌ها (Messages)</b>
+ * بین خریدار و فروشنده، در ارتباط با یک آگهی مشخص.
+ * </p>
+ * <ul>
+ *   <li>شروع یا بازیابی یک گفت‌وگوی موجود بین خریدار و فروشنده‌ی یک آگهی</li>
+ *   <li>ارسال پیام در یک گفت‌وگو، با بررسی عضویت فرستنده و مسدود نبودن طرفین</li>
+ *   <li>دریافت لیست گفت‌وگوهای کاربر جاری، به‌همراه آخرین پیام و تعداد پیام‌های نخوانده</li>
+ *   <li>دریافت پیام‌های یک گفت‌وگو و علامت‌گذاری آن‌ها به‌عنوان خوانده‌شده</li>
+ * </ul>
+ * <p>
+ * در تمام عملیات، وضعیت مسدود بودن ({@code UserStatus.BLOCKED}) کاربر جاری یا
+ * طرف مقابل گفت‌وگو بررسی می‌شود تا از ارسال یا شروع گفت‌وگو توسط/با کاربران
+ * مسدودشده جلوگیری شود.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.model.Conversation
+ * @see com.example.secondhand.model.Message
+ */
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -27,6 +49,24 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final AdvertisementRepository advertisementRepository;
 
+    /**
+     * شروع یک گفت‌وگوی جدید با فروشنده‌ی یک آگهی، یا بازگرداندن گفت‌وگوی
+     * موجود در صورتی که کاربر جاری قبلاً برای همین آگهی گفت‌وگویی شروع کرده باشد.
+     * <p>
+     * آگهی باید در وضعیت {@code APPROVED} یا {@code SOLD} باشد، کاربر جاری
+     * نباید فروشنده‌ی همان آگهی باشد، و هیچ‌کدام از کاربر جاری یا فروشنده
+     * نباید مسدود باشند.
+     * </p>
+     *
+     * @param adId        شناسه آگهی‌ای که گفت‌وگو درباره‌ی آن شروع می‌شود
+     * @param currentUser کاربری که قصد شروع گفت‌وگو (به‌عنوان خریدار) را دارد
+     * @return {@link ConversationResponse} حاوی اطلاعات گفت‌وگوی جدید یا موجود
+     * @throws UserBlockedException در صورتی که کاربر جاری یا فروشنده مسدود باشند
+     * @throws AdvertisementNotFoundException در صورتی که آگهی یافت نشود یا در
+     *         وضعیتی نباشد که امکان گفت‌وگو درباره‌ی آن وجود داشته باشد
+     * @throws UnauthorizedActionException در صورتی که کاربر جاری بخواهد با
+     *         آگهی خودش گفت‌وگو شروع کند
+     */
     @Transactional
     public ConversationResponse startOrGetConversation(Long adId, User currentUser) {
 
@@ -65,6 +105,21 @@ public class ChatService {
         return mapToResponse(conversationRepository.save(conversation), currentUser);
     }
 
+    /**
+     * ارسال یک پیام جدید در یک گفت‌وگوی موجود.
+     * <p>
+     * فرستنده باید یکی از دو طرف گفت‌وگو (خریدار یا فروشنده) باشد و نه
+     * فرستنده و نه طرف مقابل نباید مسدود باشند.
+     * </p>
+     *
+     * @param conversationId شناسه گفت‌وگویی که پیام باید در آن ارسال شود
+     * @param currentUser    کاربری که پیام را ارسال می‌کند
+     * @param request        محتوای پیام ارسالی
+     * @return {@link MessageResponse} حاوی اطلاعات پیام ذخیره‌شده
+     * @throws ConversationNotFoundException در صورتی که گفت‌وگو یافت نشود
+     * @throws UnauthorizedActionException در صورتی که کاربر جاری عضو این گفت‌وگو نباشد
+     * @throws UserBlockedException در صورتی که کاربر جاری یا طرف مقابل گفت‌وگو مسدود باشند
+     */
     @Transactional
     public MessageResponse sendMessage(Long conversationId, User currentUser, SendMessageRequest request) {
         Conversation conversation = conversationRepository.findById(conversationId)
@@ -103,6 +158,13 @@ public class ChatService {
         return mapToResponse(savedMessage);
     }
 
+    /**
+     * دریافت لیست تمام گفت‌وگوهای کاربر جاری (چه به‌عنوان خریدار و چه به‌عنوان
+     * فروشنده)، مرتب‌شده بر اساس آخرین به‌روزرسانی (نزولی).
+     *
+     * @param currentUser کاربری که گفت‌وگوهای او باید بازگردانده شود
+     * @return لیستی از {@link ConversationResponse} مرتبط با کاربر جاری
+     */
     @Transactional(readOnly = true)
     public List<ConversationResponse> getMyConversations(User currentUser) {
         return conversationRepository
@@ -115,6 +177,16 @@ public class ChatService {
                 .toList();
     }
 
+    /**
+     * دریافت تمام پیام‌های یک گفت‌وگو و علامت‌گذاری پیام‌های دریافتی به‌عنوان
+     * خوانده‌شده برای کاربر جاری.
+     *
+     * @param conversationId شناسه گفت‌وگویی که پیام‌های آن باید دریافت شود
+     * @param currentUser    کاربری که درخواست مشاهده‌ی پیام‌ها را داده است
+     * @return لیستی از {@link MessageResponse} مرتب‌شده بر اساس زمان ایجاد (صعودی)
+     * @throws ConversationNotFoundException در صورتی که گفت‌وگو یافت نشود
+     * @throws UnauthorizedActionException در صورتی که کاربر جاری عضو این گفت‌وگو نباشد
+     */
     @Transactional
     public List<MessageResponse> getMessages(Long conversationId, User currentUser) {
         Conversation conversation = conversationRepository.findById(conversationId)
@@ -135,6 +207,14 @@ public class ChatService {
                 .toList();
     }
 
+    /**
+     * تبدیل شیء {@link Conversation} به DTO خروجی {@link ConversationResponse}،
+     * به‌همراه آخرین پیام گفت‌وگو و تعداد پیام‌های نخوانده برای کاربر جاری.
+     *
+     * @param conversation موجودیت گفت‌وگو
+     * @param currentUser  کاربر جاری، برای محاسبه‌ی تعداد پیام‌های نخوانده‌ی او
+     * @return شیء {@link ConversationResponse} متناظر با گفت‌وگو
+     */
     private ConversationResponse mapToResponse(Conversation conversation, User currentUser) {
         String lastMessage = messageRepository
                 .findFirstByConversationIdOrderByCreatedAtDesc(conversation.getId())
@@ -162,6 +242,12 @@ public class ChatService {
                 .build();
     }
 
+    /**
+     * تبدیل شیء {@link Message} به DTO خروجی {@link MessageResponse}.
+     *
+     * @param message موجودیت پیام
+     * @return شیء {@link MessageResponse} متناظر با پیام
+     */
     private MessageResponse mapToResponse(Message message) {
         return MessageResponse.builder()
                 .id(message.getId())
