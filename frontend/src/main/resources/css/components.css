@@ -109,6 +109,22 @@
     -fx-font-size: 11px;
 }
 .status-badge { -fx-text-fill: -color-accent; -fx-font-weight: 800; }
+
+/* ====== حالت‌های رنگی بج وضعیت (کارت آگهی و علاقه‌مندی‌ها) ====== */
+.status-badge.status-approved,
+.status-badge.status-active { -fx-background-color: -color-success-soft; -fx-text-fill: -color-success; }
+.status-badge.status-pending { -fx-background-color: -color-warning-soft; -fx-text-fill: -color-warning; }
+.status-badge.status-rejected,
+.status-badge.status-blocked { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; }
+.status-badge.status-deleted {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text-muted;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 7;
+}
+.status-badge.status-sold { -fx-background-color: -color-info-soft; -fx-text-fill: -color-info; }
+
 .rating { -fx-text-fill: -color-warning; -fx-font-weight: 700; }
 .heart { -fx-font-size: 20px; -fx-text-fill: -color-danger; }
 
@@ -178,6 +194,9 @@
     -fx-font-size: 26px;
     -fx-font-weight: 900;
     -fx-text-fill: -color-accent;
+}
+.stat-card .stat-value.stat-value-compact {
+    -fx-font-size: 17px;
 }
 .stat-card .muted-label {
     -fx-font-size: 12px;
@@ -266,7 +285,49 @@
 .chat-header { -fx-padding: 15 24; -fx-background-color: -color-surface; -fx-border-color: transparent transparent -color-border transparent; }
 .chat-title { -fx-font-size: 17px; -fx-font-weight: 800; }
 .chat-list { -fx-background-color: transparent; -fx-border-color: transparent; }
-.chat-list .list-cell { -fx-background-color: transparent; }
+.chat-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 3 24;
+}
+.chat-list .list-cell:filled:selected,
+.chat-list .list-cell:filled:hover {
+    -fx-background-color: transparent;
+}
+
+/* ====== حباب‌های پیام (شبیه تلگرام) ====== */
+.chat-bubble {
+    -fx-padding: 9 14;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 6, 0, 0, 1);
+}
+.chat-bubble-mine {
+    -fx-background-color: -color-accent;
+    -fx-background-radius: 16 16 4 16;
+}
+.chat-bubble-theirs {
+    -fx-background-color: -color-surface-alt;
+    -fx-background-radius: 16 16 16 4;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 16 16 16 4;
+    -fx-border-width: 1;
+}
+.chat-text-mine {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+.chat-text-theirs {
+    -fx-text-fill: -color-text;
+    -fx-font-size: 14px;
+}
+.chat-timestamp {
+    -fx-font-size: 10px;
+}
+.chat-bubble-mine .chat-timestamp {
+    -fx-text-fill: rgba(255,255,255,0.75);
+}
+.chat-bubble-theirs .chat-timestamp {
+    -fx-text-fill: -color-text-muted;
+}
 
 /* ====== استایل‌های جدول (Table View) ====== */
 /* ====== استایل‌های جدول (Table View) ====== */
