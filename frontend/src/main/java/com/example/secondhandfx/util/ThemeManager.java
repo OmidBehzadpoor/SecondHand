@@ -1,6 +1,7 @@
 package com.example.secondhandfx.util;
 
 import javafx.scene.Scene;
+import javafx.scene.control.DialogPane;
 
 import java.util.prefs.Preferences;
 
@@ -44,5 +45,27 @@ public class ThemeManager {
                 ThemeManager.class.getResource(themeCssPath).toExternalForm(),
                 ThemeManager.class.getResource(COMPONENTS_CSS).toExternalForm()
         );
+    }
+
+    /**
+     * دیالوگ‌ها (Dialog/Alert/TextInputDialog) صحنه‌ی جدا و مستقل از پنجره‌ی اصلی دارند،
+     * بنابراین استایل‌شیت‌های اعمال‌شده روی Scene اصلی روی آن‌ها اثر نمی‌گذارد و همیشه
+     * با ظاهر پیش‌فرض روشن JavaFX نمایش داده می‌شوند. این متد همان تم و کامپوننت‌های
+     * جاری را مستقیماً روی DialogPane اعمال می‌کند تا دیالوگ‌ها هم دارک/لایت شوند.
+     */
+    public static void applyTheme(DialogPane dialogPane) {
+        if (dialogPane == null) {
+            return;
+        }
+
+        String themeCssPath = currentTheme == Theme.DARK ? DARK_CSS : LIGHT_CSS;
+
+        dialogPane.getStylesheets().setAll(
+                ThemeManager.class.getResource(themeCssPath).toExternalForm(),
+                ThemeManager.class.getResource(COMPONENTS_CSS).toExternalForm()
+        );
+        if (!dialogPane.getStyleClass().contains("root")) {
+            dialogPane.getStyleClass().add("root");
+        }
     }
 }
