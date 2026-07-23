@@ -46,27 +46,27 @@
                 <Label text="نام و نام خانوادگی"
                        styleClass="muted-label"/>
 
-                <TextField fx:id="nameField"/>
+                <TextField fx:id="nameField" styleClass="input"/>
 
                 <Label text="نام کاربری"
                        styleClass="muted-label"/>
 
-                <TextField fx:id="usernameField"/>
+                <TextField fx:id="usernameField" styleClass="input"/>
 
                 <Label text="رمز عبور"
                        styleClass="muted-label"/>
 
-                <PasswordField fx:id="passwordField"/>
+                <PasswordField fx:id="passwordField" styleClass="input"/>
 
                 <Label text="شماره تماس"
                        styleClass="muted-label"/>
 
-                <TextField fx:id="phoneField"/>
+                <TextField fx:id="phoneField" styleClass="input"/>
 
                 <Label text="ایمیل"
                        styleClass="muted-label"/>
 
-                <TextField fx:id="emailField"/>
+                <TextField fx:id="emailField" styleClass="input"/>
 
                 <Button text="ثبت‌نام"
                         onAction="#onRegisterButtonClick"
