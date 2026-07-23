@@ -6,11 +6,14 @@
             fx:controller="com.example.secondhandfx.controller.FavoritesController"
             styleClass="root">
     <top>
-        <VBox spacing="5" styleClass="page-header">
-            <Button text="← بازگشت به آگهی‌ها" onAction="#onBackClick" styleClass="back-link"/>
-            <Label text="علاقه‌مندی‌های من" styleClass="page-title"/>
-            <Label text="آگهی‌هایی که ذخیره کرده‌اید." styleClass="muted-label"/>
-        </VBox>
+        <HBox alignment="CENTER_RIGHT" styleClass="top-bar">
+            <Button text="← بازگشت به آگهی‌ها" onAction="#onBackClick" styleClass="back-btn"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox spacing="4" alignment="CENTER_RIGHT">
+                <Label text="علاقه‌مندی‌های من" styleClass="page-title"/>
+                <Label text="آگهی‌هایی که ذخیره کرده‌اید." styleClass="muted-label"/>
+            </VBox>
+        </HBox>
     </top>
     <center>
         <ScrollPane fitToWidth="true" styleClass="scroll-pane">
