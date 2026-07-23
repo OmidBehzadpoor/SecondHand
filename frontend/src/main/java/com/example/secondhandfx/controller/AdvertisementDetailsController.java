@@ -100,7 +100,7 @@ public class AdvertisementDetailsController {
         sellerLabel.setText(ad.getOwnerName() + ": فروشنده" );
 
         if (ad.getSellerAverageRating() != null && ad.getSellerRatingCount() != null && ad.getSellerRatingCount() > 0) {
-            ratingLabel.setText(String.format("⭐ %.1f از ۵ (%d امتیاز)", ad.getSellerAverageRating(), ad.getSellerRatingCount()));
+            ratingLabel.setText(String.format("⭐ %.1f از ۵ (%d رای)", ad.getSellerAverageRating(), ad.getSellerRatingCount()));
         } else {
             ratingLabel.setText("این فروشنده هنوز امتیازی ندارد");
         }
