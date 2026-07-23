@@ -269,33 +269,82 @@
 .chat-list .list-cell { -fx-background-color: transparent; }
 
 /* ====== استایل‌های جدول (Table View) ====== */
+/* ====== استایل‌های جدول (Table View) ====== */
 .table-view {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-fixed-cell-size: 54px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 16, 0.08, 0, 4);
 }
 .table-view .column-header-background {
     -fx-background-color: -color-surface-alt;
+    -fx-background-radius: 14 14 0 0;
+}
+.table-view .column-header {
+    -fx-padding: 14 10;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 2 0;
 }
 .table-view .column-header .label {
-    -fx-text-fill: -color-text-muted;  /* هدرها به رنگ طوسی */
+    -fx-text-fill: -color-text-muted;
+    -fx-font-weight: 800;
+    -fx-font-size: 12px;
 }
 .table-view .table-cell {
-    -fx-text-fill: -color-text;        /* سلول‌ها به رنگ سفید (در تم دارک) */
+    -fx-text-fill: -color-text;
+    -fx-padding: 10 10;
+    -fx-alignment: center-right;
+    -fx-border-color: transparent;
 }
 .table-row-cell {
     -fx-background-color: -color-surface;
     -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
 }
-.table-row-cell:hover { -fx-background-color: -color-surface-alt; }
-.table-row-cell:selected { -fx-background-color: -color-accent-soft; }
+.table-row-cell:odd {
+    -fx-background-color: derive(-color-surface, -3%);
+}
+.table-row-cell:hover {
+    -fx-background-color: -color-accent-soft;
+}
+.table-row-cell:hover .table-cell {
+    -fx-text-fill: -color-text;
+}
+.table-row-cell:selected {
+    -fx-background-color: -color-accent-soft;
+    -fx-border-color: transparent transparent -color-accent transparent;
+}
 .table-row-cell:selected .table-cell { -fx-text-fill: -color-text; }
-.table-view .column-header { -fx-padding: 10 8; -fx-border-color: transparent transparent -color-border transparent; }
 .table-view .filler { -fx-background-color: -color-surface-alt; }
 .table-view .corner { -fx-background-color: -color-surface-alt; }
 .table-view:focused { -fx-background-color: -color-surface; }
-.table-view .placeholder .label { -fx-text-fill: -color-text-muted; }
+.table-view .placeholder .label { -fx-text-fill: -color-text-muted; -fx-font-size: 13px; }
+
+/* ====== بج‌های وضعیت داخل جدول (Status Pills) ====== */
+.status-pill {
+    -fx-padding: 5 12;
+    -fx-background-radius: 20;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-alignment: center;
+}
+.status-pill.status-approved,
+.status-pill.status-active { -fx-background-color: -color-success-soft; -fx-text-fill: -color-success; }
+.status-pill.status-pending { -fx-background-color: -color-warning-soft; -fx-text-fill: -color-warning; }
+.status-pill.status-rejected,
+.status-pill.status-blocked { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; }
+.status-pill.status-deleted { -fx-background-color: -color-surface-alt; -fx-text-fill: -color-text-muted; }
+.status-pill.status-sold { -fx-background-color: -color-info-soft; -fx-text-fill: -color-info; }
+
+/* ====== گروه دکمه‌های عملیات داخل جدول ====== */
+.table-actions {
+    -fx-spacing: 6;
+    -fx-alignment: center-right;
+}
 
 .scroll-pane { -fx-background-color: transparent; -fx-background: transparent; }
 .scroll-pane > .viewport { -fx-background-color: transparent; }
