@@ -7,7 +7,7 @@
             styleClass="root">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="12" styleClass="chat-header">
-            <Button text="←" onAction="#onBackClick" styleClass="btn, btn-icon"/>
+            <Button text="←" onAction="#onBackClick" styleClass="back-btn-icon"/>
             <Label fx:id="headerLabel" text="" HBox.hgrow="ALWAYS"
                    maxWidth="Infinity" styleClass="chat-title"/>
             <Button fx:id="rateSellerButton" text="امتیازدهی به فروشنده"
