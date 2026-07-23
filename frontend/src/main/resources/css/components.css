@@ -132,7 +132,30 @@
 .sidebar-btn:hover { -fx-background-color: -color-surface-alt; }
 .sidebar-btn-primary { -fx-background-color: -color-accent-soft; -fx-text-fill: -color-accent; }
 .sidebar-btn-danger { -fx-text-fill: -color-danger; }
-
+/* ====== کارت‌های آماری داشبورد ادمین (نمای کلی) ====== */
+.stat-card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border -color-border -color-border -color-accent;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 14;
+    -fx-padding: 16 18;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 14, 0.1, 0, 4);
+}
+.stat-card:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.16), 18, 0.14, 0, 6);
+}
+.stat-card .stat-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -color-accent;
+}
+.stat-card .muted-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
 /* ====== استایل‌های تب‌ها (TabPane, Tab) ====== */
 .tabs .tab-header-area {
     -fx-padding: 8 20 0 20;
@@ -238,9 +261,48 @@
     -fx-background-color: -color-surface;
     -fx-border-color: transparent transparent -color-border transparent;
 }
+.table-row-cell:hover { -fx-background-color: -color-surface-alt; }
+.table-row-cell:selected { -fx-background-color: -color-accent-soft; }
+.table-row-cell:selected .table-cell { -fx-text-fill: -color-text; }
+.table-view .column-header { -fx-padding: 10 8; -fx-border-color: transparent transparent -color-border transparent; }
+.table-view .filler { -fx-background-color: -color-surface-alt; }
+.table-view .corner { -fx-background-color: -color-surface-alt; }
+.table-view:focused { -fx-background-color: -color-surface; }
+.table-view .placeholder .label { -fx-text-fill: -color-text-muted; }
 
 .scroll-pane { -fx-background-color: transparent; -fx-background: transparent; }
 .scroll-pane > .viewport { -fx-background-color: transparent; }
+
+/* ====== اسکرول‌بار سفارشیِ هماهنگ با تم (جدول‌ها و ScrollPane) ====== */
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+.scroll-bar .track,
+.scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.scroll-bar .thumb {
+    -fx-background-color: -color-border;
+    -fx-background-radius: 8;
+}
+.scroll-bar .thumb:hover,
+.scroll-bar .thumb:pressed {
+    -fx-background-color: -color-accent;
+}
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+.scroll-bar:vertical { -fx-pref-width: 10; }
+.scroll-bar:horizontal { -fx-pref-height: 10; }
 
 /* =========================================================
    SIDEBAR
@@ -388,7 +450,73 @@
     -fx-background-color: #3B82F6;
     -fx-border-color: #2563EB;
 }
-
+/* =========================================================
+   استایل دیالوگ‌ها (ویرایش دسته‌بندی، دلیل رد آگهی، Alert و ...)
+   قبلاً این دیالوگ‌ها استایل‌شیت برنامه را نمی‌گرفتند و با ظاهر
+   پیش‌فرض و روشنِ JavaFX (حتی در تم دارک) نمایش داده می‌شدند.
+   ========================================================= */
+.dialog-pane {
+    -fx-background-color: -color-surface;
+    -fx-min-width: 360;
+}
+.dialog-pane > *.button-bar > *.container {
+    -fx-background-color: transparent;
+    -fx-padding: 12 4 4 4;
+}
+.dialog-pane .content,
+.dialog-pane .content.label,
+.dialog-pane .header-panel .label,
+.dialog-pane .label {
+    -fx-text-fill: -color-text;
+}
+.dialog-pane .header-panel {
+    -fx-background-color: -color-surface-alt;
+    -fx-padding: 16 20;
+}
+.dialog-pane .header-panel .label {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+}
+.dialog-pane .button {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.dialog-pane .button:hover { -fx-background-color: -color-surface-alt; }
+.dialog-pane .button:default {
+    -fx-background-color: -color-accent;
+    -fx-text-fill: white;
+    -fx-border-color: -color-accent;
+    -fx-font-weight: 800;
+}
+.dialog-pane .text-field {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 9 12;
+    -fx-prompt-text-fill: -color-text-muted;
+}
+.dialog-pane .text-field:focused { -fx-border-color: -color-accent; }
+.dialog-pane .combo-box {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+}
+.dialog-form {
+    -fx-padding: 18 20 6 20;
+    -fx-spacing: 10;
+}
+.dialog-form .field-label {
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 12px;
+}
 /* =========================================================
    استایل‌های جدید برای صفحه‌ی ویرایش آگهی
    ========================================================= */
