@@ -9,6 +9,7 @@ import com.example.secondhandfx.model.CityResponse;
 import com.example.secondhandfx.service.*;
 import com.example.secondhandfx.util.AlertUtil;
 import com.example.secondhandfx.util.SceneNavigator;
+import com.example.secondhandfx.util.ThemeManager;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -195,7 +196,9 @@ public class AdminPanelController {
 
     private void onRejectClick(AdminAdvertisementResponse ad) {
         TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("رد آگهی");
         dialog.setHeaderText("دلیل رد آگهی را وارد کنید:");
+        ThemeManager.applyTheme(dialog.getDialogPane());
         dialog.showAndWait().ifPresent(reason -> {
             if (reason.isBlank()) {
                 AlertUtil.showError("دلیل رد نمی‌تواند خالی باشد.");
@@ -320,7 +323,7 @@ public class AdminPanelController {
         parentCategoryComboBox.setConverter(new javafx.util.StringConverter<>() {
             @Override
             public String toString(CategoryResponse category) {
-                return category == null ? "" : category.getName();
+                return category == null ? "بدون والد (ریشه)" : category.getName();
             }
 
             @Override
@@ -332,8 +335,16 @@ public class AdminPanelController {
 
     private void onEditCategoryClick(CategoryResponse category) {
         TextField nameField = new TextField(category.getName());
+        nameField.getStyleClass().add("input");
 
-        ComboBox<CategoryResponse> parentBox = new ComboBox<>(FXCollections.observableArrayList(categories));
+        ObservableList<CategoryResponse> parentOptions = FXCollections.observableArrayList();
+        parentOptions.add(null); // «بدون والد (ریشه)» — همیشه قابل انتخاب، حتی بعد از انتخاب یک والد
+        categories.stream()
+                .filter(c -> !c.getId().equals(category.getId()))
+                .forEach(parentOptions::add);
+
+        ComboBox<CategoryResponse> parentBox = new ComboBox<>(parentOptions);
+        parentBox.setMaxWidth(Double.MAX_VALUE);
         parentBox.setConverter(new javafx.util.StringConverter<>() {
             @Override
             public String toString(CategoryResponse c) {
@@ -345,20 +356,26 @@ public class AdminPanelController {
                 return null;
             }
         });
-        categories.stream()
+        CategoryResponse currentParent = categories.stream()
                 .filter(c -> c.getId().equals(category.getParentId()))
                 .findFirst()
-                .ifPresent(parentBox::setValue);
+                .orElse(null);
+        parentBox.setValue(currentParent);
 
-        VBox content = new VBox(10,
-                new Label("نام دسته‌بندی:"), nameField,
-                new Label("دسته‌ی والد:"), parentBox);
-        content.setStyle("-fx-padding: 15;");
+        Label nameLabel = new Label("نام دسته‌بندی");
+        nameLabel.getStyleClass().add("field-label");
+        Label parentLabel = new Label("دسته‌ی والد");
+        parentLabel.getStyleClass().add("field-label");
+
+        VBox content = new VBox(6, nameLabel, nameField, parentLabel, parentBox);
+        content.getStyleClass().add("dialog-form");
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("ویرایش دسته‌بندی");
+        dialog.setHeaderText("ویرایش دسته‌بندی «" + category.getName() + "»");
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ThemeManager.applyTheme(dialog.getDialogPane());
 
         dialog.showAndWait().filter(result -> result == ButtonType.OK).ifPresent(result -> {
             String newName = nameField.getText().trim();
@@ -380,7 +397,6 @@ public class AdminPanelController {
             new Thread(task).start();
         });
     }
-
     private void loadCategories() {
         Task<List<CategoryResponse>> task = new Task<>() {
             @Override
@@ -392,7 +408,11 @@ public class AdminPanelController {
             List<CategoryResponse> flattened = new ArrayList<>();
             flattenCategories(task.getValue(), flattened);
             categories.setAll(flattened);
-            parentCategoryComboBox.setItems(FXCollections.observableArrayList(flattened));
+
+            ObservableList<CategoryResponse> options = FXCollections.observableArrayList();
+            options.add(null); // «بدون والد (ریشه)» — همیشه به‌عنوان اولین گزینه قابل انتخاب است
+            options.addAll(flattened);
+            parentCategoryComboBox.setItems(options);
         });
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
