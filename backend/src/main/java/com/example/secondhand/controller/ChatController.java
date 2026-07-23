@@ -16,6 +16,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * <h2>ChatController</h2>
+ * <p>
+ * کنترلر مسئول <b>مکالمه و پیام‌رسانی</b> بین خریدار و فروشنده، در ارتباط با
+ * یک آگهی مشخص. تمام اندپوینت‌های این کنترلر تحت مسیر پایه {@code /api/chat}
+ * قرار دارند و نیاز به احراز هویت دارند.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.service.ChatService
+ */
 @RestController
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor
@@ -25,6 +36,13 @@ public class ChatController {
     private final ChatService chatService;
 
 
+    /**
+     * شروع یک گفت‌وگوی جدید با فروشنده‌ی یک آگهی، یا بازگرداندن گفت‌وگوی موجود.
+     *
+     * @param adId        شناسه آگهی‌ای که گفت‌وگو درباره‌ی آن شروع می‌شود
+     * @param currentUser کاربر جاری (خریدار)
+     * @return {@link ResponseEntity} حاوی {@link ConversationResponse} گفت‌وگوی جدید یا موجود
+     */
     @PostMapping("/conversations/advertisement/{adId}")
     public ResponseEntity<ApiResponse<ConversationResponse>> startOrGetConversation(
             @PathVariable Long adId,
@@ -35,6 +53,12 @@ public class ChatController {
     }
 
 
+    /**
+     * دریافت لیست تمام گفت‌وگوهای کاربر جاری.
+     *
+     * @param currentUser کاربر جاری
+     * @return {@link ResponseEntity} حاوی لیست {@link ConversationResponse} مرتبط با کاربر جاری
+     */
     @GetMapping("/conversations")
     public ResponseEntity<ApiResponse<List<ConversationResponse>>> getMyConversations(
             @AuthenticationPrincipal User currentUser) {
@@ -43,6 +67,13 @@ public class ChatController {
     }
 
 
+    /**
+     * دریافت تمام پیام‌های یک گفت‌وگو.
+     *
+     * @param conversationId شناسه گفت‌وگویی که پیام‌های آن باید دریافت شود
+     * @param currentUser    کاربر جاری (باید عضو گفت‌وگو باشد)
+     * @return {@link ResponseEntity} حاوی لیست {@link MessageResponse} گفت‌وگو
+     */
     @GetMapping("/conversations/{conversationId}/messages")
     public ResponseEntity<ApiResponse<List<MessageResponse>>> getMessages(
             @PathVariable Long conversationId,
@@ -52,6 +83,14 @@ public class ChatController {
     }
 
 
+    /**
+     * ارسال یک پیام جدید در یک گفت‌وگوی موجود.
+     *
+     * @param conversationId شناسه گفت‌وگویی که پیام باید در آن ارسال شود
+     * @param request        محتوای پیام ارسالی
+     * @param currentUser    کاربر جاری (باید عضو گفت‌وگو باشد)
+     * @return {@link ResponseEntity} با کد وضعیت {@code 201 CREATED} و اطلاعات پیام ذخیره‌شده
+     */
     @PostMapping("/conversations/{conversationId}/messages")
     public ResponseEntity<ApiResponse<MessageResponse>> sendMessage(
             @PathVariable Long conversationId,
