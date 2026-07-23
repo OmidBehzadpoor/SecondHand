@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.scene.layout.HBox?>
 <StackPane xmlns="http://javafx.com/javafx/26"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.example.secondhandfx.controller.RegisterController"
@@ -36,9 +37,11 @@
                             left="30"/>
                 </padding>
 
-                <Button text="← بازگشت به صفحه اصلی"
-                        onAction="#onBackToHomeClick"
-                        styleClass="back-link"/>
+                <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+                    <Button text="← بازگشت به صفحه اصلی"
+                            onAction="#onBackToHomeClick"
+                            styleClass="back-btn"/>
+                </HBox>
 
                 <Label text="ثبت‌نام"
                        styleClass="page-title"/>
