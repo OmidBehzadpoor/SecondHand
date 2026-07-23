@@ -136,6 +136,12 @@
 /* ====== استایل‌های تب‌ها (TabPane, Tab) ====== */
 .tabs .tab-header-area {
     -fx-padding: 8 20 0 20;
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.tabs .tab-header-background {
+    -fx-background-color: -color-surface;
 }
 .tabs .tab {
     -fx-background-color: transparent;
@@ -154,7 +160,7 @@
     -fx-text-fill: -color-accent;
 }
 .tabs .tab:hover .tab-label {
-    -fx-text-fill: black;  /* ← سیاه هنگام هاور */
+    -fx-text-fill: -color-text;
 }
 
 /* ====== استایل‌های کامبوباکس (برای خوانایی بهتر در تم دارک) ====== */
