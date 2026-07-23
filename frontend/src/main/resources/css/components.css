@@ -137,6 +137,19 @@
 .back-btn-icon:pressed, .back-btn-icon:armed {
     -fx-background-color: -color-border;
 }
+/* نسخه‌ی سبک (بدون پس‌زمینه) برای صفحات ورود/ثبت‌نام که فضای کمی دارن */
+.back-btn-ghost {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -color-text-muted;
+    -fx-padding: 4 2 4 2;
+    -fx-font-weight: 600;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-effect: none;
+}
+.back-btn-ghost:hover { -fx-text-fill: -color-accent; }
+.back-btn-ghost:pressed, .back-btn-ghost:armed { -fx-text-fill: derive(-color-accent, -15%); }
 .page-title, .section-title { -fx-font-size: 24px; -fx-font-weight: 900; }
 .section-title-small { -fx-font-size: 16px; -fx-font-weight: 800; }
 .eyebrow { -fx-font-size: 11px; -fx-font-weight: 800; -fx-text-fill: -color-accent; }
