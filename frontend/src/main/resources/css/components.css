@@ -319,6 +319,15 @@
 }
 .combo-box .text-field {
     -fx-text-fill: -color-text;
+    -fx-background-color: -color-surface;
+    -fx-prompt-text-fill: -color-text-muted;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-padding: 4 4 4 8;
+}
+.combo-box .text-field:focused {
+    -fx-background-color: -color-surface;
 }
 .combo-box .arrow-button {
     -fx-background-color: -color-surface;

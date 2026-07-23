@@ -33,6 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.util.List;
@@ -87,8 +88,31 @@ public class HomeController implements Initializable {
 
         pageSizeComboBox.getItems().addAll(12, 24, 48);
         pageSizeComboBox.getSelectionModel().select(Integer.valueOf(pageSize));
+        pageSizeComboBox.setConverter(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer value) {
+                return value == null ? "" : String.valueOf(value);
+            }
+
+            @Override
+            public Integer fromString(String text) {
+                if (text == null || text.isBlank()) {
+                    return pageSize;
+                }
+                try {
+                    int typed = Integer.parseInt(text.trim());
+                    return Math.max(1, Math.min(typed, 500));
+                } catch (NumberFormatException e) {
+                    return pageSize;
+                }
+            }
+        });
         pageSizeComboBox.setOnAction(event -> {
-            pageSize = pageSizeComboBox.getSelectionModel().getSelectedItem();
+            Integer selected = pageSizeComboBox.getValue();
+            if (selected == null) {
+                return;
+            }
+            pageSize = selected;
             currentPage = 0;
             loadAdvertisements();
         });
