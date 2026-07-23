@@ -63,13 +63,15 @@ Note that in order to prevent the JVM's module check from failing to locate sepa
  
 If you don't want to build from source, a runnable jar is published automatically on every push to the frontend, as a GitHub Release: **[Latest Frontend Build (Desktop)](https://github.com/OmidBehzadpoor/SecondHand/releases/tag/latest-frontend)**.
  
-Download the jar asset from that release and run it directly:
+Download the jar matching your OS from that release's assets and run it directly:
 ```bash
-java -jar secondhand-frontend.jar
+java -jar secondhand-frontend-ubuntu-latest.jar    # Linux
+java -jar secondhand-frontend-windows-latest.jar   # Windows
+java -jar secondhand-frontend-macos-latest.jar     # macOS
 ```
  
 > [!NOTE]
-> `latest-frontend` is a rolling tag — its assets are overwritten by an automated build on every update, so it always reflects the most recent frontend commit rather than a fixed version number.
+> `latest-frontend` is a rolling tag — its assets are overwritten by an automated build (one jar per OS: Linux, Windows, macOS) on every update, so it always reflects the most recent frontend commit rather than a fixed version number.
  
 ---
  
@@ -79,7 +81,7 @@ java -jar secondhand-frontend.jar
 cd frontend
 ./mvnw package
 ```
-The `maven-shade-plugin` bundles all dependencies (JavaFX, Jackson, etc.) into a single runnable jar at `target/secondhand-frontend.jar`, with `Launcher` set as the main class. This is the same jar published in the [GitHub releases](#-downloading-a-pre-built-release) above.
+The `maven-shade-plugin` bundles all dependencies (JavaFX, Jackson, etc.) into a single runnable jar at `target/secondhand-frontend.jar`, with `Launcher` set as the main class. This is the same jar published in the pre-built GitHub release described above.
  
 ---
  
