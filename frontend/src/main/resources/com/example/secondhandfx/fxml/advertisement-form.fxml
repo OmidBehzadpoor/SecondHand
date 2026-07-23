@@ -22,78 +22,83 @@
     <!-- ====== محتوای اصلی ====== -->
     <center>
         <ScrollPane fitToWidth="true" styleClass="scroll-pane">
-            <VBox maxWidth="760" spacing="16" styleClass="form-content" alignment="TOP_RIGHT">
+            <StackPane alignment="TOP_CENTER">
+                <VBox maxWidth="760" spacing="16" styleClass="form-content" alignment="TOP_RIGHT">
 
-                <!-- ====== کارت اطلاعات آگهی ====== -->
-                <VBox spacing="10" styleClass="form-card" alignment="TOP_RIGHT">
-                    <Label text="اطلاعات آگهی" styleClass="section-title-small" alignment="CENTER_RIGHT"/>
+                    <!-- ====== کارت اطلاعات آگهی ====== -->
+                    <VBox spacing="10" styleClass="form-card" alignment="TOP_RIGHT">
+                        <Label text="اطلاعات آگهی" styleClass="section-title-small" alignment="CENTER_RIGHT"/>
 
-                    <!-- عنوان -->
-                    <Label text="عنوان" styleClass="field-label" alignment="CENTER_RIGHT"/>
-                    <TextField fx:id="titleField" promptText="عنوان آگهی" styleClass="input" alignment="CENTER_RIGHT"/>
+                        <!-- عنوان -->
+                        <Label text="عنوان" styleClass="field-label" alignment="CENTER_RIGHT"/>
+                        <TextField fx:id="titleField" promptText="عنوان آگهی" styleClass="input"
+                                   alignment="CENTER_RIGHT"/>
 
-                    <!-- توضیحات -->
-                    <Label text="توضیحات" styleClass="field-label" alignment="CENTER_RIGHT"/>
-                    <TextArea fx:id="descriptionArea" promptText="توضیحات کامل کالا..."
-                              prefRowCount="7" wrapText="true" styleClass="input"/>
+                        <!-- توضیحات -->
+                        <Label text="توضیحات" styleClass="field-label" alignment="CENTER_RIGHT"/>
+                        <TextArea fx:id="descriptionArea" promptText="توضیحات کامل کالا..."
+                                  prefRowCount="7" wrapText="true" styleClass="input"
+                                  nodeOrientation="RIGHT_TO_LEFT"/>
 
-                    <!-- جدول دوستونه (قیمت، دسته‌بندی، شهر) -->
-                    <GridPane hgap="12" vgap="10" alignment="TOP_RIGHT">
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="50"/>
-                            <ColumnConstraints percentWidth="50"/>
-                        </columnConstraints>
+                        <!-- جدول دوستونه (قیمت، دسته‌بندی، شهر) -->
+                        <GridPane hgap="12" vgap="10" alignment="TOP_RIGHT">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
 
-                        <!-- قیمت -->
-                        <VBox spacing="6" GridPane.columnIndex="1" alignment="TOP_RIGHT">
-                            <Label text="قیمت" styleClass="field-label" alignment="CENTER_RIGHT"/>
-                            <TextField fx:id="priceField" promptText="قیمت به تومان" styleClass="input" alignment="CENTER_RIGHT"/>
-                        </VBox>
+                            <!-- قیمت -->
+                            <VBox spacing="6" GridPane.columnIndex="1" alignment="TOP_RIGHT">
+                                <Label text="قیمت" styleClass="field-label" alignment="CENTER_RIGHT"/>
+                                <TextField fx:id="priceField" promptText="قیمت به تومان" styleClass="input"
+                                           alignment="CENTER_RIGHT"/>
+                            </VBox>
 
-                        <!-- دسته‌بندی -->
-                        <VBox spacing="6" GridPane.columnIndex="0" alignment="TOP_RIGHT">
-                            <Label text="دسته‌بندی" styleClass="field-label" alignment="CENTER_RIGHT"/>
-                            <ComboBox fx:id="categoryComboBox" promptText="انتخاب دسته‌بندی"
-                                      maxWidth="Infinity" styleClass="input"/>
-                        </VBox>
+                            <!-- دسته‌بندی -->
+                            <VBox spacing="6" GridPane.columnIndex="0" alignment="TOP_RIGHT">
+                                <Label text="دسته‌بندی" styleClass="field-label" alignment="CENTER_RIGHT"/>
+                                <ComboBox fx:id="categoryComboBox" promptText="انتخاب دسته‌بندی"
+                                          maxWidth="Infinity" styleClass="input"/>
+                            </VBox>
 
-                        <!-- شهر (ردیف دوم) -->
-                        <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="TOP_RIGHT">
-                            <Label text="شهر" styleClass="field-label" alignment="CENTER_RIGHT"/>
-                            <ComboBox fx:id="cityComboBox" promptText="انتخاب شهر"
-                                      maxWidth="Infinity" styleClass="input"/>
-                        </VBox>
-                    </GridPane>
-                </VBox>
+                            <!-- شهر (ردیف دوم) -->
+                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="TOP_RIGHT">
+                                <Label text="شهر" styleClass="field-label" alignment="CENTER_RIGHT"/>
+                                <ComboBox fx:id="cityComboBox" promptText="انتخاب شهر"
+                                          maxWidth="Infinity" styleClass="input"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
 
-                <!-- ====== تصاویر فعلی (در حالت ویرایش) ====== -->
-                <VBox fx:id="existingImagesSection" spacing="10"
-                      visible="false" managed="false" styleClass="form-card" alignment="TOP_RIGHT">
-                    <Label text="تصاویر فعلی" styleClass="section-title-small" alignment="CENTER_RIGHT"/>
-                    <ListView fx:id="existingImagesListView" prefHeight="120"/>
-                </VBox>
+                    <!-- ====== تصاویر فعلی (در حالت ویرایش) ====== -->
+                    <VBox fx:id="existingImagesSection" spacing="10"
+                          visible="false" managed="false" styleClass="form-card" alignment="TOP_RIGHT">
+                        <Label text="تصاویر فعلی" styleClass="section-title-small" alignment="CENTER_RIGHT"/>
+                        <ListView fx:id="existingImagesListView" prefHeight="120"/>
+                    </VBox>
 
-                <!-- ====== تصاویر جدید ====== -->
-                <VBox spacing="10" styleClass="form-card" alignment="TOP_RIGHT">
-                    <Label text="تصاویر جدید" styleClass="section-title-small" alignment="CENTER_RIGHT"/>
-                    <ListView fx:id="selectedImagesListView" prefHeight="120"/>
-                    <HBox spacing="8" alignment="CENTER_RIGHT">
-                        <Button text="افزودن تصویر" onAction="#onAddImageClick" styleClass="btn"/>
-                        <Button text="حذف تصویر انتخاب‌شده" onAction="#onRemoveImageClick"
-                                styleClass="btn, btn-danger"/>
+                    <!-- ====== تصاویر جدید ====== -->
+                    <VBox spacing="10" styleClass="form-card" alignment="TOP_RIGHT">
+                        <Label text="تصاویر جدید" styleClass="section-title-small" alignment="CENTER_RIGHT"/>
+                        <ListView fx:id="selectedImagesListView" prefHeight="120"/>
+                        <HBox spacing="8" alignment="CENTER_RIGHT">
+                            <Button text="افزودن تصویر" onAction="#onAddImageClick" styleClass="btn"/>
+                            <Button text="حذف تصویر انتخاب‌شده" onAction="#onRemoveImageClick"
+                                    styleClass="btn, btn-danger"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- ====== دکمه‌های پایین ====== -->
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button fx:id="submitButton" text="ذخیره آگهی"
+                                onAction="#onSubmitClick" HBox.hgrow="ALWAYS"
+                                styleClass="btn, btn-primary"/>
+                        <Button text="انصراف" onAction="#onCancelClick"
+                                HBox.hgrow="ALWAYS" styleClass="btn"/>
                     </HBox>
+
                 </VBox>
-
-                <!-- ====== دکمه‌های پایین ====== -->
-                <HBox spacing="10" alignment="CENTER_RIGHT">
-                    <Button fx:id="submitButton" text="ذخیره آگهی"
-                            onAction="#onSubmitClick" HBox.hgrow="ALWAYS"
-                            styleClass="btn, btn-primary"/>
-                    <Button text="انصراف" onAction="#onCancelClick"
-                            HBox.hgrow="ALWAYS" styleClass="btn"/>
-                </HBox>
-
-            </VBox>
+            </StackPane>
         </ScrollPane>
     </center>
 
