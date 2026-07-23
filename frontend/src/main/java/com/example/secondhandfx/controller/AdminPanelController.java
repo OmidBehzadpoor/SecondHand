@@ -142,11 +142,18 @@ public class AdminPanelController {
     private VBox buildStatCard(String label, String value) {
         Label valueLabel = new Label(value);
         valueLabel.getStyleClass().add("stat-value");
+        valueLabel.setWrapText(true);
+        valueLabel.setMaxWidth(Double.MAX_VALUE);
+        if (value != null && value.length() > 6) {
+            valueLabel.getStyleClass().add("stat-value-compact");
+        }
         Label titleLabel = new Label(label);
         titleLabel.getStyleClass().add("muted-label");
+        titleLabel.setWrapText(true);
 
         VBox card = new VBox(6, valueLabel, titleLabel);
-        card.setPrefWidth(150);
+        card.setPrefWidth(170);
+        card.setMinWidth(170);
         card.getStyleClass().add("stat-card");
         return card;
     }
@@ -644,6 +651,10 @@ public class AdminPanelController {
             private final HBox box = new HBox(5, viewButton, deleteButton);
 
             {
+                viewButton.getStyleClass().addAll("btn", "btn-sm", "btn-outline");
+                deleteButton.getStyleClass().addAll("btn", "btn-sm", "btn-danger");
+                box.getStyleClass().add("table-actions");
+
                 viewButton.setOnAction(e -> {
                     AdminAdvertisementResponse ad = getTableView().getItems().get(getIndex());
                     onViewAllAdClick(ad);
