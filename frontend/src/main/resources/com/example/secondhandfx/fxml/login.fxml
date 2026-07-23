@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
 
@@ -30,15 +31,17 @@
                   styleClass="card">
 
                 <padding>
-                    <Insets top="30"
+                    <Insets top="22"
                             right="30"
                             bottom="30"
                             left="30"/>
                 </padding>
 
-                <Button text="← بازگشت به صفحه اصلی"
-                        onAction="#onBackToHomeClick"
-                        styleClass="back-link"/>
+                <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
+                    <Button text="← بازگشت به صفحه اصلی"
+                            onAction="#onBackToHomeClick"
+                            styleClass="back-btn-ghost"/>
+                </HBox>
 
                 <Label text="ورود به اکانت"
                        styleClass="page-title"/>

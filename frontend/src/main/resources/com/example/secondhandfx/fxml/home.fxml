@@ -193,7 +193,8 @@
 
                 <ComboBox fx:id="pageSizeComboBox"
                           prefWidth="85"
-                          styleClass="input"/>
+                          editable="true"
+                          styleClass="input, page-size-select"/>
 
             </HBox>
 

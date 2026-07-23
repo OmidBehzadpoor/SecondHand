@@ -6,11 +6,14 @@
             fx:controller="com.example.secondhandfx.controller.MyAdvertisementsController"
             styleClass="root">
     <top>
-        <VBox spacing="5" styleClass="page-header">
-            <Button text="← بازگشت به آگهی‌ها" onAction="#onBackClick" styleClass="back-link"/>
-            <Label text="آگهی‌های من" styleClass="page-title"/>
-            <Label text="آگهی‌های خود را بر اساس وضعیت مدیریت کنید." styleClass="muted-label"/>
-        </VBox>
+        <HBox alignment="CENTER_RIGHT" styleClass="top-bar">
+            <Button text="← بازگشت به آگهی‌ها" onAction="#onBackClick" styleClass="back-btn"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox spacing="4" alignment="CENTER_RIGHT">
+                <Label text="آگهی‌های من" styleClass="page-title"/>
+                <Label text="آگهی‌های خود را بر اساس وضعیت مدیریت کنید." styleClass="muted-label"/>
+            </VBox>
+        </HBox>
     </top>
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="tabs">

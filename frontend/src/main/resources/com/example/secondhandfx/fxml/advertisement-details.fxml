@@ -9,7 +9,7 @@
 
     <top>
         <HBox alignment="CENTER_RIGHT" styleClass="top-bar">
-            <Button text="← بازگشت" onAction="#onBackClick" styleClass="back-link"/>
+            <Button text="← بازگشت" onAction="#onBackClick" styleClass="back-btn"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Label text="جزئیات آگهی" styleClass="section-title"/>
         </HBox>
