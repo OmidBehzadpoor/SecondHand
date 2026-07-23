@@ -26,36 +26,63 @@ import java.util.List;
 
 public class AdminPanelController {
 
-    @FXML private FlowPane statsContainer;
+    @FXML
+    private FlowPane statsContainer;
 
-    @FXML private TableView<AdminAdvertisementResponse> pendingAdsTable;
-    @FXML private TableColumn<AdminAdvertisementResponse, String> adTitleColumn;
-    @FXML private TableColumn<AdminAdvertisementResponse, String> adSellerColumn;
-    @FXML private TableColumn<AdminAdvertisementResponse, String> adPriceColumn;
-    @FXML private TableColumn<AdminAdvertisementResponse, Void> adActionsColumn;
-    @FXML private TableView<AdminAdvertisementResponse> allAdsTable;
-    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdTitleColumn;
-    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdSellerColumn;
-    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdPriceColumn;
-    @FXML private TableColumn<AdminAdvertisementResponse, String> allAdStatusColumn;
-    @FXML private TableColumn<AdminAdvertisementResponse, Void> allAdActionsColumn;
-    @FXML private TableView<AdminUserResponse> usersTable;
-    @FXML private TableColumn<AdminUserResponse, String> userNameColumn;
-    @FXML private TableColumn<AdminUserResponse, String> userRoleColumn;
-    @FXML private TableColumn<AdminUserResponse, String> userStatusColumn;
-    @FXML private TableColumn<AdminUserResponse, Void> userActionsColumn;
-    @FXML private TabPane adminTabPane;
+    @FXML
+    private TableView<AdminAdvertisementResponse> pendingAdsTable;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, String> adTitleColumn;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, String> adSellerColumn;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, String> adPriceColumn;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, Void> adActionsColumn;
+    @FXML
+    private TableView<AdminAdvertisementResponse> allAdsTable;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, String> allAdTitleColumn;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, String> allAdSellerColumn;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, String> allAdPriceColumn;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, String> allAdStatusColumn;
+    @FXML
+    private TableColumn<AdminAdvertisementResponse, Void> allAdActionsColumn;
+    @FXML
+    private TableView<AdminUserResponse> usersTable;
+    @FXML
+    private TableColumn<AdminUserResponse, String> userNameColumn;
+    @FXML
+    private TableColumn<AdminUserResponse, String> userRoleColumn;
+    @FXML
+    private TableColumn<AdminUserResponse, String> userStatusColumn;
+    @FXML
+    private TableColumn<AdminUserResponse, Void> userActionsColumn;
+    @FXML
+    private TabPane adminTabPane;
 
-    @FXML private TextField newCategoryField;
-    @FXML private ComboBox<CategoryResponse> parentCategoryComboBox;
-    @FXML private TableView<CategoryResponse> categoriesTable;
-    @FXML private TableColumn<CategoryResponse, String> categoryNameColumn;
-    @FXML private TableColumn<CategoryResponse, Void> categoryActionsColumn;
+    @FXML
+    private TextField newCategoryField;
+    @FXML
+    private ComboBox<CategoryResponse> parentCategoryComboBox;
+    @FXML
+    private TableView<CategoryResponse> categoriesTable;
+    @FXML
+    private TableColumn<CategoryResponse, String> categoryNameColumn;
+    @FXML
+    private TableColumn<CategoryResponse, Void> categoryActionsColumn;
 
-    @FXML private TextField newCityField;
-    @FXML private TableView<CityResponse> citiesTable;
-    @FXML private TableColumn<CityResponse, String> cityNameColumn;
-    @FXML private TableColumn<CityResponse, Void> cityActionsColumn;
+    @FXML
+    private TextField newCityField;
+    @FXML
+    private TableView<CityResponse> citiesTable;
+    @FXML
+    private TableColumn<CityResponse, String> cityNameColumn;
+    @FXML
+    private TableColumn<CityResponse, Void> cityActionsColumn;
 
     private final AdminService adminService = new AdminServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
@@ -134,9 +161,15 @@ public class AdminPanelController {
             private final Button approveButton = new Button("تایید");
             private final Button rejectButton = new Button("رد");
             private final Button deleteButton = new Button("حذف");
-            private final HBox box = new HBox(5, viewButton, approveButton, rejectButton, deleteButton);
+            private final HBox box = new HBox(6, viewButton, approveButton, rejectButton, deleteButton);
 
             {
+                viewButton.getStyleClass().addAll("btn", "btn-sm", "btn-outline");
+                approveButton.getStyleClass().addAll("btn", "btn-sm", "btn-success");
+                rejectButton.getStyleClass().addAll("btn", "btn-sm", "btn-warning");
+                deleteButton.getStyleClass().addAll("btn", "btn-sm", "btn-danger");
+                box.getStyleClass().add("table-actions");
+
                 viewButton.setOnAction(e -> onViewAdClick(getTableView().getItems().get(getIndex())));
                 approveButton.setOnAction(e -> onApproveClick(getTableView().getItems().get(getIndex())));
                 rejectButton.setOnAction(e -> onRejectClick(getTableView().getItems().get(getIndex())));
@@ -235,16 +268,18 @@ public class AdminPanelController {
         task.setOnFailed(e -> showError(task.getException()));
         new Thread(task).start();
     }
-    
+
     private void setupUsersTable() {
         userNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUsername()));
         userRoleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getRole().name()));
         userStatusColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUserStatus()));
+        userStatusColumn.setCellFactory(column -> createStatusPillCell());
 
         userActionsColumn.setCellFactory(column -> new TableCell<>() {
             private final Button toggleButton = new Button();
 
             {
+                toggleButton.getStyleClass().addAll("btn", "btn-sm");
                 toggleButton.setOnAction(e -> onToggleBlockClick(getTableView().getItems().get(getIndex())));
             }
 
@@ -258,11 +293,52 @@ public class AdminPanelController {
                 AdminUserResponse user = getTableView().getItems().get(getIndex());
                 boolean isBlocked = "BLOCKED".equals(user.getUserStatus());
                 toggleButton.setText(isBlocked ? "آنبلاک" : "بلاک");
+                toggleButton.getStyleClass().removeAll("btn-success", "btn-danger");
+                toggleButton.getStyleClass().add(isBlocked ? "btn-success" : "btn-danger");
                 setGraphic(toggleButton);
             }
         });
 
         usersTable.setItems(users);
+    }
+
+    /**
+     * سلول عمومی برای نمایش وضعیت به‌صورت بج رنگی (Status Pill) به‌جای متن ساده.
+     */
+    private <T> TableCell<T, String> createStatusPillCell() {
+        return new TableCell<>() {
+            private final Label pill = new Label();
+
+            {
+                pill.getStyleClass().add("status-pill");
+            }
+
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+                if (empty || status == null) {
+                    setGraphic(null);
+                    return;
+                }
+                pill.setText(translateStatus(status));
+                pill.getStyleClass().removeIf(c -> c.startsWith("status-") && !c.equals("status-pill"));
+                pill.getStyleClass().add("status-" + status.toLowerCase());
+                setGraphic(pill);
+            }
+        };
+    }
+
+    private String translateStatus(String status) {
+        return switch (status) {
+            case "APPROVED" -> "تایید‌شده";
+            case "PENDING" -> "در انتظار بررسی";
+            case "REJECTED" -> "رد‌شده";
+            case "DELETED" -> "حذف‌شده";
+            case "SOLD" -> "فروخته‌شده";
+            case "ACTIVE" -> "فعال";
+            case "BLOCKED" -> "بلاک‌شده";
+            default -> status;
+        };
     }
 
     private void loadUsers() {
@@ -297,9 +373,13 @@ public class AdminPanelController {
             private final Button editButton = new Button("ویرایش");
             private final Button toggleButton = new Button();
             private final Button deleteButton = new Button("حذف");
-            private final HBox box = new HBox(5, editButton, toggleButton, deleteButton);
+            private final HBox box = new HBox(6, editButton, toggleButton, deleteButton);
 
             {
+                editButton.getStyleClass().addAll("btn", "btn-sm", "btn-outline");
+                deleteButton.getStyleClass().addAll("btn", "btn-sm", "btn-danger");
+                box.getStyleClass().add("table-actions");
+
                 editButton.setOnAction(e -> onEditCategoryClick(getTableView().getItems().get(getIndex())));
                 toggleButton.setOnAction(e -> onToggleCategoryActiveClick(getTableView().getItems().get(getIndex())));
                 deleteButton.setOnAction(e -> onDeleteCategoryClick(getTableView().getItems().get(getIndex())));
@@ -313,7 +393,10 @@ public class AdminPanelController {
                     return;
                 }
                 CategoryResponse category = getTableView().getItems().get(getIndex());
-                toggleButton.setText(category.isActive() ? "غیرفعال" : "فعال");
+                boolean isActive = category.isActive();
+                toggleButton.setText(isActive ? "غیرفعال" : "فعال");
+                toggleButton.getStyleClass().removeAll("btn", "btn-sm", "btn-success", "btn-warning");
+                toggleButton.getStyleClass().addAll("btn", "btn-sm", isActive ? "btn-warning" : "btn-success");
                 setGraphic(box);
             }
         });
@@ -397,6 +480,7 @@ public class AdminPanelController {
             new Thread(task).start();
         });
     }
+
     private void loadCategories() {
         Task<List<CategoryResponse>> task = new Task<>() {
             @Override
@@ -488,6 +572,7 @@ public class AdminPanelController {
             private final Button deleteButton = new Button("حذف");
 
             {
+                deleteButton.getStyleClass().addAll("btn", "btn-sm", "btn-danger");
                 deleteButton.setOnAction(e -> onDeleteCityClick(getTableView().getItems().get(getIndex())));
             }
 
