@@ -78,11 +78,64 @@
 .btn-sm { -fx-padding: 6 11; -fx-font-size: 12px; -fx-background-radius: 7; -fx-border-radius: 7; -fx-effect: none; }
 
 .btn-icon { -fx-padding: 7 11; -fx-font-size: 16px; }
-.back-link, .link {
+
+.link {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-text-fill: -color-accent;
+    -fx-font-weight: 700;
     -fx-cursor: hand;
+}
+.link:hover { -fx-underline: true; }
+
+/* ====== دکمه‌ی بازگشت (به‌جای متن ساده‌ی لینک‌مانند قبلی) ====== */
+.back-btn {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text-muted;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-padding: 7 16 7 16;
+    -fx-font-weight: 700;
+    -fx-font-size: 12.5px;
+    -fx-cursor: hand;
+    -fx-effect: none;
+}
+.back-btn:hover {
+    -fx-background-color: -color-accent-soft;
+    -fx-text-fill: -color-accent;
+    -fx-border-color: -color-accent;
+}
+.back-btn:pressed, .back-btn:armed {
+    -fx-background-color: -color-border;
+    -fx-translate-y: 1;
+}
+
+/* نسخه‌ی گرد (فقط آیکون) برای هدر گفتگو */
+.back-btn-icon {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text-muted;
+    -fx-border-color: -color-border;
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-min-width: 38px;
+    -fx-min-height: 38px;
+    -fx-pref-width: 38px;
+    -fx-pref-height: 38px;
+    -fx-padding: 0;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER;
+    -fx-effect: none;
+}
+.back-btn-icon:hover {
+    -fx-background-color: -color-accent-soft;
+    -fx-text-fill: -color-accent;
+    -fx-border-color: -color-accent;
+}
+.back-btn-icon:pressed, .back-btn-icon:armed {
+    -fx-background-color: -color-border;
 }
 .page-title, .section-title { -fx-font-size: 24px; -fx-font-weight: 900; }
 .section-title-small { -fx-font-size: 16px; -fx-font-weight: 800; }
