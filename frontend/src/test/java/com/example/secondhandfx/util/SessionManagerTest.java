@@ -34,7 +34,7 @@ class SessionManagerTest {
 
     @Test
     void setSession_shouldStoreAllProvidedFields() {
-        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER);
+        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER, "Test User");
 
         SessionManager session = SessionManager.getInstance();
         assertEquals("jwt-token", session.getToken());
@@ -45,21 +45,21 @@ class SessionManagerTest {
 
     @Test
     void isLoggedIn_shouldReturnTrue_afterSettingSession() {
-        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER);
+        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER, "Test User");
 
         assertTrue(SessionManager.getInstance().isLoggedIn());
     }
 
     @Test
     void isAdmin_shouldReturnTrue_whenRoleIsAdmin() {
-        SessionManager.getInstance().setSession("jwt-token", 1L, "admin1", Role.ADMIN);
+        SessionManager.getInstance().setSession("jwt-token", 1L, "admin1", Role.ADMIN , "Test User");
 
         assertTrue(SessionManager.getInstance().isAdmin());
     }
 
     @Test
     void isAdmin_shouldReturnFalse_whenRoleIsUser() {
-        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER);
+        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER, "Test User");
 
         assertFalse(SessionManager.getInstance().isAdmin());
     }
@@ -71,7 +71,7 @@ class SessionManagerTest {
 
     @Test
     void clearSession_shouldResetAllFields() {
-        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER);
+        SessionManager.getInstance().setSession("jwt-token", 1L, "ali123", Role.USER, "Test User");
 
         SessionManager.getInstance().clearSession();
 
