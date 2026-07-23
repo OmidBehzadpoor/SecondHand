@@ -13,6 +13,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * <h2>FavoriteController</h2>
+ * <p>
+ * کنترلر مدیریت <b>علاقه‌مندی‌های</b> کاربر نسبت به آگهی‌ها. تحت مسیر پایه
+ * {@code /api/favorites} قرار دارد و تمام اندپوینت‌های آن نیاز به احراز هویت دارند.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.service.FavoriteService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/favorites")
@@ -21,6 +31,13 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
+    /**
+     * افزودن یک آگهی به لیست علاقه‌مندی‌های کاربر جاری.
+     *
+     * @param advertisementId شناسه آگهی‌ای که باید به علاقه‌مندی‌ها اضافه شود
+     * @param currentUser     کاربر جاری
+     * @return {@link ResponseEntity} با کد وضعیت {@code 201 CREATED} و اطلاعات علاقه‌مندی تازه‌ثبت‌شده
+     */
     @PostMapping("/{advertisementId}")
     public ResponseEntity<ApiResponse<FavoriteResponse>> addFavorite(
             @PathVariable Long advertisementId,
@@ -29,6 +46,13 @@ public class FavoriteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, "FAVORITE_ADDED", favoriteResponse));
     }
 
+    /**
+     * حذف یک آگهی از لیست علاقه‌مندی‌های کاربر جاری.
+     *
+     * @param advertisementId شناسه آگهی‌ای که باید از علاقه‌مندی‌ها حذف شود
+     * @param currentUser     کاربر جاری
+     * @return {@link ResponseEntity} حاوی پیام موفقیت‌آمیز بودن عملیات حذف
+     */
     @DeleteMapping("/{advertisementId}")
     public ResponseEntity<ApiResponse<Void>> removeFavorite(
             @PathVariable Long advertisementId,
@@ -38,6 +62,12 @@ public class FavoriteController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * دریافت لیست تمام آگهی‌های موردعلاقه‌ی کاربر جاری.
+     *
+     * @param currentUser کاربر جاری
+     * @return {@link ResponseEntity} حاوی لیست {@link FavoriteResponse}
+     */
     @GetMapping
     public ResponseEntity<ApiResponse<List<FavoriteResponse>>> getMyFavorites(
             @AuthenticationPrincipal User currentUser) {
