@@ -39,15 +39,18 @@ public class FavoriteCardController {
 
     private void applyStatusBadge(String status) {
         String text;
-        String color;
+        String styleClass;
         switch (status) {
-            case "APPROVED" -> { text = "فعال"; color = "-color-success"; }
-            case "SOLD" -> { text = "فروخته‌شده"; color = "-color-text-muted"; }
-            case "DELETED" -> { text = "حذف‌شده توسط مدیر"; color = "-color-text-muted"; }
-            default -> { text = status; color = "-color-text-muted"; }
+            case "APPROVED" -> { text = "فعال"; styleClass = "status-approved"; }
+            case "PENDING" -> { text = "در انتظار بررسی"; styleClass = "status-pending"; }
+            case "REJECTED" -> { text = "رد شده"; styleClass = "status-rejected"; }
+            case "SOLD" -> { text = "فروخته‌شده"; styleClass = "status-sold"; }
+            case "DELETED" -> { text = "حذف‌شده توسط مدیر"; styleClass = "status-deleted"; }
+            default -> { text = status; styleClass = "status-deleted"; }
         }
         statusBadgeLabel.setText(text);
-        statusBadgeLabel.setStyle("-fx-background-color: " + color + ";");
+        statusBadgeLabel.getStyleClass().removeIf(c -> c.startsWith("status-") && !c.equals("status-badge"));
+        statusBadgeLabel.getStyleClass().add(styleClass);
     }
 
     @FXML

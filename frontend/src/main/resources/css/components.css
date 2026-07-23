@@ -37,12 +37,39 @@
     -fx-border-radius: 9;
     -fx-background-radius: 9;
     -fx-padding: 9 15;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 1);
 }
-.btn:hover { -fx-background-color: -color-surface-alt; }
+.btn:hover { -fx-background-color: -color-surface-alt; -fx-border-color: -color-accent; }
+.btn:pressed, .btn:armed { -fx-background-color: -color-border; -fx-effect: none; -fx-translate-y: 1; }
+.btn:disabled { -fx-opacity: 0.45; -fx-cursor: default; -fx-effect: none; }
+
 .btn-primary { -fx-background-color: -color-accent; -fx-text-fill: white; -fx-border-color: -color-accent; -fx-font-weight: 800; }
-.btn-danger { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; -fx-border-color: transparent; }
-.btn-warning { -fx-background-color: -color-warning-soft; -fx-text-fill: -color-warning; -fx-border-color: transparent; }
+.btn-primary:hover { -fx-background-color: derive(-color-accent, -12%); -fx-border-color: derive(-color-accent, -12%); }
+
+.btn-success { -fx-background-color: -color-success-soft; -fx-text-fill: -color-success; -fx-border-color: transparent; -fx-font-weight: 800; }
+.btn-success:hover { -fx-background-color: derive(-color-success-soft, -8%); }
+
+.btn-danger { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; -fx-border-color: transparent; -fx-font-weight: 800; }
+.btn-danger:hover { -fx-background-color: derive(-color-danger-soft, -8%); }
+
+.btn-warning { -fx-background-color: -color-warning-soft; -fx-text-fill: -color-warning; -fx-border-color: transparent; -fx-font-weight: 800; }
+.btn-warning:hover { -fx-background-color: derive(-color-warning-soft, -8%); }
+
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-accent;
+    -fx-border-color: -color-accent;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-effect: none;
+}
+.btn-outline:hover { -fx-background-color: -color-accent-soft; }
+
+.btn-sm { -fx-padding: 6 11; -fx-font-size: 12px; -fx-background-radius: 7; -fx-border-radius: 7; -fx-effect: none; }
+
 .btn-icon { -fx-padding: 7 11; -fx-font-size: 16px; }
 .back-link, .link {
     -fx-background-color: transparent;
@@ -82,6 +109,22 @@
     -fx-font-size: 11px;
 }
 .status-badge { -fx-text-fill: -color-accent; -fx-font-weight: 800; }
+
+/* ====== حالت‌های رنگی بج وضعیت (کارت آگهی و علاقه‌مندی‌ها) ====== */
+.status-badge.status-approved,
+.status-badge.status-active { -fx-background-color: -color-success-soft; -fx-text-fill: -color-success; }
+.status-badge.status-pending { -fx-background-color: -color-warning-soft; -fx-text-fill: -color-warning; }
+.status-badge.status-rejected,
+.status-badge.status-blocked { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; }
+.status-badge.status-deleted {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text-muted;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 7;
+}
+.status-badge.status-sold { -fx-background-color: -color-info-soft; -fx-text-fill: -color-info; }
+
 .rating { -fx-text-fill: -color-warning; -fx-font-weight: 700; }
 .heart { -fx-font-size: 20px; -fx-text-fill: -color-danger; }
 
@@ -132,10 +175,42 @@
 .sidebar-btn:hover { -fx-background-color: -color-surface-alt; }
 .sidebar-btn-primary { -fx-background-color: -color-accent-soft; -fx-text-fill: -color-accent; }
 .sidebar-btn-danger { -fx-text-fill: -color-danger; }
-
+/* ====== کارت‌های آماری داشبورد ادمین (نمای کلی) ====== */
+.stat-card {
+    -fx-background-color: -color-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -color-border -color-border -color-border -color-accent;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 14;
+    -fx-padding: 16 18;
+    -fx-alignment: center-left;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 14, 0.1, 0, 4);
+}
+.stat-card:hover {
+    -fx-translate-y: -2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.16), 18, 0.14, 0, 6);
+}
+.stat-card .stat-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-text-fill: -color-accent;
+}
+.stat-card .stat-value.stat-value-compact {
+    -fx-font-size: 17px;
+}
+.stat-card .muted-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
 /* ====== استایل‌های تب‌ها (TabPane, Tab) ====== */
 .tabs .tab-header-area {
     -fx-padding: 8 20 0 20;
+    -fx-background-color: -color-surface;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.tabs .tab-header-background {
+    -fx-background-color: -color-surface;
 }
 .tabs .tab {
     -fx-background-color: transparent;
@@ -154,7 +229,7 @@
     -fx-text-fill: -color-accent;
 }
 .tabs .tab:hover .tab-label {
-    -fx-text-fill: black;  /* ← سیاه هنگام هاور */
+    -fx-text-fill: -color-text;
 }
 
 /* ====== استایل‌های کامبوباکس (برای خوانایی بهتر در تم دارک) ====== */
@@ -210,31 +285,161 @@
 .chat-header { -fx-padding: 15 24; -fx-background-color: -color-surface; -fx-border-color: transparent transparent -color-border transparent; }
 .chat-title { -fx-font-size: 17px; -fx-font-weight: 800; }
 .chat-list { -fx-background-color: transparent; -fx-border-color: transparent; }
-.chat-list .list-cell { -fx-background-color: transparent; }
+.chat-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 3 24;
+}
+.chat-list .list-cell:filled:selected,
+.chat-list .list-cell:filled:hover {
+    -fx-background-color: transparent;
+}
 
+/* ====== حباب‌های پیام (شبیه تلگرام) ====== */
+.chat-bubble {
+    -fx-padding: 9 14;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 6, 0, 0, 1);
+}
+.chat-bubble-mine {
+    -fx-background-color: -color-accent;
+    -fx-background-radius: 16 16 4 16;
+}
+.chat-bubble-theirs {
+    -fx-background-color: -color-surface-alt;
+    -fx-background-radius: 16 16 16 4;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 16 16 16 4;
+    -fx-border-width: 1;
+}
+.chat-text-mine {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+.chat-text-theirs {
+    -fx-text-fill: -color-text;
+    -fx-font-size: 14px;
+}
+.chat-timestamp {
+    -fx-font-size: 10px;
+}
+.chat-bubble-mine .chat-timestamp {
+    -fx-text-fill: rgba(255,255,255,0.75);
+}
+.chat-bubble-theirs .chat-timestamp {
+    -fx-text-fill: -color-text-muted;
+}
+
+/* ====== استایل‌های جدول (Table View) ====== */
 /* ====== استایل‌های جدول (Table View) ====== */
 .table-view {
     -fx-background-color: -color-surface;
     -fx-border-color: -color-border;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-fixed-cell-size: 54px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 16, 0.08, 0, 4);
 }
 .table-view .column-header-background {
     -fx-background-color: -color-surface-alt;
+    -fx-background-radius: 14 14 0 0;
+}
+.table-view .column-header {
+    -fx-padding: 14 10;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 2 0;
 }
 .table-view .column-header .label {
-    -fx-text-fill: -color-text-muted;  /* هدرها به رنگ طوسی */
+    -fx-text-fill: -color-text-muted;
+    -fx-font-weight: 800;
+    -fx-font-size: 12px;
 }
 .table-view .table-cell {
-    -fx-text-fill: -color-text;        /* سلول‌ها به رنگ سفید (در تم دارک) */
+    -fx-text-fill: -color-text;
+    -fx-padding: 10 10;
+    -fx-alignment: center-right;
+    -fx-border-color: transparent;
 }
 .table-row-cell {
     -fx-background-color: -color-surface;
     -fx-border-color: transparent transparent -color-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.table-row-cell:odd {
+    -fx-background-color: derive(-color-surface, -3%);
+}
+.table-row-cell:hover {
+    -fx-background-color: -color-accent-soft;
+}
+.table-row-cell:hover .table-cell {
+    -fx-text-fill: -color-text;
+}
+.table-row-cell:selected {
+    -fx-background-color: -color-accent-soft;
+    -fx-border-color: transparent transparent -color-accent transparent;
+}
+.table-row-cell:selected .table-cell { -fx-text-fill: -color-text; }
+.table-view .filler { -fx-background-color: -color-surface-alt; }
+.table-view .corner { -fx-background-color: -color-surface-alt; }
+.table-view:focused { -fx-background-color: -color-surface; }
+.table-view .placeholder .label { -fx-text-fill: -color-text-muted; -fx-font-size: 13px; }
+
+/* ====== بج‌های وضعیت داخل جدول (Status Pills) ====== */
+.status-pill {
+    -fx-padding: 5 12;
+    -fx-background-radius: 20;
+    -fx-font-size: 11px;
+    -fx-font-weight: 800;
+    -fx-alignment: center;
+}
+.status-pill.status-approved,
+.status-pill.status-active { -fx-background-color: -color-success-soft; -fx-text-fill: -color-success; }
+.status-pill.status-pending { -fx-background-color: -color-warning-soft; -fx-text-fill: -color-warning; }
+.status-pill.status-rejected,
+.status-pill.status-blocked { -fx-background-color: -color-danger-soft; -fx-text-fill: -color-danger; }
+.status-pill.status-deleted { -fx-background-color: -color-surface-alt; -fx-text-fill: -color-text-muted; }
+.status-pill.status-sold { -fx-background-color: -color-info-soft; -fx-text-fill: -color-info; }
+
+/* ====== گروه دکمه‌های عملیات داخل جدول ====== */
+.table-actions {
+    -fx-spacing: 6;
+    -fx-alignment: center-right;
 }
 
 .scroll-pane { -fx-background-color: transparent; -fx-background: transparent; }
 .scroll-pane > .viewport { -fx-background-color: transparent; }
+
+/* ====== اسکرول‌بار سفارشیِ هماهنگ با تم (جدول‌ها و ScrollPane) ====== */
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+.scroll-bar .track,
+.scroll-bar .track-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.scroll-bar .thumb {
+    -fx-background-color: -color-border;
+    -fx-background-radius: 8;
+}
+.scroll-bar .thumb:hover,
+.scroll-bar .thumb:pressed {
+    -fx-background-color: -color-accent;
+}
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+.scroll-bar:vertical { -fx-pref-width: 10; }
+.scroll-bar:horizontal { -fx-pref-height: 10; }
 
 /* =========================================================
    SIDEBAR
@@ -382,7 +587,73 @@
     -fx-background-color: #3B82F6;
     -fx-border-color: #2563EB;
 }
-
+/* =========================================================
+   استایل دیالوگ‌ها (ویرایش دسته‌بندی، دلیل رد آگهی، Alert و ...)
+   قبلاً این دیالوگ‌ها استایل‌شیت برنامه را نمی‌گرفتند و با ظاهر
+   پیش‌فرض و روشنِ JavaFX (حتی در تم دارک) نمایش داده می‌شدند.
+   ========================================================= */
+.dialog-pane {
+    -fx-background-color: -color-surface;
+    -fx-min-width: 360;
+}
+.dialog-pane > *.button-bar > *.container {
+    -fx-background-color: transparent;
+    -fx-padding: 12 4 4 4;
+}
+.dialog-pane .content,
+.dialog-pane .content.label,
+.dialog-pane .header-panel .label,
+.dialog-pane .label {
+    -fx-text-fill: -color-text;
+}
+.dialog-pane .header-panel {
+    -fx-background-color: -color-surface-alt;
+    -fx-padding: 16 20;
+}
+.dialog-pane .header-panel .label {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+}
+.dialog-pane .button {
+    -fx-background-color: -color-surface;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.dialog-pane .button:hover { -fx-background-color: -color-surface-alt; }
+.dialog-pane .button:default {
+    -fx-background-color: -color-accent;
+    -fx-text-fill: white;
+    -fx-border-color: -color-accent;
+    -fx-font-weight: 800;
+}
+.dialog-pane .text-field {
+    -fx-background-color: -color-surface-alt;
+    -fx-text-fill: -color-text;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 9 12;
+    -fx-prompt-text-fill: -color-text-muted;
+}
+.dialog-pane .text-field:focused { -fx-border-color: -color-accent; }
+.dialog-pane .combo-box {
+    -fx-background-color: -color-surface-alt;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+}
+.dialog-form {
+    -fx-padding: 18 20 6 20;
+    -fx-spacing: 10;
+}
+.dialog-form .field-label {
+    -fx-text-fill: -color-text-muted;
+    -fx-font-size: 12px;
+}
 /* =========================================================
    استایل‌های جدید برای صفحه‌ی ویرایش آگهی
    ========================================================= */

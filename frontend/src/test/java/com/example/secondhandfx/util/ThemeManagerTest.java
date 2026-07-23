@@ -1,5 +1,6 @@
 package com.example.secondhandfx.util;
 
+import javafx.scene.Scene;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,6 +62,7 @@ class ThemeManagerTest {
 
     @Test
     void applyTheme_shouldNotThrow_whenSceneIsNull() {
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> ThemeManager.applyTheme(null));
+        //چون دو تا متد استاتیک از applyTheme وجود دارد صریح مشخص شد
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> ThemeManager.applyTheme((Scene) null));
     }
 }

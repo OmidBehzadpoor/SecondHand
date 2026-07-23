@@ -1,4 +1,3 @@
-
 .root {
     -color-bg: #0F141A;
     -color-surface: #171E26;
@@ -13,4 +12,8 @@
     -color-danger-soft: #3A2024;
     -color-warning: #E2B65D;
     -color-warning-soft: #3B301D;
+    -color-success: #4ADE80;
+    -color-success-soft: #16301F;
+    -color-info: #7DB4FF;
+    -color-info-soft: #17263D;
 }

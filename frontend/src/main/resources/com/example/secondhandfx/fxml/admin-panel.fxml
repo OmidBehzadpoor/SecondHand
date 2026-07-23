@@ -64,7 +64,7 @@
                     <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="admin-card">
                         <Label text="دسته‌بندی‌ها" styleClass="section-title-small"/>
                         <HBox spacing="8">
-                            <TextField fx:id="newCategoryField" promptText="دسته‌بندی جدید" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="newCategoryField" promptText="دسته‌بندی جدید" styleClass="input" HBox.hgrow="ALWAYS"/>
                             <ComboBox fx:id="parentCategoryComboBox" promptText="دسته والد" prefWidth="180"/>
                             <Button text="افزودن" onAction="#onAddCategoryClick" styleClass="btn, btn-primary"/>
                         </HBox>
@@ -78,7 +78,7 @@
                     <VBox spacing="10" HBox.hgrow="ALWAYS" styleClass="admin-card">
                         <Label text="شهرها" styleClass="section-title-small"/>
                         <HBox spacing="8">
-                            <TextField fx:id="newCityField" promptText="شهر جدید" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="newCityField" promptText="شهر جدید" styleClass="input" HBox.hgrow="ALWAYS"/>
                             <Button text="افزودن" onAction="#onAddCityClick" styleClass="btn, btn-primary"/>
                         </HBox>
                         <TableView fx:id="citiesTable" VBox.vgrow="ALWAYS">

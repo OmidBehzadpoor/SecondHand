@@ -46,12 +46,12 @@
                 <Label text="نام کاربری"
                        styleClass="muted-label"/>
 
-                <TextField fx:id="usernameField"/>
+                <TextField fx:id="usernameField" styleClass="input"/>
 
                 <Label text="رمز عبور"
                        styleClass="muted-label"/>
 
-                <PasswordField fx:id="passwordField"/>
+                <PasswordField fx:id="passwordField" styleClass="input"/>
 
                 <Button text="ورود"
                         onAction="#onLoginButtonClick"
