@@ -6,7 +6,7 @@
       fx:controller="com.example.secondhandfx.controller.ConversationListController"
       styleClass="root">
     <HBox alignment="CENTER_RIGHT" styleClass="top-bar">
-        <Button text="← بازگشت" onAction="#onBackClick" styleClass="back-link"/>
+        <Button text="← بازگشت" onAction="#onBackClick" styleClass="back-btn"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label text="گفتگوهای من" styleClass="page-title"/>
     </HBox>
