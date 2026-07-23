@@ -7,7 +7,7 @@
             styleClass="root">
     <top>
         <HBox alignment="CENTER_RIGHT" styleClass="top-bar">
-            <Button text="← بازگشت به آگهی‌ها" onAction="#onBackClick" styleClass="back-link"/>
+            <Button text="← بازگشت به آگهی‌ها" onAction="#onBackClick" styleClass="back-btn"/>
             <Region HBox.hgrow="ALWAYS"/>
             <VBox spacing="3">
                 <Label text="مدیریت سامانه" styleClass="eyebrow"/>
