@@ -11,6 +11,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * <h2>AdminDashboardController</h2>
+ * <p>
+ * کنترلر مخصوص پنل مدیریت (ادمین) برای نمایش <b>آمار کلی سامانه</b> در داشبورد.
+ * تمام اندپوینت‌های این کنترلر تحت مسیر پایه {@code /api/admin/dashboard}
+ * قرار دارند و فقط برای کاربرانی با نقش {@code ADMIN} در دسترس هستند.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.service.AdminDashboardService
+ */
 @RestController
 @RequestMapping("/api/admin/dashboard")
 @RequiredArgsConstructor
@@ -19,6 +30,11 @@ public class AdminDashboardController {
 
     private final AdminDashboardService adminDashboardService;
 
+    /**
+     * دریافت آمار کلی سامانه برای نمایش در داشبورد ادمین.
+     *
+     * @return {@link ResponseEntity} حاوی {@link AdminDashboardResponse} با تمام آمار خلاصه‌شده
+     */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<AdminDashboardResponse>> getDashboard() {
