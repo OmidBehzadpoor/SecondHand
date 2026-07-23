@@ -60,40 +60,41 @@ public class MyAdvertisementCardController {
 
     private void applyStatusBadge(String status) {
         String text;
-        String color;
+        String styleClass;
         if (status == null) {
             text = "نامشخص";
-            color = "-color-text-muted";
+            styleClass = "status-deleted";
         } else {
             switch (status) {
                 case "APPROVED":
                     text = "فعال";
-                    color = "-color-success";
+                    styleClass = "status-approved";
                     break;
                 case "PENDING":
                     text = "در انتظار بررسی";
-                    color = "-color-warning";
+                    styleClass = "status-pending";
                     break;
                 case "REJECTED":
                     text = "رد شده";
-                    color = "-color-danger";
+                    styleClass = "status-rejected";
                     break;
                 case "SOLD":
                     text = "فروخته‌شده";
-                    color = "-color-text-muted";
+                    styleClass = "status-sold";
                     break;
                 case "DELETED":
                     text = "حذف‌شده";
-                    color = "-color-text-muted";
+                    styleClass = "status-deleted";
                     break;
                 default:
                     text = status;
-                    color = "-color-text-muted";
+                    styleClass = "status-deleted";
                     break;
             }
         }
         statusBadgeLabel.setText(text);
-        statusBadgeLabel.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-padding: 2 8; -fx-background-radius: 4;");
+        statusBadgeLabel.getStyleClass().removeIf(c -> c.startsWith("status-") && !c.equals("status-badge"));
+        statusBadgeLabel.getStyleClass().add(styleClass);
     }
 
     private void applyActionVisibility(String status) {
