@@ -25,6 +25,27 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * <h2>AdvertisementImageService</h2>
+ * <p>
+ * سرویس مسئول مدیریت <b>تصاویر آگهی‌ها</b>، شامل آپلود، حذف و دریافت لیست تصاویر
+ * مرتبط با یک آگهی. این کلاس علاوه بر ذخیره‌سازی فیزیکی فایل‌ها روی دیسک، اعتبارسنجی
+ * فرمت و محتوای فایل ارسالی را نیز انجام می‌دهد.
+ * </p>
+ * <ul>
+ *   <li>بررسی مالکیت آگهی توسط کاربر جاری پیش از هر عملیات</li>
+ *   <li>محدودیت تعداد تصاویر مجاز برای هر آگهی ({@value #MAX_IMAGES_PER_ADVERTISEMENT} عدد)</li>
+ *   <li>بررسی نوع فایل (Content-Type) و همچنین امضای واقعی محتوای فایل (Magic Number)
+ *       برای جلوگیری از آپلود فایل‌های جعلی یا مخرب</li>
+ * </ul>
+ * <p>
+ * مسیر ذخیره‌سازی فایل‌ها از طریق مقدار {@code app.upload.dir} در تنظیمات برنامه
+ * تعیین می‌شود.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.model.AdvertisementImage
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -39,6 +60,25 @@ public class AdvertisementImageService {
     @Value("${app.upload.dir}")
     private String uploadDir;
 
+    /**
+     * آپلود یک تصویر جدید برای آگهی مشخص‌شده.
+     * <p>
+     * پیش از ذخیره‌سازی، مالکیت آگهی، وضعیت آگهی (غیرحذف‌شده و غیرفروخته‌شده)،
+     * محدودیت تعداد تصاویر، خالی نبودن فایل، نوع محتوا و امضای واقعی فایل
+     * بررسی می‌شوند. در صورت موفقیت، فایل روی دیسک ذخیره و رکورد مربوطه در
+     * پایگاه داده ثبت می‌شود.
+     * </p>
+     *
+     * @param advertisementId شناسه آگهی مقصد برای افزودن تصویر
+     * @param file             فایل تصویر ارسالی توسط کاربر
+     * @param currentUser      کاربر جاری که درخواست آپلود را ارسال کرده است
+     * @return {@link AdvertisementImageResponse} حاوی اطلاعات تصویر ذخیره‌شده
+     * @throws AdvertisementNotFoundException در صورتی که آگهی مورد نظر یافت نشود
+     * @throws UnauthorizedActionException در صورتی که کاربر جاری مالک آگهی نباشد
+     * @throws InvalidImageException در صورت نامعتبر بودن وضعیت آگهی، عبور از سقف مجاز تصاویر،
+     *         خالی بودن فایل، نامعتبر بودن فرمت، عدم تطابق محتوا با فرمت اعلام‌شده،
+     *         یا بروز خطا در ذخیره‌سازی فایل روی دیسک
+     */
     @Transactional
     public AdvertisementImageResponse uploadImage(Long advertisementId, MultipartFile file, User currentUser) {
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
@@ -96,6 +136,23 @@ public class AdvertisementImageService {
         return mapToResponse(advertisementImageRepository.save(image));
     }
 
+    /**
+     * حذف یک تصویر مشخص از یک آگهی.
+     * <p>
+     * علاوه بر حذف رکورد از پایگاه داده، تلاش می‌شود فایل فیزیکی مرتبط نیز از
+     * روی دیسک حذف شود. در صورت شکست حذف فیزیکی فایل، فقط یک هشدار ثبت می‌شود
+     * و عملیات با خطا متوقف نمی‌شود.
+     * </p>
+     *
+     * @param advertisementId شناسه آگهی‌ای که تصویر به آن تعلق دارد
+     * @param imageId          شناسه تصویری که باید حذف شود
+     * @param currentUser      کاربر جاری که درخواست حذف را ارسال کرده است
+     * @throws AdvertisementNotFoundException در صورتی که آگهی مورد نظر یافت نشود
+     * @throws UnauthorizedActionException در صورتی که کاربر جاری مالک آگهی نباشد
+     * @throws InvalidImageException در صورتی که وضعیت آگهی اجازه حذف تصویر را ندهد
+     * @throws AdvertisementImageNotFoundException در صورتی که تصویر مورد نظر یافت نشود
+     *         یا متعلق به آگهی داده‌شده نباشد
+     */
     @Transactional
     public void deleteImage(Long advertisementId, Long imageId, User currentUser) {
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
@@ -124,6 +181,13 @@ public class AdvertisementImageService {
         }
     }
 
+    /**
+     * دریافت لیست تمام تصاویر مرتبط با یک آگهی مشخص.
+     *
+     * @param advertisementId شناسه آگهی مورد نظر
+     * @return لیستی از {@link AdvertisementImageResponse} مرتبط با آگهی
+     * @throws AdvertisementNotFoundException در صورتی که آگهی مورد نظر یافت نشود
+     */
     @Transactional(readOnly = true)
     public List<AdvertisementImageResponse> getImages(Long advertisementId) {
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
@@ -134,6 +198,12 @@ public class AdvertisementImageService {
                 .toList();
     }
 
+    /**
+     * تبدیل شیء {@link AdvertisementImage} به DTO خروجی {@link AdvertisementImageResponse}.
+     *
+     * @param image موجودیت تصویر آگهی
+     * @return شیء {@link AdvertisementImageResponse} متناظر
+     */
     private AdvertisementImageResponse mapToResponse(AdvertisementImage image) {
         return AdvertisementImageResponse.builder()
                 .id(image.getId())
@@ -141,6 +211,18 @@ public class AdvertisementImageService {
                 .build();
     }
 
+    /**
+     * بررسی معتبر بودن امضای واقعی (Magic Number) فایل تصویر ارسالی.
+     * <p>
+     * این متد صرفاً به Content-Type اعلام‌شده توسط کلاینت اکتفا نمی‌کند و با
+     * خواندن چند بایت ابتدایی فایل، فرمت واقعی آن را (JPEG، PNG یا WEBP)
+     * تشخیص می‌دهد تا از آپلود فایل‌های جعلی جلوگیری شود.
+     * </p>
+     *
+     * @param file فایل تصویر ارسالی
+     * @return {@code true} در صورتی که فایل دارای امضای معتبر JPEG، PNG یا WEBP باشد،
+     *         در غیر این صورت {@code false}
+     */
     private boolean hasValidImageSignature(MultipartFile file) {
         try {
             byte[] header = new byte[12];

@@ -22,6 +22,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * <h2>AdvertisementController</h2>
+ * <p>
+ * کنترلر اصلی مدیریت <b>آگهی‌ها</b>. این کنترلر تحت مسیر پایه {@code /api/advertisements}
+ * قرار دارد. مشاهده لیست و جزئیات آگهی‌ها به‌صورت عمومی (بدون نیاز به توکن) در
+ * دسترس است، در حالی که سایر عملیات (ایجاد، ویرایش، حذف، علامت‌گذاری به‌عنوان
+ * فروخته‌شده و مشاهده‌ی آگهی‌های خود کاربر) نیاز به احراز هویت دارند.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.service.AdvertisementService
+ */
 @RestController
 @RequestMapping("/api/advertisements")
 @RequiredArgsConstructor
@@ -31,6 +43,13 @@ public class AdvertisementController {
 
     private final AdvertisementService advertisementService;
 
+    /**
+     * ایجاد یک آگهی جدید برای کاربر جاری.
+     *
+     * @param request     اطلاعات آگهی جدید
+     * @param currentUser کاربر جاری (فروشنده‌ی آگهی)
+     * @return {@link ResponseEntity} با کد وضعیت {@code 201 CREATED} و اطلاعات آگهی تازه‌ایجادشده
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<AdvertisementResponse>> create(@Valid @RequestBody AdvertisementRequest request,
                                                                      @AuthenticationPrincipal User currentUser) {
@@ -39,6 +58,12 @@ public class AdvertisementController {
                 .body(new ApiResponse<>(true, "ADVERTISEMENT_CREATED", response));
     }
 
+    /**
+     * دریافت لیست تمام آگهی‌های ثبت‌شده توسط کاربر جاری.
+     *
+     * @param currentUser کاربر جاری
+     * @return {@link ResponseEntity} حاوی لیست {@link AdvertisementResponse} متعلق به کاربر جاری
+     */
     @GetMapping("/mine")
     public ResponseEntity<ApiResponse<List<AdvertisementResponse>>> getMyAdvertisements(
             @AuthenticationPrincipal User currentUser) {
@@ -46,6 +71,17 @@ public class AdvertisementController {
         return ResponseEntity.ok(new ApiResponse<>(true, "MY_ADVERTISEMENTS_RETRIEVED", responses));
     }
 
+    /**
+     * دریافت یک آگهی بر اساس شناسه.
+     * <p>
+     * این اندپوینت نیازی به توکن ندارد؛ در صورت ارسال توکن معتبر، سطح دسترسی
+     * کاربر (مالک/ادمین/سایرین) در نمایش آگهی‌های غیرعمومی لحاظ می‌شود.
+     * </p>
+     *
+     * @param id          شناسه آگهی مورد نظر
+     * @param currentUser کاربر جاری (می‌تواند {@code null} باشد برای کاربر مهمان)
+     * @return {@link ResponseEntity} حاوی {@link AdvertisementResponse} آگهی درخواستی
+     */
     @GetMapping("/{id}")
     @SecurityRequirements
     public ResponseEntity<ApiResponse<AdvertisementResponse>> getById(@PathVariable Long id,
@@ -54,6 +90,21 @@ public class AdvertisementController {
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_RETRIEVED", response));
     }
 
+    /**
+     * جست‌وجو و دریافت لیست صفحه‌بندی‌شده‌ی آگهی‌های تاییدشده، با فیلترهای اختیاری.
+     * <p>
+     * این اندپوینت نیازی به توکن ندارد.
+     * </p>
+     *
+     * @param keyword    کلمه کلیدی برای جست‌وجو (اختیاری)
+     * @param categoryId شناسه دسته‌بندی برای فیلتر (اختیاری)
+     * @param cityId     شناسه شهر برای فیلتر (اختیاری)
+     * @param minPrice   حداقل قیمت مجاز؛ نباید منفی باشد (اختیاری)
+     * @param maxPrice   حداکثر قیمت مجاز؛ نباید منفی باشد (اختیاری)
+     * @param sortBy     نوع مرتب‌سازی نتایج (اختیاری)
+     * @param pageable   اطلاعات صفحه‌بندی؛ به‌طور پیش‌فرض اندازه صفحه ۵۰ است
+     * @return {@link ResponseEntity} حاوی صفحه‌ای از {@link AdvertisementResponse} مطابق با فیلترها
+     */
     @GetMapping
     @SecurityRequirements
     public ResponseEntity<ApiResponse<Page<AdvertisementResponse>>> getAll(
@@ -69,6 +120,14 @@ public class AdvertisementController {
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENTS_RETRIEVED", responses));
     }
 
+    /**
+     * ویرایش یک آگهی موجود توسط مالک آن.
+     *
+     * @param id          شناسه آگهی‌ای که باید ویرایش شود
+     * @param request     اطلاعات جدید آگهی
+     * @param currentUser کاربر جاری (باید مالک آگهی باشد)
+     * @return {@link ResponseEntity} حاوی {@link AdvertisementResponse} به‌روزشده
+     */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AdvertisementResponse>> update(@PathVariable Long id,
                                                                      @Valid @RequestBody AdvertisementRequest request,
@@ -77,6 +136,13 @@ public class AdvertisementController {
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_UPDATED", response));
     }
 
+    /**
+     * حذف نرم (Soft Delete) یک آگهی توسط مالک آن.
+     *
+     * @param id          شناسه آگهی‌ای که باید حذف شود
+     * @param currentUser کاربر جاری (باید مالک آگهی باشد)
+     * @return {@link ResponseEntity} حاوی پیام موفقیت‌آمیز بودن عملیات حذف
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id,
                                                     @AuthenticationPrincipal User currentUser) {
@@ -84,6 +150,13 @@ public class AdvertisementController {
         return ResponseEntity.ok(new ApiResponse<>(true, "ADVERTISEMENT_DELETED", null));
     }
 
+    /**
+     * علامت‌گذاری یک آگهی تاییدشده به‌عنوان فروخته‌شده، توسط مالک آن.
+     *
+     * @param id          شناسه آگهی‌ای که باید فروخته‌شده علامت زده شود
+     * @param currentUser کاربر جاری (باید مالک آگهی باشد)
+     * @return {@link ResponseEntity} حاوی {@link AdvertisementResponse} به‌روزشده پس از تغییر وضعیت
+     */
     @PatchMapping("/{id}/sold")
     public ResponseEntity<ApiResponse<AdvertisementResponse>> markAsSold(@PathVariable Long id,
                                                                          @AuthenticationPrincipal User currentUser) {

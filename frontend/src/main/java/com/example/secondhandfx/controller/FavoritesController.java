@@ -17,21 +17,50 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
+/**
+ * <h2>FavoritesController</h2>
+ * <p>
+ * کنترلر صفحه‌ی <b>علاقه‌مندی‌های</b> کاربر جاری. لیست آگهی‌های موردعلاقه را
+ * از سرور دریافت کرده و برای هر کدام یک کارت {@link FavoriteCardController}
+ * در یک {@link FlowPane} ایجاد می‌کند، و اقدامات مشاهده و حذف هر کارت را
+ * مدیریت می‌کند.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.service.FavoriteService
+ */
 public class FavoritesController {
 
     @FXML private FlowPane favoritesContainer;
 
     private final FavoriteService favoriteService = new FavoriteServiceImpl();
 
+    /**
+     * مقداردهی اولیه‌ی صفحه پس از بارگذاری FXML: بارگذاری لیست علاقه‌مندی‌ها.
+     */
     @FXML
     private void initialize() {
         loadFavorites();
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست آگهی‌های موردعلاقه‌ی کاربر جاری از سرور.
+     */
     private void loadFavorites() {
         runAsync(favoriteService::getMyFavorites, this::render, "خطا در دریافت لیست علاقه‌مندی‌ها");
     }
 
+    /**
+     * ساخت و نمایش کارت‌های علاقه‌مندی در ظرف {@link #favoritesContainer}.
+     * <p>
+     * در صورت خالی بودن لیست، یک پیام راهنما نمایش داده می‌شود. برای هر
+     * آگهی موردعلاقه، فایل FXML کارت بارگذاری شده، داده‌ی آن مقداردهی
+     * می‌شود، و handler های مشاهده و حذف به {@link #openDetails(Long)} و
+     * {@link #removeFavorite(Long)} متصل می‌شوند.
+     * </p>
+     *
+     * @param favorites لیست آگهی‌های موردعلاقه‌ی دریافت‌شده از سرور
+     */
     private void render(List<FavoriteResponse> favorites) {
         favoritesContainer.getChildren().clear();
 
@@ -59,6 +88,11 @@ public class FavoritesController {
         }
     }
 
+    /**
+     * هدایت کاربر به صفحه‌ی جزئیات یک آگهی موردعلاقه.
+     *
+     * @param advertisementId شناسه آگهی مورد نظر
+     */
     private void openDetails(Long advertisementId) {
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
@@ -67,6 +101,12 @@ public class FavoritesController {
         controller.setReturnPage("/com/example/secondhandfx/fxml/favorites.fxml");
     }
 
+    /**
+     * حذف غیرهمزمان یک آگهی از علاقه‌مندی‌های کاربر جاری، و بارگذاری مجدد
+     * فهرست در صورت موفقیت.
+     *
+     * @param advertisementId شناسه آگهی‌ای که باید از علاقه‌مندی‌ها حذف شود
+     */
     private void removeFavorite(Long advertisementId) {
         runAsyncVoid(
                 () -> favoriteService.removeFavorite(advertisementId),
@@ -75,11 +115,23 @@ public class FavoritesController {
         );
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی بازگشت، و هدایت کاربر به صفحه‌ی آگهی‌ها.
+     */
     @FXML
     private void onBackClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
+    /**
+     * اجرای غیرهمزمان یک عملیات بازگرداننده‌ی مقدار (روی یک {@code Virtual Thread})
+     * و بازگرداندن نتیجه یا نمایش خطای مناسب در نخ رابط کاربری.
+     *
+     * @param supplier     عملیات ناهمزمانی که مقداری از نوع {@code T} برمی‌گرداند و ممکن است {@link ApiException} پرتاب کند
+     * @param onSuccess    عملیاتی که در صورت موفقیت با نتیجه‌ی دریافتی فراخوانی می‌شود
+     * @param errorMessage پیام پیش‌فرض خطا برای زمانی که استثنای پرتاب‌شده از نوع {@link ApiException} نباشد
+     * @param <T>          نوع نتیجه‌ی بازگردانده‌شده توسط {@code supplier}
+     */
     private <T> void runAsync(ThrowingSupplier<T> supplier, java.util.function.Consumer<T> onSuccess, String errorMessage) {
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -100,6 +152,14 @@ public class FavoritesController {
         });
     }
 
+    /**
+     * اجرای غیرهمزمان یک عملیات بدون مقدار بازگشتی (روی یک {@code Virtual Thread})
+     * و فراخوانی callback موفقیت یا نمایش خطای مناسب در نخ رابط کاربری.
+     *
+     * @param action       عملیات ناهمزمانی که ممکن است {@link ApiException} پرتاب کند
+     * @param onSuccess    عملیاتی که در صورت موفقیت اجرا می‌شود
+     * @param errorMessage پیام پیش‌فرض خطا برای زمانی که استثنای پرتاب‌شده از نوع {@link ApiException} نباشد
+     */
     private void runAsyncVoid(ThrowingRunnable action, Runnable onSuccess, String errorMessage) {
         CompletableFuture.runAsync(() -> {
             try {
@@ -120,11 +180,21 @@ public class FavoritesController {
         });
     }
 
+    /**
+     * اینترفیس تابعی داخلی برای عملیات‌های ناهمزمانی که مقداری بازمی‌گردانند
+     * و ممکن است {@link ApiException} پرتاب کنند.
+     *
+     * @param <T> نوع مقدار بازگشتی
+     */
     @FunctionalInterface
     private interface ThrowingSupplier<T> {
         T get() throws ApiException;
     }
 
+    /**
+     * اینترفیس تابعی داخلی برای عملیات‌های ناهمزمانی بدون مقدار بازگشتی که
+     * ممکن است {@link ApiException} پرتاب کنند.
+     */
     @FunctionalInterface
     private interface ThrowingRunnable {
         void run() throws ApiException;

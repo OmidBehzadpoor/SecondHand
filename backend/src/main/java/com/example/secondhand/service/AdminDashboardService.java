@@ -15,6 +15,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * <h2>AdminDashboardService</h2>
+ * <p>
+ * سرویس مسئول تولید <b>آمار کلی سامانه</b> برای نمایش در داشبورد پنل مدیریت (ادمین).
+ * این کلاس با فراخوانی متدهای شمارشی (count) از چندین Repository مختلف، یک
+ * تصویر خلاصه و لحظه‌ای از وضعیت کاربران، آگهی‌ها، دسته‌بندی‌ها، شهرها،
+ * گفت‌وگوها، پیام‌ها، علاقه‌مندی‌ها و امتیازها را فراهم می‌کند.
+ * </p>
+ * <p>
+ * از آنجا که این سرویس صرفاً عملیات خواندن (Read) روی پایگاه داده انجام می‌دهد،
+ * متد آن با {@code @Transactional(readOnly = true)} علامت‌گذاری شده است.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.dto.response.AdminDashboardResponse
+ */
 @Service
 @RequiredArgsConstructor
 public class AdminDashboardService {
@@ -28,6 +44,17 @@ public class AdminDashboardService {
     private final FavoriteRepository favoriteRepository;
     private final SellerRatingRepository sellerRatingRepository;
 
+    /**
+     * تولید و بازگرداندن آمار کلی سامانه برای نمایش در داشبورد ادمین.
+     * <p>
+     * این متد شامل تعداد کل کاربران (به‌همراه تفکیک فعال/مسدود)، تعداد کل
+     * آگهی‌ها (به‌همراه تفکیک بر اساس وضعیت‌های در انتظار، تاییدشده، ردشده،
+     * فروخته‌شده و حذف‌شده)، تعداد دسته‌بندی‌ها، شهرها، گفت‌وگوها، پیام‌ها،
+     * علاقه‌مندی‌ها و امتیازهای ثبت‌شده است.
+     * </p>
+     *
+     * @return {@link AdminDashboardResponse} حاوی تمام آمار خلاصه‌شده‌ی سامانه
+     */
     @Transactional(readOnly = true)
     public AdminDashboardResponse getDashboard() {
         return AdminDashboardResponse.builder()

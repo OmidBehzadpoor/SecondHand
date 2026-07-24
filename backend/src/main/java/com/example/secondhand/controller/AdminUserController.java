@@ -11,6 +11,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * <h2>AdminUserController</h2>
+ * <p>
+ * کنترلر مخصوص پنل مدیریت (ادمین) برای <b>مدیریت کاربران</b>، شامل مشاهده لیست
+ * کاربران و مسدودسازی/رفع مسدودیت آن‌ها. تمام اندپوینت‌های این کنترلر تحت
+ * مسیر پایه {@code /api/admin/users} قرار دارند و فقط برای کاربرانی با نقش
+ * {@code ADMIN} در دسترس هستند.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.service.UserService
+ */
 @RestController
 @RequestMapping("/api/admin/users")
 @RequiredArgsConstructor
@@ -19,6 +31,11 @@ public class AdminUserController {
 
     private final UserService userService;
 
+    /**
+     * دریافت لیست تمام کاربران سامانه.
+     *
+     * @return {@link ResponseEntity} حاوی لیست {@link AdminUserResponse} تمام کاربران
+     */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<AdminUserResponse>>> getAllUsers() {
@@ -26,6 +43,12 @@ public class AdminUserController {
         return ResponseEntity.ok(new ApiResponse<>(true, "USERS_FETCHED", users));
     }
 
+    /**
+     * مسدود کردن یک کاربر.
+     *
+     * @param userId شناسه کاربری که باید مسدود شود
+     * @return {@link ResponseEntity} حاوی {@link AdminUserResponse} به‌روزشده پس از مسدودسازی
+     */
     @PatchMapping("/{userId}/block")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<AdminUserResponse>> blockUser(@PathVariable Long userId) {
@@ -33,6 +56,12 @@ public class AdminUserController {
         return ResponseEntity.ok(new ApiResponse<>(true, "USER_BLOCKED", response));
     }
 
+    /**
+     * رفع مسدودیت یک کاربر.
+     *
+     * @param userId شناسه کاربری که باید از حالت مسدود خارج شود
+     * @return {@link ResponseEntity} حاوی {@link AdminUserResponse} به‌روزشده پس از رفع مسدودیت
+     */
     @PatchMapping("/{userId}/unblock")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<AdminUserResponse>> unblockUser(@PathVariable Long userId) {

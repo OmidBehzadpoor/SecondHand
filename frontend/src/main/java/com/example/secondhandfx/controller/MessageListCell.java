@@ -10,10 +10,35 @@ import javafx.scene.layout.VBox;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * <h2>MessageListCell</h2>
+ * <p>
+ * سلول سفارشی (Custom {@link ListCell}) برای نمایش یک <b>پیام</b> در فهرست
+ * پیام‌های یک گفت‌وگو، به شکل حباب چت (Chat Bubble). پیام‌های ارسالی توسط
+ * کاربر جاری و پیام‌های طرف مقابل با استایل و چیدمان متفاوت (راست/چپ)
+ * نمایش داده می‌شوند تا جهت مکالمه از نظر بصری واضح باشد.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.controller.ChatViewController
+ */
 public class MessageListCell extends ListCell<MessageResponse> {
 
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
+    /**
+     * به‌روزرسانی محتوای بصری سلول بر اساس آیتم پیام داده‌شده.
+     * <p>
+     * در صورت خالی بودن سلول یا {@code null} بودن آیتم، محتوای سلول پاک
+     * می‌شود. در غیر این صورت، بر اساس اینکه فرستنده‌ی پیام کاربر جاری باشد
+     * یا خیر، یک حباب چت با استایل و چیدمان (راست‌چین برای پیام‌های خودم،
+     * چپ‌چین برای پیام‌های طرف مقابل) به‌همراه متن پیام و زمان ارسال ساخته
+     * می‌شود.
+     * </p>
+     *
+     * @param message آیتم پیام مرتبط با این سلول
+     * @param empty   نشان‌دهنده‌ی خالی بودن سلول (بدون آیتم معتبر)
+     */
     @Override
     protected void updateItem(MessageResponse message, boolean empty) {
         super.updateItem(message, empty);

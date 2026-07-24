@@ -37,6 +37,19 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
+/**
+ * <h2>AdvertisementFormController</h2>
+ * <p>
+ * کنترلر فرم <b>ایجاد یا ویرایش یک آگهی</b>. این کنترلر یک فرم واحد است که
+ * هم برای ثبت آگهی جدید و هم برای ویرایش آگهی موجود استفاده می‌شود؛ حالت
+ * فرم بر اساس فراخوانی یا عدم فراخوانی {@link #setAdvertisementId(Long)}
+ * تعیین می‌شود. شامل انتخاب دسته‌بندی (با نمایش سلسله‌مراتبی درختی) و شهر،
+ * و مدیریت تصاویر آگهی (تصاویر موجود و تصاویر تازه انتخاب‌شده برای آپلود) است.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.service.AdvertisementService
+ */
 public class AdvertisementFormController {
 
     @FXML
@@ -69,6 +82,15 @@ public class AdvertisementFormController {
 
     private final Map<Long, Integer> categoryDepthMap = new HashMap<>();
 
+    /**
+     * مقداردهی اولیه‌ی فرم پس از بارگذاری FXML.
+     * <p>
+     * لیست تصاویر انتخاب‌شده مقداردهی می‌شود، بخش تصاویر موجود در حالت
+     * پیش‌فرض (ایجاد آگهی جدید) مخفی می‌شود، مبدل‌های نمایشی (Converter) و
+     * سلول‌های سفارشی برای کمبوباکس‌های دسته‌بندی و شهر تنظیم می‌شوند، و در
+     * نهایت دسته‌بندی‌ها و شهرها از سرور بارگذاری می‌شوند.
+     * </p>
+     */
     @FXML
     private void initialize() {
         selectedImagesListView.setItems(FXCollections.observableArrayList());
@@ -123,12 +145,24 @@ public class AdvertisementFormController {
         loadCities();
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست دسته‌بندی‌ها از سرور و افزودن نسخه‌ی
+     * مسطح‌شده‌ی (Flattened) آن‌ها به کمبوباکس دسته‌بندی.
+     */
     private void loadCategories() {
         runAsync(categoryService::getAllCategories, categories -> {
             categoryComboBox.getItems().addAll(flattenCategories(categories, 0));
         }, "خطا در دریافت دسته‌بندی‌ها");
     }
 
+    /**
+     * تبدیل بازگشتی درخت دسته‌بندی‌ها به یک لیست مسطح، به‌همراه ثبت عمق هر
+     * دسته‌بندی در {@link #categoryDepthMap} برای استفاده در نمایش تورفتگی.
+     *
+     * @param categories لیست دسته‌بندی‌های سطح فعلی (در ابتدا، ریشه‌ها)
+     * @param depth      عمق فعلی در درخت (ریشه = ۰)
+     * @return لیست مسطح‌شده‌ی تمام دسته‌بندی‌ها به ترتیب پیمایش عمقی
+     */
     private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
         List<CategoryResponse> result = new ArrayList<>();
         for (CategoryResponse category : categories) {
@@ -142,11 +176,18 @@ public class AdvertisementFormController {
         return result;
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست شهرها از سرور و افزودن آن‌ها به کمبوباکس شهر.
+     */
     private void loadCities() {
         runAsync(cityService::getAllCities, cities -> cityComboBox.getItems().addAll(cities),
                 "خطا در دریافت شهرها");
     }
 
+    /**
+     * تنظیم سلول سفارشی نمایش برای فهرست تصاویر موجود (متعلق به آگهی، در
+     * حالت ویرایش)، شامل تصویر بندانگشتی، نام فایل، و دکمه‌ی حذف.
+     */
     private void setupExistingImagesListView() {
         existingImagesListView.setCellFactory(listView -> new ListCell<>() {
             private final ImageView thumb = new ImageView();
@@ -179,6 +220,10 @@ public class AdvertisementFormController {
         existingImagesListView.setPrefHeight(120);
     }
 
+    /**
+     * تنظیم سلول سفارشی نمایش برای فهرست تصاویر تازه انتخاب‌شده (روی دیسک
+     * محلی کاربر، هنوز آپلود نشده)، شامل پیش‌نمایش تصویر و نام فایل.
+     */
     private void setupSelectedImagesListView() {
         selectedImagesListView.setCellFactory(listView -> new ListCell<>() {
             private final ImageView thumb = new ImageView();
@@ -212,12 +257,23 @@ public class AdvertisementFormController {
         selectedImagesListView.setPrefHeight(120);
     }
 
+    /**
+     * استخراج نام فایل از انتهای یک آدرس (URL) تصویر.
+     *
+     * @param imageUrl آدرس کامل یا نسبی تصویر
+     * @return بخش نام فایل، یا رشته‌ی خالی در صورت {@code null} بودن ورودی
+     */
     private String fileNameOf(String imageUrl) {
         if (imageUrl == null) return "";
         int lastSlash = imageUrl.lastIndexOf('/');
         return lastSlash >= 0 ? imageUrl.substring(lastSlash + 1) : imageUrl;
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست تصاویر موجود یک آگهی (در حالت ویرایش) از سرور.
+     *
+     * @param advertisementId شناسه آگهی‌ای که تصاویر آن باید دریافت شود
+     */
     private void loadExistingImages(Long advertisementId) {
         runAsync(
                 () -> advertisementService.getImages(advertisementId),
@@ -226,6 +282,12 @@ public class AdvertisementFormController {
         );
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی حذف یک تصویر موجود: حذف تصویر از سرور و از
+     * فهرست نمایشی، در صورت موفقیت.
+     *
+     * @param image تصویری که باید حذف شود
+     */
     private void onDeleteExistingImageClick(AdvertisementImageResponse image) {
         if (image == null || editingAdvertisementId == null) {
             return;
@@ -240,6 +302,12 @@ public class AdvertisementFormController {
         }, "خطا در حذف تصویر");
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «افزودن تصویر»: باز کردن انتخابگر فایل برای
+     * انتخاب یک یا چند تصویر، با بررسی عدم عبور از سقف مجاز
+     * {@value #MAX_IMAGES_PER_ADVERTISEMENT} تصویر برای هر آگهی (با احتساب
+     * تصاویر موجود و تصاویر قبلاً انتخاب‌شده).
+     */
     @FXML
     private void onAddImageClick() {
         FileChooser fileChooser = new FileChooser();
@@ -273,6 +341,10 @@ public class AdvertisementFormController {
         selectedImagesListView.getItems().addAll(files);
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «حذف تصویر انتخاب‌شده»: حذف تصویر انتخاب‌شده‌ی
+     * فعلی از فهرست تصاویر در انتظار آپلود (بدون تماس با سرور).
+     */
     @FXML
     private void onRemoveImageClick() {
         File selected = selectedImagesListView.getSelectionModel().getSelectedItem();
@@ -281,6 +353,16 @@ public class AdvertisementFormController {
         }
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی ثبت/ذخیره‌ی فرم.
+     * <p>
+     * پس از اعتبارسنجی کامل فیلدها (خالی نبودن، انتخاب دسته‌بندی و شهر،
+     * معتبر و مثبت بودن قیمت)، بسته به اینکه در حالت ویرایش باشیم یا ایجاد،
+     * درخواست به‌روزرسانی یا ایجاد آگهی ارسال می‌شود و در صورت موفقیت،
+     * آپلود تصاویر تازه‌انتخاب‌شده از طریق
+     * {@link #uploadImagesThenNavigate(AdvertisementResponse, List)} آغاز می‌شود.
+     * </p>
+     */
     @FXML
     private void onSubmitClick() {
         String title = titleField.getText().trim();
@@ -341,6 +423,14 @@ public class AdvertisementFormController {
         }
     }
 
+    /**
+     * آپلود پیوسته‌ی تمام تصاویر تازه‌انتخاب‌شده برای آگهی ایجاد/ویرایش‌شده،
+     * و در پایان هدایت کاربر به صفحه‌ی جزئیات همان آگهی، همراه با پیام
+     * مناسب بر اساس موفقیت کامل، موفقیت جزئی، یا شکست کامل آپلود تصاویر.
+     *
+     * @param createdAd آگهی‌ای که ایجاد یا ویرایش شده و تصاویر باید برای آن آپلود شوند
+     * @param images    لیست فایل‌های محلی تصاویری که باید آپلود شوند
+     */
     private void uploadImagesThenNavigate(AdvertisementResponse createdAd, List<File> images) {
         CompletableFuture.supplyAsync(() -> {
             List<String> failedFileNames = new ArrayList<>();
@@ -373,6 +463,11 @@ public class AdvertisementFormController {
         });
     }
 
+    /**
+     * هدایت کاربر به صفحه‌ی جزئیات آگهی‌ای که تازه ایجاد یا ویرایش شده است.
+     *
+     * @param id شناسه آگهی مورد نظر
+     */
     private void openCreatedAdvertisement(Long id) {
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
@@ -380,18 +475,35 @@ public class AdvertisementFormController {
         controller.setAdvertisementId(id);
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «انصراف»: هدایت کاربر به صفحه‌ی آگهی‌ها بدون
+     * ذخیره‌ی تغییرات فرم.
+     */
     @FXML
     private void onCancelClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
     // ====== متد جدید برای دکمه‌ی بازگشت ======
+    /**
+     * پردازش کلیک روی دکمه‌ی بازگشت: هدایت کاربر به صفحه‌ی آگهی‌ها.
+     */
     @FXML
     private void onBackClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
     // ========================================
 
+    /**
+     * اجرای غیرهمزمان یک عملیات بازگرداننده‌ی مقدار (روی یک {@code Virtual Thread})
+     * و بازگرداندن نتیجه یا نمایش خطای مناسب در نخ رابط کاربری؛ در پایان
+     * (چه موفق و چه ناموفق) دکمه‌ی ثبت دوباره فعال می‌شود.
+     *
+     * @param supplier     عملیات ناهمزمانی که مقداری از نوع {@code T} برمی‌گرداند و ممکن است {@link ApiException} پرتاب کند
+     * @param onSuccess    عملیاتی که در صورت موفقیت با نتیجه‌ی دریافتی فراخوانی می‌شود
+     * @param errorMessage پیام پیش‌فرض خطا برای زمانی که استثنای پرتاب‌شده از نوع {@link ApiException} نباشد
+     * @param <T>          نوع نتیجه‌ی بازگردانده‌شده توسط {@code supplier}
+     */
     private <T> void runAsync(ThrowingSupplier<T> supplier, java.util.function.Consumer<T> onSuccess, String errorMessage) {
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -413,11 +525,24 @@ public class AdvertisementFormController {
         });
     }
 
+    /**
+     * اینترفیس تابعی داخلی برای عملیات‌های ناهمزمانی که مقداری بازمی‌گردانند
+     * و ممکن است {@link ApiException} پرتاب کنند.
+     *
+     * @param <T> نوع مقدار بازگشتی
+     */
     @FunctionalInterface
     private interface ThrowingSupplier<T> {
         T get() throws ApiException;
     }
 
+    /**
+     * تنظیم شناسه‌ی آگهی مورد ویرایش، تغییر فرم به حالت ویرایش (عنوان صفحه،
+     * متن دکمه‌ی ثبت، نمایان‌سازی بخش تصاویر موجود)، و بارگذاری غیرهمزمان
+     * اطلاعات و تصاویر فعلی آگهی برای پر کردن فرم.
+     *
+     * @param id شناسه آگهی‌ای که باید ویرایش شود
+     */
     public void setAdvertisementId(Long id) {
         this.editingAdvertisementId = id;
         pageTitleLabel.setText("ویرایش آگهی");
@@ -435,6 +560,12 @@ public class AdvertisementFormController {
         loadExistingImages(id);
     }
 
+    /**
+     * پر کردن فیلدهای فرم با اطلاعات آگهی موجود، در حالت ویرایش، شامل
+     * انتخاب دسته‌بندی و شهر متناظر با نام‌های ذخیره‌شده در آگهی.
+     *
+     * @param ad داده‌ی آگهی‌ای که باید فرم بر اساس آن پر شود
+     */
     private void populateFormForEdit(AdvertisementResponse ad) {
         titleField.setText(ad.getTitle());
         descriptionArea.setText(ad.getDescription());

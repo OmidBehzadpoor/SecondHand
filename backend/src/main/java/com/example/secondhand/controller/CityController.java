@@ -14,6 +14,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * <h2>CityController</h2>
+ * <p>
+ * کنترلر مدیریت <b>شهرها</b>. تحت مسیر پایه {@code /api/cities} قرار دارد.
+ * مشاهده‌ی لیست شهرها برای همه در دسترس است؛ ایجاد و حذف شهر مخصوص کاربران
+ * با نقش {@code ADMIN} است.
+ * </p>
+ *
+ * @author تیم بک‌اند
+ * @see com.example.secondhand.service.CityService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/cities")
@@ -22,6 +33,11 @@ public class CityController {
 
     private final CityService cityService;
 
+    /**
+     * دریافت لیست تمام شهرهای ثبت‌شده در سامانه.
+     *
+     * @return {@link ResponseEntity} حاوی لیست {@link CityResponse}
+     */
     @GetMapping("")
     public ResponseEntity<ApiResponse<List<CityResponse>>> getAllCities() {
         List<CityResponse> cities = cityService.getAllCities();
@@ -33,6 +49,12 @@ public class CityController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * ایجاد یک شهر جدید، توسط ادمین.
+     *
+     * @param request اطلاعات شهر جدید شامل نام آن
+     * @return {@link ResponseEntity} با کد وضعیت {@code 201 CREATED} و اطلاعات شهر تازه‌ایجادشده
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     public ResponseEntity<ApiResponse<CityResponse>> createCity(@Valid @RequestBody CityRequest request) {
@@ -41,6 +63,12 @@ public class CityController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    /**
+     * حذف یک شهر، توسط ادمین.
+     *
+     * @param id شناسه شهری که باید حذف شود
+     * @return {@link ResponseEntity} حاوی پیام موفقیت‌آمیز بودن عملیات حذف
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCity(@PathVariable Long id) {
