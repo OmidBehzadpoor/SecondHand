@@ -21,11 +21,13 @@ A full-stack secondhand-marketplace application — a Spring Boot REST API backe
   <a href="https://github.com/OmidBehzadpoor/SecondHand/actions/workflows/frontend-package.yml"><img src="https://github.com/OmidBehzadpoor/SecondHand/actions/workflows/frontend-package.yml/badge.svg" alt="Frontend Package"/></a>
 </p>
 </div>
+
 ---
  
 ## 👥 Contributors
 - Omid BehzadPour
 - Parsa Zebardast
+
 ---
  
 ## 📝 Brief Description of the project
@@ -52,6 +54,7 @@ This is an application for secondhand marketing written in Java. The application
   <img src="docs/screenshots/admin-panel-light.png" width="48%" alt="Admin panel"/>
 </p>
 <p align="center"><em>Chat between buyer &amp; seller — and the admin panel</em></p>
+
 ---
  
 ## 🧰 Technologies Used
