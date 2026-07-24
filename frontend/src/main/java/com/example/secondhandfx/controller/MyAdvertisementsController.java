@@ -22,6 +22,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+/**
+ * <h2>MyAdvertisementsController</h2>
+ * <p>
+ * کنترلر صفحه‌ی <b>آگهی‌های من</b>. تمام آگهی‌های متعلق به کاربر جاری را از
+ * سرور دریافت کرده و بر اساس وضعیت (فعال، در انتظار بررسی، رد شده،
+ * فروخته‌شده، حذف‌شده) در تب‌های جداگانه گروه‌بندی و نمایش می‌دهد. برای هر
+ * آگهی، کارت {@link MyAdvertisementCardController} با دکمه‌های عملیاتی
+ * (مشاهده، ویرایش، فروخته‌شده علامت زدن، حذف) ساخته می‌شود.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.service.AdvertisementService
+ */
 public class MyAdvertisementsController {
 
     @FXML
@@ -48,15 +61,26 @@ public class MyAdvertisementsController {
 
     private final AdvertisementService advertisementService = new AdvertisementServiceImpl();
 
+    /**
+     * مقداردهی اولیه‌ی صفحه پس از بارگذاری FXML: بارگذاری آگهی‌های کاربر جاری.
+     */
     @FXML
     private void initialize() {
         loadAdvertisements();
     }
 
+    /**
+     * بارگذاری غیرهمزمان تمام آگهی‌های کاربر جاری (بدون فیلتر وضعیت) از سرور.
+     */
     private void loadAdvertisements() {
         runAsync(advertisementService::getMyAdvertisements, this::renderAll, "خطا در دریافت آگهی‌های شما");
     }
 
+    /**
+     * تفکیک لیست کامل آگهی‌ها بر اساس وضعیت و نمایش هر گروه در تب متناظر خودش.
+     *
+     * @param advertisements لیست کامل آگهی‌های کاربر جاری
+     */
     private void renderAll(List<AdvertisementResponse> advertisements) {
         renderGroup(approvedContainer, approvedTab, "فعال",
                 filterByStatus(advertisements, "APPROVED"));
@@ -70,12 +94,33 @@ public class MyAdvertisementsController {
                 filterByStatus(advertisements, "DELETED"));
     }
 
+    /**
+     * فیلتر کردن لیست آگهی‌ها بر اساس یک وضعیت مشخص.
+     *
+     * @param advertisements لیست کامل آگهی‌ها
+     * @param status         مقدار وضعیتی که باید فیلتر شود
+     * @return لیستی شامل فقط آگهی‌های با وضعیت مشخص‌شده
+     */
     private List<AdvertisementResponse> filterByStatus(List<AdvertisementResponse> advertisements, String status) {
         return advertisements.stream()
                 .filter(ad -> status.equals(ad.getStatus()))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * ساخت و نمایش کارت‌های یک گروه از آگهی‌ها در ظرف مشخص‌شده، به‌همراه
+     * به‌روزرسانی عنوان تب با تعداد آگهی‌های آن گروه.
+     * <p>
+     * در صورت خالی بودن گروه، پیام «آگهی‌ای در این وضعیت نیست» نمایش داده
+     * می‌شود. در صورت بروز خطا هنگام ساخت کارت یک آگهی خاص، به‌جای متوقف
+     * شدن کل نمایش، یک برچسب خطا برای همان آگهی نمایش داده می‌شود.
+     * </p>
+     *
+     * @param container ظرف {@link FlowPane} مقصد برای افزودن کارت‌ها
+     * @param tab       تب متناظر که عنوان آن باید با تعداد آگهی‌ها به‌روزرسانی شود
+     * @param label     برچسب فارسی وضعیت (برای استفاده در عنوان تب)
+     * @param ads       لیست آگهی‌های این گروه وضعیتی
+     */
     private void renderGroup(FlowPane container, Tab tab, String label, List<AdvertisementResponse> ads) {
         container.getChildren().clear();
         tab.setText(label + " (" + ads.size() + ")");
@@ -111,6 +156,11 @@ public class MyAdvertisementsController {
         }
     }
 
+    /**
+     * هدایت کاربر به صفحه‌ی جزئیات یک آگهی، با مبدأ بازگشت به صفحه‌ی آگهی‌های من.
+     *
+     * @param id شناسه آگهی مورد نظر
+     */
     private void openDetails(Long id) {
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
@@ -119,6 +169,11 @@ public class MyAdvertisementsController {
         controller.setReturnPage("/com/example/secondhandfx/fxml/my-advertisements.fxml");
     }
 
+    /**
+     * هدایت کاربر به فرم آگهی در حالت ویرایش برای یک آگهی مشخص.
+     *
+     * @param id شناسه آگهی‌ای که باید ویرایش شود
+     */
     private void openEditForm(Long id) {
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-form.fxml", "ویرایش آگهی");
@@ -126,6 +181,12 @@ public class MyAdvertisementsController {
         controller.setAdvertisementId(id);
     }
     
+    /**
+     * علامت‌گذاری غیرهمزمان یک آگهی به‌عنوان فروخته‌شده، و بارگذاری مجدد
+     * فهرست آگهی‌ها در صورت موفقیت.
+     *
+     * @param id شناسه آگهی‌ای که باید فروخته‌شده علامت زده شود
+     */
     private void markAsSold(Long id) {
         runAsync(
                 () -> advertisementService.markAsSold(id),
@@ -134,6 +195,13 @@ public class MyAdvertisementsController {
         );
     }
 
+    /**
+     * نمایش دیالوگ تایید حذف یک آگهی و، در صورت تایید کاربر، حذف غیرهمزمان
+     * آن از سرور.
+     *
+     * @param id            شناسه آگهی‌ای که باید حذف شود
+     * @param currentStatus وضعیت فعلی آگهی؛ در صورتی که از قبل {@code DELETED} باشد، عملیات با پیام خطا متوقف می‌شود
+     */
     private void confirmAndDelete(Long id, String currentStatus) {
         if ("DELETED".equals(currentStatus)) {
             AlertUtil.showError("این آگهی قبلاً حذف شده است.");
@@ -154,11 +222,23 @@ public class MyAdvertisementsController {
         }
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی بازگشت، و هدایت کاربر به صفحه‌ی آگهی‌ها.
+     */
     @FXML
     private void onBackClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
+    /**
+     * اجرای غیرهمزمان یک عملیات بازگرداننده‌ی مقدار (روی یک {@code Virtual Thread})
+     * و بازگرداندن نتیجه یا نمایش خطای مناسب در نخ رابط کاربری.
+     *
+     * @param supplier     عملیات ناهمزمانی که مقداری از نوع {@code T} برمی‌گرداند و ممکن است {@link ApiException} پرتاب کند
+     * @param onSuccess    عملیاتی که در صورت موفقیت با نتیجه‌ی دریافتی فراخوانی می‌شود
+     * @param errorMessage پیام پیش‌فرض خطا برای زمانی که استثنای پرتاب‌شده از نوع {@link ApiException} نباشد
+     * @param <T>          نوع نتیجه‌ی بازگردانده‌شده توسط {@code supplier}
+     */
     private <T> void runAsync(ThrowingSupplier<T> supplier, java.util.function.Consumer<T> onSuccess, String errorMessage) {
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -179,6 +259,14 @@ public class MyAdvertisementsController {
         });
     }
 
+    /**
+     * اجرای غیرهمزمان یک عملیات بدون مقدار بازگشتی (روی یک {@code Virtual Thread})
+     * و فراخوانی callback موفقیت یا نمایش خطای مناسب در نخ رابط کاربری.
+     *
+     * @param action       عملیات ناهمزمانی که ممکن است {@link ApiException} پرتاب کند
+     * @param onSuccess    عملیاتی که در صورت موفقیت اجرا می‌شود
+     * @param errorMessage پیام پیش‌فرض خطا برای زمانی که استثنای پرتاب‌شده از نوع {@link ApiException} نباشد
+     */
     private void runAsyncVoid(ThrowingRunnable action, Runnable onSuccess, String errorMessage) {
         CompletableFuture.runAsync(() -> {
             try {
@@ -199,11 +287,21 @@ public class MyAdvertisementsController {
         });
     }
 
+    /**
+     * اینترفیس تابعی داخلی برای عملیات‌های ناهمزمانی که مقداری بازمی‌گردانند
+     * و ممکن است {@link ApiException} پرتاب کنند.
+     *
+     * @param <T> نوع مقدار بازگشتی
+     */
     @FunctionalInterface
     private interface ThrowingSupplier<T> {
         T get() throws ApiException;
     }
 
+    /**
+     * اینترفیس تابعی داخلی برای عملیات‌های ناهمزمانی بدون مقدار بازگشتی که
+     * ممکن است {@link ApiException} پرتاب کنند.
+     */
     @FunctionalInterface
     private interface ThrowingRunnable {
         void run() throws ApiException;
