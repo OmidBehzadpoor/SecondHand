@@ -16,6 +16,19 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
+/**
+ * <h2>RegisterController</h2>
+ * <p>
+ * کنترلر صفحه‌ی <b>ثبت‌نام</b> کاربر جدید. اعتبارسنجی کامل سمت کلاینت (خالی
+ * نبودن فیلدها، طول رمز عبور، فرمت ایمیل و شماره تماس) را پیش از ارسال
+ * درخواست انجام می‌دهد. پس از ثبت‌نام موفق، به‌صورت خودکار با همان نام
+ * کاربری و رمز عبور، ورود ({@link #autoLogin}) نیز انجام می‌شود تا کاربر
+ * مجبور به وارد کردن مجدد اطلاعات نباشد.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.service.AuthService
+ */
 public class RegisterController {
 
     @FXML
@@ -35,6 +48,16 @@ public class RegisterController {
 
     private final AuthService authService = new AuthServiceImpl();
 
+    /**
+     * پردازش کلیک روی دکمه‌ی ثبت‌نام.
+     * <p>
+     * ابتدا تمام قوانین اعتبارسنجی سمت کلاینت (خالی نبودن فیلدها، حداقل طول
+     * رمز عبور، فرمت معتبر ایمیل و شماره تماس) بررسی می‌شوند. در صورت عبور
+     * از اعتبارسنجی، درخواست ثبت‌نام به‌صورت غیرهمزمان ارسال می‌شود و در
+     * صورت موفقیت، مرحله‌ی ورود خودکار از طریق {@link #autoLogin(String, String)}
+     * آغاز می‌شود.
+     * </p>
+     */
     @FXML
     private void onRegisterButtonClick() {
         String name = nameField.getText().trim();
@@ -99,6 +122,18 @@ public class RegisterController {
     }
 
     // متد کمکی برای لاگین خودکار
+    /**
+     * انجام ورود خودکار پس از ثبت‌نام موفق، با استفاده از همان نام کاربری و
+     * رمز عبوری که کاربر برای ثبت‌نام وارد کرده است.
+     * <p>
+     * در صورت موفقیت، نشست کاربر ثبت شده و کاربر به صفحه‌ی خانه هدایت
+     * می‌شود. در صورت شکست ورود خودکار، پیام خطا نمایش داده شده و کاربر به
+     * صفحه‌ی ورود هدایت می‌شود تا به‌صورت دستی وارد شود.
+     * </p>
+     *
+     * @param username نام کاربری‌ای که کاربر با آن ثبت‌نام کرده است
+     * @param password رمز عبوری که کاربر با آن ثبت‌نام کرده است
+     */
     private void autoLogin(String username, String password) {
         LoginRequest loginRequest = LoginRequest.builder()
                 .username(username)
@@ -138,11 +173,17 @@ public class RegisterController {
         new Thread(loginTask).start();
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی بازگشت به صفحه‌ی خانه.
+     */
     @FXML
     private void onBackToHomeClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
+    /**
+     * پردازش کلیک روی لینک ورود، و هدایت کاربر به صفحه‌ی ورود.
+     */
     @FXML
     private void onLoginLinkClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/login.fxml", "ورود");
