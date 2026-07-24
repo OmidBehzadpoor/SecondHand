@@ -20,6 +20,25 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Duration;
 
+/**
+ * <h2>HttpClientHelper</h2>
+ * <p>
+ * کلاس کمکی (Utility) مسئول ارتباط HTTP بین فرانت‌اند JavaFX و بک‌اند REST API.
+ * این کلاس بر پایه‌ی {@link java.net.http.HttpClient} استاندارد جاوا ساخته
+ * شده و متدهای ساده‌ای برای متدهای HTTP رایج ({@code GET/POST/PUT/PATCH/DELETE})
+ * و همچنین آپلود فایل ({@code multipart/form-data}) فراهم می‌کند.
+ * </p>
+ * <p>
+ * سریال‌سازی/غیرسریال‌سازی JSON با {@link ObjectMapper} (به‌همراه پشتیبانی از
+ * {@code java.time} از طریق {@link JavaTimeModule}) انجام می‌شود، و توکن JWT
+ * کاربر جاری (در صورت وجود) به‌صورت خودکار به هدر {@code Authorization} درخواست‌ها
+ * افزوده می‌شود.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.util.SessionManager
+ * @see com.example.secondhandfx.exception.ApiException
+ */
 public class HttpClientHelper {
 
     private static final String BASE_URL = Config.getApiBaseUrl();
@@ -29,31 +48,90 @@ public class HttpClientHelper {
     private static final ObjectMapper objectMapper = new ObjectMapper()
             .registerModule(new JavaTimeModule());
 
+    /** سازنده‌ی خصوصی برای جلوگیری از نمونه‌سازی؛ این کلاس فقط شامل متدهای استاتیک است. */
     private HttpClientHelper() {
     }
 
+    /**
+     * ارسال یک درخواست {@code GET} به مسیر مشخص‌شده.
+     *
+     * @param path         مسیر نسبی اندپوینت (نسبت به {@link #BASE_URL})
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت بروز خطای شبکه یا پاسخ ناموفق از سرور
+     */
     public static <T> T get(String path, TypeReference<T> responseType) throws ApiException {
         return send(HttpMethod.GET, path, null, responseType);
     }
 
+    /**
+     * ارسال یک درخواست {@code POST} به مسیر مشخص‌شده، به‌همراه بدنه‌ی درخواست.
+     *
+     * @param path         مسیر نسبی اندپوینت (نسبت به {@link #BASE_URL})
+     * @param body         بدنه‌ی درخواست که به‌صورت JSON سریال می‌شود
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت بروز خطای شبکه یا پاسخ ناموفق از سرور
+     */
     public static <T> T post(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
         return send(HttpMethod.POST, path, body, responseType);
     }
 
+    /**
+     * ارسال یک درخواست {@code PUT} به مسیر مشخص‌شده، به‌همراه بدنه‌ی درخواست.
+     *
+     * @param path         مسیر نسبی اندپوینت (نسبت به {@link #BASE_URL})
+     * @param body         بدنه‌ی درخواست که به‌صورت JSON سریال می‌شود
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت بروز خطای شبکه یا پاسخ ناموفق از سرور
+     */
     public static <T> T put(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
         return send(HttpMethod.PUT, path, body, responseType);
     }
 
+    /**
+     * ارسال یک درخواست {@code PATCH} به مسیر مشخص‌شده، به‌همراه بدنه‌ی درخواست.
+     *
+     * @param path         مسیر نسبی اندپوینت (نسبت به {@link #BASE_URL})
+     * @param body         بدنه‌ی درخواست که به‌صورت JSON سریال می‌شود
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت بروز خطای شبکه یا پاسخ ناموفق از سرور
+     */
     public static <T> T patch(String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
         return send(HttpMethod.PATCH, path, body, responseType);
     }
 
+    /**
+     * ارسال یک درخواست {@code DELETE} به مسیر مشخص‌شده.
+     *
+     * @param path         مسیر نسبی اندپوینت (نسبت به {@link #BASE_URL})
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت بروز خطای شبکه یا پاسخ ناموفق از سرور
+     */
     public static <T> T delete(String path, TypeReference<T> responseType) throws ApiException {
         return send(HttpMethod.DELETE, path, null, responseType);
     }
 
     // آپلود یک فایل به‌صورت multipart/form-data — فرمتی که AdvertisementImageController
     // (با @RequestParam("file") MultipartFile) در بک‌اند انتظارش را دارد.
+    /**
+     * آپلود یک فایل (تصویر) به مسیر مشخص‌شده، به‌صورت {@code multipart/form-data}.
+     *
+     * @param path         مسیر نسبی اندپوینت آپلود (نسبت به {@link #BASE_URL})
+     * @param file         فایلی که باید آپلود شود
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت بروز خطا در خواندن فایل، خطای شبکه، یا پاسخ ناموفق از سرور
+     */
     public static <T> T uploadFile(String path, File file, TypeReference<T> responseType) throws ApiException {
         try {
             String boundary = "----SecondHandBoundary" + System.currentTimeMillis();
@@ -73,6 +151,14 @@ public class HttpClientHelper {
         }
     }
 
+    /**
+     * ساخت بدنه‌ی خام (بایت‌آرایه) درخواست {@code multipart/form-data} برای یک فایل.
+     *
+     * @param file     فایلی که باید در بدنه‌ی درخواست قرار گیرد
+     * @param boundary رشته‌ی مرزبندی (boundary) یکتا برای جداسازی بخش‌های چندبخشی
+     * @return بایت‌آرایه‌ی نهایی بدنه‌ی درخواست
+     * @throws IOException در صورت بروز خطا در تشخیص نوع محتوا یا خواندن فایل
+     */
     private static byte[] buildMultipartBody(File file, String boundary) throws IOException {
         String mimeType = Files.probeContentType(file.toPath());
         if (mimeType == null) {
@@ -89,6 +175,17 @@ public class HttpClientHelper {
         return body.toByteArray();
     }
 
+    /**
+     * ساخت و ارسال یک درخواست HTTP با متد، مسیر و بدنه‌ی مشخص‌شده.
+     *
+     * @param method       متد HTTP درخواست
+     * @param path         مسیر نسبی اندپوینت (نسبت به {@link #BASE_URL})
+     * @param body         بدنه‌ی درخواست (ممکن است {@code null} باشد، در این صورت بدون بدنه ارسال می‌شود)
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت بروز خطا در آماده‌سازی درخواست، خطای شبکه، یا پاسخ ناموفق از سرور
+     */
     private static <T> T send(HttpMethod method, String path, ApiRequest body, TypeReference<T> responseType) throws ApiException {
         try {
             HttpRequest.Builder builder = HttpRequest.newBuilder()
@@ -110,6 +207,12 @@ public class HttpClientHelper {
         }
     }
 
+    /**
+     * افزودن هدر {@code Authorization} با توکن JWT کاربر جاری به درخواست، در
+     * صورتی که کاربر وارد سیستم شده باشد.
+     *
+     * @param builder سازنده‌ی درخواست HTTP که هدر باید به آن اضافه شود
+     */
     private static void attachAuthHeader(HttpRequest.Builder builder) {
         String token = SessionManager.getInstance().getToken();
         if (token != null) {
@@ -118,6 +221,15 @@ public class HttpClientHelper {
     }
 
     // بخش مشترک بین send() و uploadFile(): فرستادن request آماده‌شده و مدیریت خطاهای شبکه
+    /**
+     * ارسال یک درخواست HTTP آماده‌شده و مدیریت خطاهای رایج شبکه (اتصال، Timeout و غیره).
+     *
+     * @param builder      سازنده‌ی درخواست HTTP نهایی که باید ارسال شود
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ
+     * @throws ApiException در صورت عدم امکان اتصال به سرور، Timeout، یا سایر خطاهای شبکه
+     */
     private static <T> T executeAndParse(HttpRequest.Builder builder, TypeReference<T> responseType) throws ApiException {
         try {
             HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
@@ -131,6 +243,17 @@ public class HttpClientHelper {
         }
     }
 
+    /**
+     * پردازش پاسخ خام HTTP و غیرسریال‌سازی آن به نوع مورد انتظار، یا پرتاب
+     * {@link ApiException} در صورت پاسخ ناموفق.
+     *
+     * @param response     پاسخ خام دریافت‌شده از سرور
+     * @param responseType نوع مورد انتظار پاسخ، برای غیرسریال‌سازی JSON
+     * @param <T>          نوع داده‌ی پاسخ
+     * @return شیء غیرسریال‌سازی‌شده‌ی پاسخ، در صورتی که کد وضعیت پاسخ در بازه‌ی موفقیت‌آمیز باشد
+     * @throws ApiException در صورتی که کد وضعیت پاسخ ناموفق باشد (همراه با پیام خطای سرور)،
+     *         یا در صورت بروز خطا هنگام پردازش بدنه‌ی پاسخ
+     */
     private static <T> T parseResponse(HttpResponse<String> response, TypeReference<T> responseType) throws ApiException {
         try {
             JsonNode root = objectMapper.readTree(response.body());
