@@ -24,6 +24,26 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <h2>AdminPanelController</h2>
+ * <p>
+ * کنترلر <b>پنل مدیریت (ادمین)</b>، شامل چند تب مجزا برای:
+ * </p>
+ * <ul>
+ *   <li><b>نمای کلی</b>: کارت‌های آماری خلاصه‌ی سامانه</li>
+ *   <li><b>آگهی‌های در انتظار بررسی</b>: مشاهده، تایید، رد و حذف</li>
+ *   <li><b>همه‌ی آگهی‌ها</b>: مشاهده و حذف تمام آگهی‌های سامانه</li>
+ *   <li><b>کاربران</b>: مشاهده لیست کاربران و مسدود/رفع مسدودیت آن‌ها</li>
+ *   <li><b>دسته‌بندی‌ها و شهرها</b>: ایجاد، ویرایش، فعال/غیرفعال‌سازی و حذف</li>
+ * </ul>
+ * <p>
+ * هر بخش داده‌های خود را به‌صورت غیرهمزمان (با {@link Task}) از سرویس مربوطه
+ * دریافت کرده و در جدول‌ها ({@link TableView}) نمایش می‌دهد.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.service.AdminService
+ */
 public class AdminPanelController {
 
     @FXML
@@ -93,6 +113,11 @@ public class AdminPanelController {
     private final ObservableList<CategoryResponse> categories = FXCollections.observableArrayList();
     private final ObservableList<CityResponse> cities = FXCollections.observableArrayList();
 
+    /**
+     * مقداردهی اولیه‌ی پنل پس از بارگذاری FXML: تنظیم تمام جدول‌ها و
+     * بارگذاری غیرهمزمان داده‌های اولیه‌ی هر تب (داشبورد، آگهی‌های در
+     * انتظار، همه‌ی آگهی‌ها، کاربران، دسته‌بندی‌ها و شهرها).
+     */
     @FXML
     public void initialize() {
         setupAdsTable();
@@ -109,6 +134,9 @@ public class AdminPanelController {
         loadCities();
     }
 
+    /**
+     * بارگذاری غیرهمزمان آمار کلی داشبورد از سرور و رندر آن پس از دریافت.
+     */
     private void loadDashboard() {
         Task<AdminDashboardResponse> task = new Task<>() {
             @Override
@@ -121,6 +149,11 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * ساخت و نمایش کارت‌های آماری تب «نمای کلی» بر اساس آمار دریافتی از سرور.
+     *
+     * @param stats آمار کلی سامانه
+     */
     private void renderDashboard(AdminDashboardResponse stats) {
         statsContainer.getChildren().clear();
         statsContainer.getChildren().addAll(
@@ -139,6 +172,13 @@ public class AdminPanelController {
         );
     }
 
+    /**
+     * ساخت یک کارت آماری واحد شامل مقدار و برچسب آن.
+     *
+     * @param label برچسب توصیفی کارت
+     * @param value مقدار نمایشی کارت
+     * @return {@link VBox} حاوی کارت آماری آماده برای افزودن به {@link #statsContainer}
+     */
     private VBox buildStatCard(String label, String value) {
         Label valueLabel = new Label(value);
         valueLabel.getStyleClass().add("stat-value");
@@ -158,6 +198,10 @@ public class AdminPanelController {
         return card;
     }
 
+    /**
+     * تنظیم ستون‌های داده و ستون عملیات (مشاهده، تایید، رد، حذف) جدول
+     * آگهی‌های در انتظار بررسی، و اتصال آن به {@link #pendingAds}.
+     */
     private void setupAdsTable() {
         adTitleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTitle()));
         adSellerColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSellerUsername()));
@@ -193,6 +237,12 @@ public class AdminPanelController {
         pendingAdsTable.setItems(pendingAds);
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «مشاهده» یک آگهی در تب آگهی‌های در انتظار:
+     * هدایت به صفحه‌ی جزئیات با بازگشت به تب مربوطه‌ی پنل ادمین.
+     *
+     * @param ad آگهی‌ای که باید جزئیات آن مشاهده شود
+     */
     private void onViewAdClick(AdminAdvertisementResponse ad) {
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
@@ -202,6 +252,9 @@ public class AdminPanelController {
         controller.setReturnTabIndex(1);
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست آگهی‌های در انتظار بررسی از سرور.
+     */
     private void loadPendingAds() {
         Task<List<AdminAdvertisementResponse>> task = new Task<>() {
             @Override
@@ -214,11 +267,20 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی بازگشت، و هدایت کاربر به صفحه‌ی آگهی‌ها.
+     */
     @FXML
     private void onBackClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/home.fxml", "آگهی‌ها");
     }
 
+    /**
+     * تایید غیرهمزمان یک آگهی در انتظار بررسی، و حذف آن از فهرست در انتظار
+     * بررسی در صورت موفقیت.
+     *
+     * @param ad آگهی‌ای که باید تایید شود
+     */
     private void onApproveClick(AdminAdvertisementResponse ad) {
         Task<AdminAdvertisementResponse> task = new Task<>() {
             @Override
@@ -234,6 +296,12 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * نمایش دیالوگ دریافت دلیل رد آگهی و، در صورت وارد کردن دلیل معتبر،
+     * ارسال غیرهمزمان درخواست رد آگهی به سرور.
+     *
+     * @param ad آگهی‌ای که باید رد شود
+     */
     private void onRejectClick(AdminAdvertisementResponse ad) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("رد آگهی");
@@ -259,6 +327,12 @@ public class AdminPanelController {
         });
     }
 
+    /**
+     * حذف غیرهمزمان یک آگهی توسط ادمین، و حذف آن از فهرست‌های در انتظار
+     * بررسی و همه‌ی آگهی‌ها در صورت موفقیت.
+     *
+     * @param ad آگهی‌ای که باید حذف شود
+     */
     private void onDeleteAdClick(AdminAdvertisementResponse ad) {
         Task<Void> task = new Task<>() {
             @Override
@@ -276,6 +350,10 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * تنظیم ستون‌های داده و ستون عملیات (بلاک/آنبلاک) جدول کاربران، و اتصال
+     * آن به {@link #users}.
+     */
     private void setupUsersTable() {
         userNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUsername()));
         userRoleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getRole().name()));
@@ -335,6 +413,12 @@ public class AdminPanelController {
         };
     }
 
+    /**
+     * ترجمه‌ی مقدار خام یک وضعیت (آگهی یا کاربر) به متن نمایشی فارسی.
+     *
+     * @param status مقدار خام وضعیت
+     * @return متن فارسی متناظر، یا خود مقدار ورودی در صورت عدم تطابق با موارد شناخته‌شده
+     */
     private String translateStatus(String status) {
         return switch (status) {
             case "APPROVED" -> "تایید‌شده";
@@ -348,6 +432,9 @@ public class AdminPanelController {
         };
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست تمام کاربران سامانه از سرور.
+     */
     private void loadUsers() {
         Task<List<AdminUserResponse>> task = new Task<>() {
             @Override
@@ -360,6 +447,12 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * تغییر غیرهمزمان وضعیت مسدودیت یک کاربر (بلاک/آنبلاک، بسته به وضعیت
+     * فعلی)، و به‌روزرسانی ردیف متناظر در جدول در صورت موفقیت.
+     *
+     * @param user کاربری که وضعیت مسدودیت او باید تغییر کند
+     */
     private void onToggleBlockClick(AdminUserResponse user) {
         boolean isBlocked = "BLOCKED".equals(user.getUserStatus());
         Task<AdminUserResponse> task = new Task<>() {
@@ -373,6 +466,11 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * تنظیم ستون‌های داده و ستون عملیات (ویرایش، فعال/غیرفعال، حذف) جدول
+     * دسته‌بندی‌ها، اتصال آن به {@link #categories}، و پیکربندی مبدل نمایشی
+     * کمبوباکس انتخاب دسته‌بندی والد.
+     */
     private void setupCategoriesTable() {
         categoryNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
 
@@ -423,6 +521,13 @@ public class AdminPanelController {
         });
     }
 
+    /**
+     * نمایش دیالوگ ویرایش نام و والد یک دسته‌بندی، و در صورت تایید کاربر،
+     * ارسال غیرهمزمان درخواست به‌روزرسانی به سرور و بارگذاری مجدد فهرست
+     * دسته‌بندی‌ها.
+     *
+     * @param category دسته‌بندی‌ای که باید ویرایش شود
+     */
     private void onEditCategoryClick(CategoryResponse category) {
         TextField nameField = new TextField(category.getName());
         nameField.getStyleClass().add("input");
@@ -488,6 +593,10 @@ public class AdminPanelController {
         });
     }
 
+    /**
+     * بارگذاری غیرهمزمان درخت دسته‌بندی‌ها از سرور، مسطح‌سازی آن برای نمایش
+     * در جدول، و به‌روزرسانی گزینه‌های کمبوباکس انتخاب دسته‌بندی والد.
+     */
     private void loadCategories() {
         Task<List<CategoryResponse>> task = new Task<>() {
             @Override
@@ -509,6 +618,12 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * مسطح‌سازی بازگشتی درخت دسته‌بندی‌ها در یک لیست خروجی (پیمایش عمقی).
+     *
+     * @param roots لیست دسته‌بندی‌های سطح فعلی (در ابتدا، ریشه‌ها)
+     * @param out   لیست خروجی که دسته‌بندی‌های مسطح‌شده به آن افزوده می‌شوند
+     */
     private void flattenCategories(List<CategoryResponse> roots, List<CategoryResponse> out) {
         for (CategoryResponse category : roots) {
             out.add(category);
@@ -518,6 +633,11 @@ public class AdminPanelController {
         }
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «افزودن» دسته‌بندی جدید: اعتبارسنجی نام، ارسال
+     * غیرهمزمان درخواست ایجاد به سرور، و پاک‌سازی فرم و بارگذاری مجدد فهرست
+     * در صورت موفقیت.
+     */
     @FXML
     private void onAddCategoryClick() {
         String name = newCategoryField.getText().trim();
@@ -544,6 +664,12 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * تغییر غیرهمزمان وضعیت فعال/غیرفعال یک دسته‌بندی (بسته به وضعیت
+     * فعلی)، و بارگذاری مجدد فهرست دسته‌بندی‌ها در صورت موفقیت.
+     *
+     * @param category دسته‌بندی‌ای که وضعیت فعال بودن آن باید تغییر کند
+     */
     private void onToggleCategoryActiveClick(CategoryResponse category) {
         boolean isActive = category.isActive();
         Task<CategoryResponse> task = new Task<>() {
@@ -559,6 +685,12 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * حذف غیرهمزمان یک دسته‌بندی، و بارگذاری مجدد فهرست دسته‌بندی‌ها در
+     * صورت موفقیت.
+     *
+     * @param category دسته‌بندی‌ای که باید حذف شود
+     */
     private void onDeleteCategoryClick(CategoryResponse category) {
         Task<Void> task = new Task<>() {
             @Override
@@ -572,6 +704,10 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * تنظیم ستون‌های داده و ستون عملیات (حذف) جدول شهرها، و اتصال آن به
+     * {@link #cities}.
+     */
     private void setupCitiesTable() {
         cityNameColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
 
@@ -593,6 +729,9 @@ public class AdminPanelController {
         citiesTable.setItems(cities);
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست شهرها از سرور.
+     */
     private void loadCities() {
         Task<List<CityResponse>> task = new Task<>() {
             @Override
@@ -605,6 +744,11 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «افزودن» شهر جدید: اعتبارسنجی نام، ارسال
+     * غیرهمزمان درخواست ایجاد به سرور، و افزودن مستقیم شهر تازه‌ایجادشده به
+     * جدول به‌همراه پاک‌سازی فیلد ورودی، در صورت موفقیت.
+     */
     @FXML
     private void onAddCityClick() {
         String name = newCityField.getText().trim();
@@ -626,6 +770,11 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * حذف غیرهمزمان یک شهر، و حذف آن از جدول در صورت موفقیت.
+     *
+     * @param city شهری که باید حذف شود
+     */
     private void onDeleteCityClick(CityResponse city) {
         Task<Void> task = new Task<>() {
             @Override
@@ -639,6 +788,10 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * تنظیم ستون‌های داده و ستون عملیات (مشاهده، حذف) جدول همه‌ی آگهی‌ها.
+     * دکمه‌ی حذف برای آگهی‌های از قبل حذف‌شده غیرفعال می‌شود.
+     */
     private void setupAllAdsTable() {
         allAdTitleColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTitle()));
         allAdSellerColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSellerUsername()));
@@ -685,6 +838,9 @@ public class AdminPanelController {
         allAdsTable.setItems(FXCollections.observableArrayList());
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست تمام آگهی‌های سامانه (بدون فیلتر وضعیت) از سرور.
+     */
     private void loadAllAds() {
         Task<List<AdminAdvertisementResponse>> task = new Task<>() {
             @Override
@@ -697,6 +853,12 @@ public class AdminPanelController {
         new Thread(task).start();
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «مشاهده» یک آگهی در تب همه‌ی آگهی‌ها: هدایت به
+     * صفحه‌ی جزئیات با بازگشت به تب مربوطه‌ی پنل ادمین.
+     *
+     * @param ad آگهی‌ای که باید جزئیات آن مشاهده شود
+     */
     private void onViewAllAdClick(AdminAdvertisementResponse ad) {
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
@@ -706,12 +868,24 @@ public class AdminPanelController {
         controller.setReturnTabIndex(2);
     }
 
+    /**
+     * نمایش پیام خطای مناسب برای یک {@link Throwable} پرتاب‌شده از یک
+     * {@link Task} ناموفق، و ثبت جزئیات آن در کنسول.
+     *
+     * @param ex استثنای پرتاب‌شده
+     */
     private void showError(Throwable ex) {
         ex.printStackTrace();
         String message = (ex instanceof ApiException) ? ex.getMessage() : "خطای ناشناخته‌ای رخ داد.";
         AlertUtil.showError(message);
     }
 
+    /**
+     * انتخاب یک تب مشخص در پنل ادمین بر اساس شاخص آن؛ عمدتاً هنگام بازگشت
+     * از صفحه‌ی جزئیات آگهی به پنل ادمین استفاده می‌شود.
+     *
+     * @param index شاخص تب مورد نظر برای انتخاب
+     */
     public void setSelectedTabIndex(int index) {
         if (adminTabPane != null) {
             adminTabPane.getSelectionModel().select(index);
