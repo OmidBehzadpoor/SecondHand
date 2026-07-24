@@ -40,6 +40,19 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
+/**
+ * <h2>HomeController</h2>
+ * <p>
+ * کنترلر صفحه‌ی <b>خانه</b>، صفحه‌ی اصلی و ورودی سامانه که فهرست عمومی
+ * آگهی‌ها را به‌صورت صفحه‌بندی‌شده (Paginated) و قابل جست‌وجو/فیلتر (بر اساس
+ * کلمه کلیدی، دسته‌بندی، شهر و محدوده قیمت) نمایش می‌دهد. همچنین شامل ناحیه‌ی
+ * احراز هویت (ورود/ثبت‌نام برای مهمان، یا منوی کاربر برای کاربر واردشده) و
+ * یک ساید‌بار کشویی برای ناوبری سریع است.
+ * </p>
+ *
+ * @author تیم فرانت‌اند
+ * @see com.example.secondhandfx.service.AdvertisementService
+ */
 public class HomeController implements Initializable {
 
     @FXML private TextField searchField;
@@ -78,6 +91,18 @@ public class HomeController implements Initializable {
     private int currentPage = 0;
     private int totalPages = 1;
 
+    /**
+     * مقداردهی اولیه‌ی صفحه پس از بارگذاری FXML.
+     * <p>
+     * ناحیه‌ی احراز هویت بر اساس وضعیت ورود کاربر تنظیم می‌شود، گزینه‌های
+     * مرتب‌سازی و اندازه‌ی صفحه مقداردهی می‌شوند، دسته‌بندی‌ها/شهرها/آگهی‌ها
+     * بارگذاری می‌شوند، ساید‌بار در حالت بسته و مخفی قرار می‌گیرد، و مبدل‌های
+     * نمایشی (Converter) و سلول سفارشی کمبوباکس دسته‌بندی تنظیم می‌شوند.
+     * </p>
+     *
+     * @param location  آدرس مورد استفاده برای تفکیک مسیرهای نسبی در فایل FXML (استفاده‌نشده)
+     * @param resources منابع بین‌المللی‌سازی (استفاده‌نشده)
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupAuthArea();
@@ -144,6 +169,11 @@ public class HomeController implements Initializable {
         });
     }
 
+    /**
+     * نمایان‌سازی ناحیه‌ی مناسب احراز هویت (مهمان یا کاربر واردشده) و
+     * شخصی‌سازی پیام‌های خوش‌آمدگویی و نمایان بودن دکمه‌ی پنل ادمین، بر
+     * اساس وضعیت ورود و نقش کاربر جاری.
+     */
     private void setupAuthArea() {
         boolean loggedIn = SessionManager.getInstance().isLoggedIn();
 
@@ -174,6 +204,10 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «☰ منو»: باز یا بسته کردن ساید‌بار با انیمیشن
+     * کشویی، به‌همراه نمایان/مخفی کردن پوشش (Overlay) پس‌زمینه.
+     */
     @FXML
     private void onToggleSidebarClick() {
         sidebarOpen = !sidebarOpen;
@@ -199,6 +233,12 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * پردازش کلیک روی پوشش (Overlay) پشت ساید‌بار: بستن ساید‌بار در صورتی
+     * که کلیک دقیقاً روی خود پوشش (و نه محتوای داخل آن) رخ داده باشد.
+     *
+     * @param event رویداد کلیک ماوس
+     */
     @FXML
     private void onOverlayClick(javafx.scene.input.MouseEvent event) {
         if (event.getTarget() == sidebarOverlay) {
@@ -206,12 +246,19 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * بستن ساید‌بار در صورت باز بودن؛ معمولاً پیش از ناوبری به صفحه‌ی دیگر فراخوانی می‌شود.
+     */
     private void closeSidebarIfOpen() {
         if (sidebarOpen) {
             onToggleSidebarClick();
         }
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست دسته‌بندی‌ها از سرور، افزودن گزینه‌ی «همه
+     * دسته‌بندی‌ها» به ابتدای لیست، و انتخاب آن به‌عنوان مقدار پیش‌فرض.
+     */
     private void loadCategories() {
         runAsync(categoryService::getAllCategories, categories -> {
             CategoryResponse allOption = CategoryResponse.builder().id(null).name("همه دسته‌بندی‌ها").build();
@@ -223,6 +270,14 @@ public class HomeController implements Initializable {
 
     private final java.util.Map<Long, Integer> categoryDepthMap = new java.util.HashMap<>();
 
+    /**
+     * تبدیل بازگشتی درخت دسته‌بندی‌ها به یک لیست مسطح، به‌همراه ثبت عمق هر
+     * دسته‌بندی در {@link #categoryDepthMap} برای استفاده در نمایش تورفتگی.
+     *
+     * @param categories لیست دسته‌بندی‌های سطح فعلی (در ابتدا، ریشه‌ها)
+     * @param depth      عمق فعلی در درخت (ریشه = ۰)
+     * @return لیست مسطح‌شده‌ی تمام دسته‌بندی‌ها به ترتیب پیمایش عمقی
+     */
     private List<CategoryResponse> flattenCategories(List<CategoryResponse> categories, int depth) {
         List<CategoryResponse> result = new java.util.ArrayList<>();
         for (CategoryResponse category : categories) {
@@ -236,6 +291,10 @@ public class HomeController implements Initializable {
         return result;
     }
 
+    /**
+     * بارگذاری غیرهمزمان لیست شهرها از سرور، افزودن گزینه‌ی «همه شهرها» به
+     * ابتدای لیست، و انتخاب آن به‌عنوان مقدار پیش‌فرض.
+     */
     private void loadCities() {
         runAsync(cityService::getAllCities, cities -> {
             CityResponse allOption = CityResponse.builder().id(null).name("همه شهرها").build();
@@ -245,12 +304,19 @@ public class HomeController implements Initializable {
         }, "خطا در دریافت شهرها");
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «جست‌وجو»: بازگشت به صفحه‌ی اول و بارگذاری
+     * مجدد آگهی‌ها بر اساس فیلترهای فعلی.
+     */
     @FXML
     private void onSearchClick() {
         currentPage = 0;
         loadAdvertisements();
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی صفحه‌ی قبلی: رفتن به صفحه‌ی قبل (در صورت وجود) و بارگذاری مجدد.
+     */
     @FXML
     private void onPrevPageClick() {
         if (currentPage > 0) {
@@ -259,6 +325,9 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی صفحه‌ی بعدی: رفتن به صفحه‌ی بعد (در صورت وجود) و بارگذاری مجدد.
+     */
     @FXML
     private void onNextPageClick() {
         if (currentPage < totalPages - 1) {
@@ -267,16 +336,26 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «ورود»، و هدایت کاربر به صفحه‌ی ورود.
+     */
     @FXML
     private void onLoginClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/login.fxml", "ورود");
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «ثبت‌نام»، و هدایت کاربر به صفحه‌ی ثبت‌نام.
+     */
     @FXML
     private void onRegisterClick() {
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/register.fxml", "ثبت‌نام");
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی خروج از حساب کاربری: بستن ساید‌بار، پاک کردن
+     * نشست جاری، و بازگشت به صفحه‌ی خانه.
+     */
     @FXML
     private void onLogoutButtonClick() {
         closeSidebarIfOpen();
@@ -285,6 +364,11 @@ public class HomeController implements Initializable {
     }
 
     // ====== متد اصلاح‌شده با استفاده از AlertUtil ======
+    /**
+     * پردازش کلیک روی دکمه‌ی «ثبت آگهی»: در صورت وارد نبودن کاربر، هدایت به
+     * صفحه‌ی ورود؛ در غیر این صورت هدایت به فرم ثبت آگهی جدید. هرگونه خطای
+     * غیرمنتظره نیز گرفته شده و پیام مناسب نمایش داده می‌شود.
+     */
     @FXML
     private void onCreateAdvertisementClick() {
         System.out.println("onCreateAdvertisementClick called");
@@ -303,6 +387,10 @@ public class HomeController implements Initializable {
     }
     // ========================================================
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «آگهی‌های من»: بستن ساید‌بار و هدایت کاربر (در
+     * صورت وارد بودن) به صفحه‌ی آگهی‌های خودش.
+     */
     @FXML
     private void onMyAdvertisementsClick() {
         closeSidebarIfOpen();
@@ -310,6 +398,10 @@ public class HomeController implements Initializable {
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/my-advertisements.fxml", "آگهی‌های من"));
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «علاقه‌مندی‌ها»: بستن ساید‌بار و هدایت کاربر
+     * (در صورت وارد بودن) به صفحه‌ی علاقه‌مندی‌های خودش.
+     */
     @FXML
     private void onFavoritesClick() {
         closeSidebarIfOpen();
@@ -317,6 +409,10 @@ public class HomeController implements Initializable {
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/favorites.fxml", "علاقه‌مندی‌های من"));
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «گفت‌وگوها»: بستن ساید‌بار و هدایت کاربر (در
+     * صورت وارد بودن) به صفحه‌ی گفت‌وگوهای خودش.
+     */
     @FXML
     private void onConversationsClick() {
         closeSidebarIfOpen();
@@ -324,12 +420,21 @@ public class HomeController implements Initializable {
                 SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/conversation-list.fxml", "گفتگوها"));
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی «پنل ادمین»: بستن ساید‌بار و هدایت کاربر به پنل مدیریت.
+     */
     @FXML
     private void onAdminPanelClick() {
         closeSidebarIfOpen();
         SceneNavigator.navigateTo("/com/example/secondhandfx/fxml/admin-panel.fxml", "پنل ادمین");
     }
 
+    /**
+     * اجرای یک عملیات فقط در صورتی که کاربر جاری وارد سیستم شده باشد؛ در غیر
+     * این صورت پیام خطا نمایش داده شده و کاربر به صفحه‌ی ورود هدایت می‌شود.
+     *
+     * @param action عملیاتی که فقط برای کاربران واردشده باید اجرا شود
+     */
     private void requireLoginThen(Runnable action) {
         if (!SessionManager.getInstance().isLoggedIn()) {
             AlertUtil.showError("برای این کار ابتدا باید وارد حساب کاربری خود شوید.");
@@ -339,6 +444,10 @@ public class HomeController implements Initializable {
         action.run();
     }
 
+    /**
+     * جمع‌آوری مقادیر فعلی فیلترها (کلمه کلیدی، دسته‌بندی، شهر، محدوده
+     * قیمت، مرتب‌سازی) و بارگذاری غیرهمزمان صفحه‌ی متناظر از آگهی‌ها از سرور.
+     */
     private void loadAdvertisements() {
         String keyword = searchField.getText();
         CategoryResponse selectedCategory = categoryComboBox.getSelectionModel().getSelectedItem();
@@ -359,6 +468,13 @@ public class HomeController implements Initializable {
         );
     }
 
+    /**
+     * نمایش یک صفحه از نتایج آگهی‌ها: ساخت کارت برای هر آگهی، به‌روزرسانی
+     * برچسب و دکمه‌های صفحه‌بندی، و نمایش پیام «آگهی‌ای یافت نشد» در صورت
+     * خالی بودن نتایج.
+     *
+     * @param page صفحه‌ی نتایج دریافت‌شده از سرور
+     */
     private void renderPage(PageResponse<AdvertisementResponse> page) {
         advertisementsContainer.getChildren().clear();
         totalPages = Math.max(page.getTotalPages(), 1);
@@ -388,6 +504,11 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * هدایت کاربر به صفحه‌ی جزئیات یک آگهی، با مبدأ بازگشت به صفحه‌ی خانه.
+     *
+     * @param id شناسه آگهی مورد نظر
+     */
     private void openAdvertisementDetails(Long id) {
         FXMLLoader loader = SceneNavigator.navigateTo(
                 "/com/example/secondhandfx/fxml/advertisement-details.fxml", "جزئیات آگهی");
@@ -396,6 +517,12 @@ public class HomeController implements Initializable {
         controller.setReturnPage("/com/example/secondhandfx/fxml/home.fxml");
     }
 
+    /**
+     * تبدیل برچسب فارسی گزینه‌ی مرتب‌سازی انتخاب‌شده به مقدار مورد انتظار API.
+     *
+     * @param label برچسب فارسی نمایش‌داده‌شده در کمبوباکس مرتب‌سازی
+     * @return کد مرتب‌سازی متناظر (مانند {@code "NEWEST"})، یا {@code null} در صورت عدم تطابق یا {@code null} بودن ورودی
+     */
     private String mapSortOption(String label) {
         if (label == null) return null;
         return switch (label) {
@@ -407,6 +534,12 @@ public class HomeController implements Initializable {
         };
     }
 
+    /**
+     * تبدیل ایمن یک رشته به {@link Long}، بدون پرتاب استثنا در صورت نامعتبر بودن.
+     *
+     * @param text مقدار متنی ورودی
+     * @return مقدار {@link Long} تبدیل‌شده، یا {@code null} در صورت خالی بودن یا نامعتبر بودن ورودی
+     */
     private Long parseLongOrNull(String text) {
         if (text == null || text.isBlank()) return null;
         try {
@@ -416,6 +549,15 @@ public class HomeController implements Initializable {
         }
     }
 
+    /**
+     * اجرای غیرهمزمان یک عملیات بازگرداننده‌ی مقدار (روی یک {@code Virtual Thread})
+     * و بازگرداندن نتیجه یا نمایش خطای مناسب در نخ رابط کاربری.
+     *
+     * @param supplier     عملیات ناهمزمانی که مقداری از نوع {@code T} برمی‌گرداند و ممکن است {@link ApiException} پرتاب کند
+     * @param onSuccess    عملیاتی که در صورت موفقیت با نتیجه‌ی دریافتی فراخوانی می‌شود
+     * @param errorMessage پیام پیش‌فرض خطا برای زمانی که استثنای پرتاب‌شده از نوع {@link ApiException} نباشد
+     * @param <T>          نوع نتیجه‌ی بازگردانده‌شده توسط {@code supplier}
+     */
     private <T> void runAsync(ThrowingSupplier<T> supplier, java.util.function.Consumer<T> onSuccess, String errorMessage) {
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -436,12 +578,24 @@ public class HomeController implements Initializable {
         });
     }
 
+    /**
+     * پردازش کلیک روی دکمه‌ی تعویض تم: تغییر تم روشن/تاریک برنامه بر اساس
+     * صحنه‌ی منبع رویداد.
+     *
+     * @param event رویداد کلیک که منبع آن برای دسترسی به صحنه‌ی جاری استفاده می‌شود
+     */
     @FXML
     private void onToggleThemeClick(ActionEvent event) {
         Node source = (Node) event.getSource();
         ThemeManager.toggleTheme(source.getScene());
     }
 
+    /**
+     * اینترفیس تابعی داخلی برای عملیات‌های ناهمزمانی که مقداری بازمی‌گردانند
+     * و ممکن است {@link ApiException} پرتاب کنند.
+     *
+     * @param <T> نوع مقدار بازگشتی
+     */
     @FunctionalInterface
     private interface ThrowingSupplier<T> {
         T get() throws ApiException;
