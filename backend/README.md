@@ -34,6 +34,21 @@ No separate database server needs to be installed; SQLite is embedded and its fi
  
 By default, the server starts on **`http://localhost:8080`**.
  
+### Running with Docker
+A `Dockerfile` is included and works the same way locally as it does in the hosted deployment — it isn't tied to Render in any way (no Render-specific config, no dynamic `$PORT` handling; it always listens on the fixed `8080`).
+ 
+```bash
+cd backend
+docker build -t secondhand-backend .
+docker run -p 8080:8080 secondhand-backend
+```
+ 
+> [!NOTE]
+> The container's SQLite database file and uploaded images are written inside the container's own filesystem, so they are lost when the container is removed. To persist them across restarts, mount a volume, e.g.:
+> ```bash
+> docker run -p 8080:8080 -v secondhand-data:/app secondhand-backend
+> ```
+ 
 ---
  
 ## 🌐 Live deployment
